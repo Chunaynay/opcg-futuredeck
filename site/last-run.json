@@ -1,5 +1,53 @@
 {
-  "ranAt": null,
-  "ok": null,
-  "note": "尚未由 GitHub Actions 執行過；第一次執行後會覆寫"
+  "ranAt": "2026-10-03T16:54:37.738Z",
+  "ok": true,
+  "changed": true,
+  "sources": {
+    "cn": {
+      "status": "ok",
+      "count": 4927,
+      "fetchedAt": "2026-10-03T16:54:37.738Z",
+      "note": "詳情失敗 0、沿用舊資料 0"
+    },
+    "tw": {
+      "status": "ok",
+      "count": 4915,
+      "fill": 2,
+      "fetchedAt": "2026-10-03T16:54:37.738Z",
+      "note": "62 系列、失敗 0、重複印刷 0"
+    },
+    "jp": {
+      "status": "ok",
+      "count": 4997,
+      "fill": 7,
+      "fetchedAt": "2026-10-03T16:54:37.738Z",
+      "note": "62 系列、失敗 0、重複印刷 0"
+    }
+  },
+  "stats": {
+    "cardNumbers": 2912,
+    "byLang": {
+      "cn": 2907,
+      "tw": 1,
+      "jp": 4
+    },
+    "newCards": 5,
+    "newSets": [
+      "Premium Card Collection -29th Anniversary Edition-（2）",
+      "最強ジャンプ5月号​ 応募者全員大サービス（2026年4月3日売）（3）",
+      "プレミアムカードコレクション-メラメラの実争奪戦Edition-（3）",
+      "交流会 2026年11月開催記念品（1）"
+    ],
+    "upgradedToCn": 0,
+    "removed": 0
+  },
+  "newCards": [
+    "P-152",
+    "P-153",
+    "P-154",
+    "P-159",
+    "P-160"
+  ],
+  "removedCards": [],
+  "commitMessage": "cards 2026-10-03：2912 張（簡中 2907、補繁中 1、補日文 4），新增 5 張：Premium Card Collection -29th Anniversary Edition-（2）、最強ジャンプ5月号​ 応募者全員大サービス（2026年4月3日売）（3）、プレミアムカードコレクション-メラメラの実争奪戦Edition-（3）、交流会 2026年11月開催記念品（1） [CN ok 4927 / TW ok 4915 / JP ok 4997]"
 }

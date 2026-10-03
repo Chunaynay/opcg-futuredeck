@@ -1,0 +1,5 @@
+{
+ "_readme": "網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同：cardNumber、cardName、cardType（领袖/角色/事件/舞台）、cardColor（红/绿/蓝/紫/黑/黄，雙色用 /）、cardLife（領袖＝生命，其他＝費用）、cardPower、cardAttack（反击+1000 / 反击+2000 / -）、cardAttribute（[打,斩,射,特,智]）、cardFeatures（用 / 分隔）、cardTextDesc、cardTrigger、cardRarity、cardOfferType（建議含【OP-18】這種代號）、cardImg（custom/卡號.jpg，454×635；空字串＝自動產生文字卡面）。同卡號會覆蓋官方資料。",
+ "updatedAt": "2026-10-03T00:00:00+08:00",
+ "cards": []
+}

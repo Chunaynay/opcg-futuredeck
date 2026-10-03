@@ -1,0 +1,90 @@
+name: Update card data
+
+# 排程：每週日 13:00 UTC（台北 21:00）正式執行；週一同一時間是「補跑」——只有昨天的排程沒成功才會真的跑。
+# 兩天都以 2026-10-11（週日）為第 0 週，只有偶數週執行 → 實際為每兩週一次（10/11、10/25、11/8…）。
+# 手動執行（Actions → Update card data → Run workflow）不受雙週限制。
+on:
+  schedule:
+    - cron: '0 13 * * 0'
+    - cron: '0 13 * * 1'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '備註（選填）'
+        required: false
+        default: 'manual'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: update-cards
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 雙週判斷（週一為補跑）
+        id: gate
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" != "schedule" ]; then echo "手動執行，略過雙週判斷"; echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          today=$(TZ=Asia/Taipei date +%F); dow=$(TZ=Asia/Taipei date +%u)   # 7=週日 1=週一
+          if [ "$dow" = "7" ]; then anchor=$today; else anchor=$(date -u -d "$today -1 day" +%F); fi
+          days=$(( ( $(date -u -d "$anchor" +%s) - $(date -u -d 2026-10-11 +%s) ) / 86400 ))
+          week=$(( days / 7 ))
+          if [ "$days" -lt 0 ] || [ $(( week % 2 )) -ne 0 ]; then
+            echo "台北 $today：第 $week 週（奇數週）→ 跳過"; echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "### 本週跳過（雙週排程：台北 $today 為第 $week 週）" >> "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          if [ "$dow" = "1" ]; then
+            last=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/update-cards.yml/runs?event=schedule&status=success&per_page=10" --jq '[.workflow_runs[].created_at] | max // ""')
+            if [ -n "$last" ] && [ $(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 3600 )) -lt 36 ]; then
+              echo "週一補跑：昨天的排程已成功（$last），跳過"; echo "run=false" >> "$GITHUB_OUTPUT"
+              echo "### 週一補跑跳過：昨天排程已成功（$last）" >> "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+            echo "週一補跑：昨天的排程沒有成功紀錄 → 執行"
+          fi
+          echo "台北 $today：第 $week 週（偶數週）→ 執行"; echo "run=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.run == 'true'
+        with:
+          node-version: 22
+
+      - name: 抓取三官網並合併
+        if: steps.gate.outputs.run == 'true'
+        run: node scripts/fetch-cards.mjs --out site/cards.json --prev site/cards.json --summary site/last-run.json
+
+      - name: 上傳執行摘要（artifact）
+        if: steps.gate.outputs.run == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: last-run
+          path: site/last-run.json
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Commit 並推送（會觸發 Netlify 部署）
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git config user.name "opcg-cards-bot"
+          git config user.email "opcg-cards-bot@users.noreply.github.com"
+          git add site/cards.json site/last-run.json
+          if git diff --cached --quiet; then echo "沒有任何變動"; exit 0; fi
+          if git diff --cached --quiet -- site/cards.json; then
+            msg="cards $(TZ=Asia/Taipei date +%F)：資料無變動（只更新 last-run.json）"
+            echo "- 卡片資料與上次相同，只更新執行摘要" >> "$GITHUB_STEP_SUMMARY"
+          else
+            msg="$(jq -r .commitMessage site/last-run.json)"
+            echo "- 卡片資料有變動，已更新" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          git commit -m "$msg"
+          git push
+          echo "- 已推送，Netlify 會自動部署" >> "$GITHUB_STEP_SUMMARY"

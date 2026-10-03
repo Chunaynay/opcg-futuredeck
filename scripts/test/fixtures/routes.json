@@ -1,0 +1,12 @@
+{
+ "https://webadmin.windoent.com/front/op-public/cardList/cardlist/weblist?": "cn_list.json",
+ "https://webadmin.windoent.com/front/op-public/cardList/cardlist/webInfo/": "cn_{id}.json",
+ "https://asia-tc.onepiece-cardgame.com/cardlist/?series=554117": "tw_554117.html",
+ "https://asia-tc.onepiece-cardgame.com/cardlist/?series=554035": "tw_554035.html",
+ "https://asia-tc.onepiece-cardgame.com/cardlist/?series=554118": "tw_554118.html",
+ "https://asia-tc.onepiece-cardgame.com/cardlist/": "tw_index.html",
+ "https://www.onepiece-cardgame.com/cardlist/?series=550117": "jp_550117.html",
+ "https://www.onepiece-cardgame.com/cardlist/?series=550118": "jp_550118.html",
+ "https://www.onepiece-cardgame.com/cardlist/?series=550119": "jp_550119.html",
+ "https://www.onepiece-cardgame.com/cardlist/": "jp_index.html"
+}

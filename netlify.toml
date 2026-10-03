@@ -1,0 +1,10 @@
+# Netlify 直接發佈 site/ 資料夾（index.html、cards.json、_redirects），沒有建置步驟
+[build]
+  publish = "site"
+  command = ""
+
+# cards.json 每次部署都可能更新：讓瀏覽器每次重新驗證，構築器再用 fetchedAt 判斷要不要換
+[[headers]]
+  for = "/cards.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

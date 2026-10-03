@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OPCG 自訂卡編輯器</title>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/t2cn.js"></script>
+<style>
+:root{--sea:#0C1A2B;--sea2:#132840;--sea3:#1B3552;--line:#2A4A6B;--ink:#EAF1F8;--ink2:#9FB3C8;--ink3:#6B8199;--gold:#E8B84A;--gold2:#B98A2A;--ok:#4cc38a;--bad:#ef5b5b;--warn:#e8a64a;
+--c-红:#D8463A;--c-绿:#2FA866;--c-蓝:#3B7BDF;--c-紫:#8C5BD9;--c-黑:#4A4F5A;--c-黄:#E6C23C}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--sea);color:var(--ink);font:14px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+button{white-space:nowrap;font:inherit;color:var(--ink);background:var(--sea3);border:1px solid var(--line);border-radius:7px;padding:5px 11px;cursor:pointer}
+button:hover{border-color:var(--ink3)}
+button.pri{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+button.danger{color:#ffb4b4;border-color:#6b2a2a}
+button:disabled{opacity:.45;cursor:default}
+input,textarea{font:inherit;color:var(--ink);background:var(--sea2);border:1px solid var(--line);border-radius:7px;padding:6px 9px;width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+textarea{resize:vertical;line-height:1.6}
+header{height:52px;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--sea2);border-bottom:1px solid var(--line)}
+header b{font-size:16px;color:var(--gold)}
+header .sp{flex:1}
+.hint{font-size:12px;color:var(--ink3)}
+#dirty{color:var(--warn);font-size:12.5px}
+.layout{display:grid;grid-template-columns:240px minmax(460px,1fr) minmax(380px,44%);height:calc(100vh - 52px)}
+.layout>*{overflow:auto;min-height:0}
+#left{border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.lhead{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--line)}
+.lhead button{white-space:nowrap;flex:none}
+#list{flex:1;overflow:auto;padding:6px}
+.it{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:7px;cursor:pointer;border:1px solid transparent}
+.it:hover{background:var(--sea2)}
+.it.on{background:var(--sea3);border-color:var(--gold2)}
+.it .no{font-weight:700;font-size:12.5px;white-space:nowrap}
+.it .nm{font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .t{flex:1;min-width:0}
+.it .st{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ok)}
+.it .st.warn{background:var(--warn)}.it .st.bad{background:var(--bad)}
+.it .im{font-size:10.5px;border:1px solid var(--line);border-radius:4px;padding:0 4px;color:var(--ink3)}
+.it .im.y{color:var(--gold);border-color:var(--gold2)}
+.dots{display:flex;gap:2px}.dots i{width:7px;height:7px;border-radius:50%;display:block}
+#form{padding:14px 18px 40px}
+.empty{color:var(--ink3);padding:40px 10px;text-align:center}
+.top{display:grid;grid-template-columns:200px 1fr;gap:16px;margin-bottom:10px}
+.face canvas{width:200px;height:280px;border-radius:9px;display:block;background:#000;border:1px solid var(--line)}
+.face.drop canvas{outline:3px dashed var(--gold)}
+.imgBtns{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.imgBtns button{padding:3px 8px;font-size:12.5px}
+.fl,label.f{display:block;margin-bottom:9px}
+.lab{display:block;font-size:12.5px;color:var(--ink2);margin-bottom:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{padding:4px 10px;font-size:13px;background:var(--sea2)}
+.seg button.on{background:var(--gold);color:#1a1300;border-color:var(--gold);font-weight:700}
+#fColor button{min-width:42px}
+#fColor button.on{color:#fff;text-shadow:0 1px 2px #000}
+.chipsIn{display:flex;flex-wrap:wrap;gap:5px;align-items:center;background:var(--sea2);border:1px solid var(--line);border-radius:7px;padding:4px}
+.chipsIn input{border:0;flex:1;min-width:140px;padding:3px 5px;background:transparent}
+.chip{background:var(--sea3);border:1px solid var(--line);border-radius:12px;padding:1px 4px 1px 9px;font-size:12.5px;display:inline-flex;gap:4px;align-items:center}
+.chip.new{border-color:var(--warn)}
+.chip b{cursor:pointer;color:var(--ink3);padding:0 4px;font-weight:400}
+#tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+#tags button{padding:1px 7px;font-size:12px;background:var(--sea2)}
+#issues{margin:10px 0;font-size:13px}
+#issues div{padding:3px 0}
+#issues .e{color:var(--bad)}#issues .w{color:var(--warn)}#issues .i{color:var(--ink3)}
+.factions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#right{border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.rhead{display:flex;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.rhead button{padding:3px 9px;font-size:12.5px}
+#refName{flex:1;min-width:100px;font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ref{flex:1;position:relative;overflow:hidden;background:#071220;cursor:grab}
+#ref.drag{cursor:grabbing}
+#ref.drop{outline:3px dashed var(--gold);outline-offset:-6px}
+#refImg{position:absolute;left:0;top:0;transform-origin:0 0;user-select:none;-webkit-user-drag:none;max-width:none}
+#refEmpty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink3);padding:30px}
+.inboxHead{display:flex;gap:8px;align-items:center;padding:6px 10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
+.inboxHead button{padding:2px 8px;font-size:12px}
+#inbox{height:118px;display:flex;gap:6px;overflow-x:auto;padding:0 10px 10px}
+#inbox .ib{flex:none;width:76px;cursor:pointer;position:relative}
+#inbox .ib img{width:76px;height:84px;object-fit:cover;border-radius:5px;border:2px solid transparent;display:block;background:#000}
+#inbox .ib.on img{border-color:var(--gold)}
+#inbox .ib span{display:block;font-size:10.5px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#inbox .ib.used::after{content:'已用';position:absolute;top:3px;right:3px;background:#000c;color:var(--ok);font-size:10px;padding:0 4px;border-radius:3px}
+dialog{background:var(--sea2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px}
+dialog::backdrop{background:#0009}
+.cropWrap{display:flex;gap:16px}
+#cropCv{width:340px;height:476px;border-radius:8px;cursor:grab;background:#000;touch-action:none}
+.cropSide{width:230px;display:flex;flex-direction:column;gap:10px}
+.cropSide input[type=range]{padding:0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#000d;border:1px solid var(--line);padding:8px 16px;border-radius:9px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+#toast.on{opacity:1}
+.welcome{max-width:560px;margin:60px auto;line-height:1.8}
+.welcome code{background:var(--sea3);padding:1px 6px;border-radius:4px}
+kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px}
+</style>
+</head>
+<body>
+<header>
+  <b>OPCG 自訂卡編輯器</b><span class="hint">v1.2</span>
+  <button id="btnOpen">開啟資料夾</button>
+  <span id="dirName" class="hint"></span>
+  <span id="stat" class="hint"></span>
+  <span class="sp"></span>
+  <label class="hint" title="卡名、特徵、效果、觸發、系列離開欄位時自動轉成簡中官方用字；卡名會對照官方繁中卡名換成簡中卡名"><input type="checkbox" id="optT2S" checked style="width:auto;vertical-align:-2px"> 自動轉簡體</label>
+  <span id="dirty"></span>
+  <button id="btnSave" class="pri" disabled>儲存到資料夾</button>
+  <button id="btnGit" disabled title="複製 Terminal 指令：pull → commit → push，Netlify 會自動上線">複製上線指令</button>
+</header>
+
+<main class="layout">
+  <aside id="left">
+    <div class="lhead"><input id="q" placeholder="搜尋卡號／卡名"><button id="btnNew" disabled>＋新卡</button></div>
+    <div id="list"></div>
+  </aside>
+
+  <section id="form">
+    <div id="welcome" class="welcome">
+      <p>按左上的 <b>開啟資料夾</b>，選 <code>~/Sites/opcg-futuredeck</code>（整個 repo 資料夾）。</p>
+      <p>工具會讀寫 <code>site/custom.json</code> 與 <code>site/custom/</code>，參考圖從 <code>_inbox/</code> 讀，並用 <code>site/cards.json</code> 提供特徵／系列／卡名的建議。</p>
+      <p class="hint">需要 Chrome 或 Edge（要用到瀏覽器讀寫本機資料夾的功能，Safari 不支援）。</p>
+    </div>
+    <div id="noCard" class="empty" hidden>左邊選一張卡，或按「＋新卡」</div>
+    <div id="fwrap" hidden>
+      <div class="top">
+        <div class="face" id="faceBox">
+          <canvas id="facePrev" width="454" height="635"></canvas>
+          <div class="imgBtns">
+            <button id="btnCrop">調整卡圖</button>
+            <button id="btnPickImg">選檔案</button>
+            <button id="btnNoImg">不用圖</button>
+            <input type="file" id="fileImg" accept="image/*" hidden>
+          </div>
+          <div id="imgState" class="hint" style="margin-top:4px"></div>
+        </div>
+        <div>
+          <label class="f"><span class="lab">卡號</span><input id="fNo" placeholder="EB05-001" autocomplete="off" spellcheck="false"></label>
+          <label class="f"><span class="lab">卡名</span><input id="fName" list="dlName" autocomplete="off"></label>
+          <div class="fl"><span class="lab">類型</span><div class="seg" id="fType"></div></div>
+          <div class="fl"><span class="lab">顏色（雙色點兩個）</span><div class="seg" id="fColor"></div></div>
+          <div class="grid2">
+            <label class="f"><span class="lab" id="lCost">費用</span><input id="fCost" inputmode="numeric" autocomplete="off"></label>
+            <label class="f" id="wPow"><span class="lab">力量</span><input id="fPow" inputmode="numeric" autocomplete="off" placeholder="5000"></label>
+          </div>
+          <div class="fl" id="wCounter"><span class="lab">反擊</span><div class="seg" id="fCounter"></div></div>
+          <div class="fl" id="wAttr"><span class="lab">屬性</span><div class="seg" id="fAttr"></div></div>
+          <div class="fl"><span class="lab">稀有度</span><div class="seg" id="fRar"></div></div>
+        </div>
+      </div>
+      <div class="fl"><span class="lab">特徵（輸入後按 Enter；黃框＝現有資料沒有的特徵，確認用詞）</span><div class="chipsIn" id="fFeat"><input id="fFeatIn" list="dlFeat" autocomplete="off"></div></div>
+      <div class="fl"><span class="lab">效果（點標記插入游標處）</span><div id="tags"></div><textarea id="fText" rows="6"></textarea></div>
+      <label class="f"><span class="lab">觸發（不用打【觸發】）</span><textarea id="fTrig" rows="2"></textarea></label>
+      <div class="grid3">
+        <label class="f"><span class="lab">系列名稱（新系列直接打，例：特別補充包 ○○）</span><input id="fSetName" list="dlSet" autocomplete="off"></label>
+        <label class="f"><span class="lab">系列代號（依卡號自動帶）</span><input id="fSetCode" placeholder="EB-05" autocomplete="off" spellcheck="false"></label>
+        <label class="f"><span class="lab">區塊圖示（可留空）</span><input id="fBlock" inputmode="numeric" autocomplete="off"></label>
+      </div>
+      <div class="fl"><span class="lab">從現有卡帶入資料（再錄、同名卡用；卡號與卡圖不會被蓋）</span>
+        <div style="display:flex;gap:6px"><input id="fCopyFrom" list="dlNo" placeholder="輸入卡號" autocomplete="off" spellcheck="false"><button id="btnCopyFrom">帶入</button></div></div>
+      <div id="issues"></div>
+      <div class="factions">
+        <button id="btnNext" class="pri">下一張 <kbd>⌘</kbd><kbd>Enter</kbd></button>
+        <button id="btnDup">複製這張</button>
+        <button id="btnDel" class="danger">刪除這張</button>
+      </div>
+      <p class="hint" style="margin-top:14px">快捷鍵：<kbd>⌘S</kbd> 儲存到資料夾　<kbd>⌘Enter</kbd> 下一張（沒有就以卡號＋1 新增，沿用系列與顏色）　<kbd>⌥↑</kbd><kbd>⌥↓</kbd> 上／下一張　<kbd>⌘V</kbd> 貼上圖片當參考圖</p>
+    </div>
+  </section>
+
+  <section id="right">
+    <div class="rhead">
+      <span id="refName">參考圖</span>
+      <button id="refSetImg" disabled>設為這張的卡圖</button>
+      <button id="refNewCard" disabled>用這張圖新增卡片</button>
+      <button id="refFit">符合視窗</button>
+    </div>
+    <div id="ref"><img id="refImg" alt="" hidden><div id="refEmpty">把官方情報圖／卡面放進 <b>_inbox/</b>（可以分子資料夾），<br>或直接 ⌘V 貼上、拖進這裡。<br><br>滾輪縮放、拖曳移動、雙擊符合視窗。</div></div>
+    <div class="inboxHead">_inbox <span id="inboxN"></span><span class="sp" style="flex:1"></span><button id="btnInboxReload" disabled>重新整理</button></div>
+    <div id="inbox"></div>
+  </section>
+</main>
+
+<datalist id="dlFeat"></datalist><datalist id="dlSet"></datalist><datalist id="dlName"></datalist><datalist id="dlNo"></datalist>
+
+<dialog id="cropDlg">
+  <div class="cropWrap">
+    <canvas id="cropCv" width="454" height="635"></canvas>
+    <div class="cropSide">
+      <b>調整卡圖</b>
+      <div id="cropRatio" class="hint"></div>
+      <div><span class="lab">方式</span><div class="seg" id="cMode"></div></div>
+      <div><span class="lab">縮放 <span id="cZoomV"></span></span><input type="range" id="cZoom" min="0.3" max="6" step="0.01"></div>
+      <div><span class="lab">留邊顏色（完整顯示時）</span><div class="seg" id="cBg"></div></div>
+      <p class="hint">在圖上拖曳移動、滾輪縮放。要從情報圖裡只取卡面：放大後拖到卡面位置。</p>
+      <div style="display:flex;gap:6px;margin-top:auto"><button id="cReset">重設</button><span style="flex:1"></span><button id="cDone" class="pri">完成</button></div>
+    </div>
+  </div>
+</dialog>
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const W=454,H=635;
+const TYPES=['领袖','角色','事件','舞台'],TYPE_T={'领袖':'領袖','角色':'角色','事件':'事件','舞台':'舞台'};
+const COLORS=['红','绿','蓝','紫','黑','黄'],COLOR_T={'红':'紅','绿':'綠','蓝':'藍','紫':'紫','黑':'黑','黄':'黃'};
+const COLOR_HEX={'红':'#D8463A','绿':'#2FA866','蓝':'#3B7BDF','紫':'#8C5BD9','黑':'#4A4F5A','黄':'#E6C23C'};
+const ATTRS=['打','斩','射','特','智'],ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
+const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
+const NO_RE=/^[A-Z]{1,6}\d{0,2}-\d{3}$/;
+const FIELDS=['cardNumber','cardName','cardType','cardColor','cardLife','cardPower','cardAttack','cardAttribute','cardFeatures','cardTextDesc','cardTrigger','cardRarity','cardOfferType','subscript','mixedColor','cardImg'];
+const DEFAULT_TAGS=['【登场时】','【启动主要】','【阻挡者】','【速攻】','【回合1次】','【对方的回合中】','【自己的回合中】','【攻击时】','【KO时】','【反击】','【主要】','【咚!!×1】'];
+// 簡中官方用字修正（OpenCC 轉出來和官方不同的詞）
+const OFFICIAL_FIX=[['海贼团','海盗团']];
+const DEFAULT_README='網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同。同卡號會覆蓋官方資料。';
+
+/* ---------- 轉簡體 ---------- */
+let occ=null;try{if(window.OpenCC)occ=OpenCC.Converter({from:'tw',to:'cn'});}catch(e){}
+const T2S_LITE='達达 爾尔 龍龙 羅罗 綠绿 藍蓝 紅红 黃黄 鬥斗 戰战 鷹鹰 獸兽 鳥鸟 魚鱼 馬马 貓猫 獅狮 鳳凤 風风 電电 雲云 島岛 國国 們们 寶宝 劍剑 槍枪 艦舰 團团 盜盗 軍军 將将 隊队 門门 鐵铁 銀银 擊击 護护 衛卫 體体 麗丽 蘿萝 賓宾 傑杰 蘭兰 絲丝 歐欧 亞亚 愛爱 華华 瑪玛 麥麦 兒儿 強强 鱷鳄 喬乔 傳传 說说 條条 雙双 單单 頭头 長长 陽阳 氣气 動动 聲声 書书 畫画 圖图 數数 點点 層层 階阶 終终 總总 權权 處处 貴贵 賊贼 遊游 過过 進进 選选 時时 會会 對对 還还 後后 發发 從从 當当 應应 實实 現现 讓让 樣样 張张 給给 場场 啟启 擊击 觸触 費费 張张 當当 數数 機机 剩剩 層层 選选 戰战 牌牌 這这 個个 將将 為为 與与 於于 來来 無无 斬斩 盤盘 獲获 復复 殘残 張张 區区 棄弃 墓墓 換换 給给 狀态 態态 種种 類类 擁拥 確确 認认 開开 關关 間间 際际 準准 標标 歸归 備备 銷销 魯鲁 羅罗 薩萨 諾诺 維维 盧卢 樂乐 號号 邊边 員员 揮挥 導导 謀谋 隨随 卻却 覺觉 變变 計计 劃划 節节 屬属 黨党 鬼鬼 魔魔 靈灵 聖圣 帝帝 雖虽 從从 驅驱 勢势 勞劳 協协 勝胜 敗败 創创 傷伤 斷断 釋释 雜杂 結结 擇择';
+const T2S_MAP={};T2S_LITE.split(' ').forEach(p=>{if(p.length===2)T2S_MAP[p[0]]=p[1];});
+function t2s(s){s=String(s||'');s=occ?occ(s):[...s].map(c=>T2S_MAP[c]||c).join('');for(const [a,b] of OFFICIAL_FIX)s=s.split(a).join(b);return s;}
+const conv=s=>$('#optT2S').checked?t2s(s):s;
+
+/* ---------- 狀態 ---------- */
+const S={root:null,site:null,cdir:null,items:[],cur:-1,readme:DEFAULT_README,off:new Map(),feats:new Map(),sets:[],tagList:DEFAULT_TAGS,
+  nameMap:new Map(),inbox:[],pasted:[],ref:null,dirty:false,changed:new Set(),snap:new Map(),deletedFiles:new Set(),uid:1};
+const cur=()=>S.items[S.cur];
+function emptyRaw(){return {cardNumber:'',cardName:'',cardType:'角色',cardColor:'',cardLife:'',cardPower:'',cardAttack:'-',cardAttribute:[],cardFeatures:'',cardTextDesc:'',cardTrigger:'',cardRarity:'',cardOfferType:'',subscript:'',mixedColor:0,cardImg:''};}
+function canon(r){const o={};for(const k of FIELDS)o[k]=r[k]??(k==='cardAttribute'?[]:k==='mixedColor'?0:'');for(const k in r)if(!(k in o))o[k]=r[k];return o;}
+const newItem=(r,origNo=null)=>({uid:S.uid++,r:canon(Object.assign(emptyRaw(),r||{})),origNo,diskFile:null,img:{state:'none'}});
+const codeFromNo=no=>{const m=String(no||'').match(/^([A-Z]+)(\d+)-/);return m?m[1]+'-'+m[2]:'';};
+const splitSet=s=>{const m=String(s||'').match(/^(.*?)\s*【([^】]+)】\s*$/);return m?{name:m[1].trim(),code:m[2].trim()}:{name:String(s||'').trim(),code:''};};
+const colorsOf=r=>String(r.cardColor||'').split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean);
+const featsOf=r=>String(r.cardFeatures||'').split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean);
+
+/* ---------- 小工具 ---------- */
+let toastT;function toast(m,ms=2600){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms);}
+function loadImage(src){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('圖片讀取失敗'));im.src=src;});}
+function taipeiISO(){return new Date(Date.now()+8*3600e3).toISOString().slice(0,19)+'+08:00';}
+function diffNos(){const now=new Map(S.items.map(i=>[i.r.cardNumber,JSON.stringify(canon(i.r))+'|'+(i.img.state==='new'?'newimg':i.img.state)]));const out=new Set();
+  for(const [no,v] of now)if(no&&S.snap.get(no)!==v)out.add(no);for(const no of S.snap.keys())if(!now.has(no))out.add(no);return [...out].sort();}
+function takeSnap(){S.snap=new Map(S.items.map(i=>[i.r.cardNumber,JSON.stringify(canon(i.r))+'|'+i.img.state]));}
+function setDirty(v=true){S.dirty=v;const n=v?diffNos().length:0;$('#dirty').textContent=v?`● 未儲存（${n} 張有改動）`:'';}
+const idb={db:null,async open(){if(this.db)return this.db;return this.db=await new Promise((ok,no)=>{const q=indexedDB.open('opcg-custom-editor',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error);});},
+  async get(k){const db=await this.open();return new Promise(ok=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>ok(q.result);q.onerror=()=>ok(null);});},
+  async set(k,v){try{const db=await this.open();return await new Promise(ok=>{try{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>ok();t.onerror=()=>ok();t.onabort=()=>ok();}catch(e){ok();}});}catch(e){}}};
+
+/* ---------- 開資料夾 ---------- */
+async function tryGet(dir,name,kind='file'){try{return kind==='file'?await dir.getFileHandle(name):await dir.getDirectoryHandle(name);}catch(e){return null;}}
+async function readJSON(dir,name){const h=await tryGet(dir,name);if(!h)return null;return JSON.parse(await (await h.getFile()).text());}
+async function writeFile(dir,name,data){const h=await dir.getFileHandle(name,{create:true});const w=await h.createWritable();await w.write(data);await w.close();}
+
+$('#btnOpen').onclick=async()=>{
+  if(!window.showDirectoryPicker)return alert('這個瀏覽器不能讀寫本機資料夾，請用 Chrome 或 Edge 開這個檔案。');
+  const last=await idb.get('root');
+  if(last&&!S.root){try{if(await last.requestPermission({mode:'readwrite'})==='granted')return openRoot(last);}catch(e){}}
+  try{const h=await window.showDirectoryPicker({id:'opcg-futuredeck',mode:'readwrite'});openRoot(h);}catch(e){if(e.name!=='AbortError')alert(e.message);}
+};
+async function openRoot(h){
+  if(S.dirty&&!confirm('目前有未儲存的改動，確定要重新開啟？'))return;
+  let site=await tryGet(h,'site','dir'),root=h;
+  if(!site){if(await tryGet(h,'custom.json')||await tryGet(h,'index.html')){site=h;root=null;}else return alert('這個資料夾裡找不到 site/。請選 opcg-futuredeck（repo 根目錄）。');}
+  S.root=root||h;S.site=site;S.cdir=await site.getDirectoryHandle('custom',{create:true});
+  await idb.set('root',h);
+  $('#dirName').textContent='📁 '+h.name;
+  // custom.json
+  const cj=await readJSON(site,'custom.json')||{cards:[]};
+  S.readme=cj._readme||DEFAULT_README;
+  S.items=[];S.changed.clear();S.deletedFiles.clear();
+  for(const r of (cj.cards||[])){const it=newItem(r,r.cardNumber);S.items.push(it);await loadDiskImg(it);}
+  sortItems();takeSnap();
+  // cards.json（建議清單用）
+  try{const d=await readJSON(site,'cards.json');buildRefData(d?(Array.isArray(d)?d:d.cards):[]);}catch(e){buildRefData([]);toast('cards.json 讀取失敗，沒有建議清單');}
+  await loadInbox();
+  ['#btnSave','#btnGit','#btnNew','#btnInboxReload'].forEach(s=>$(s).disabled=false);
+  $('#welcome').hidden=true;
+  setDirty(false);
+  // 還原草稿
+  const dr=await idb.get('draft');
+  if(dr&&dr.dir===h.name&&dr.cards&&JSON.stringify(dr.cards)!==JSON.stringify(S.items.map(i=>i.r))&&confirm(`有上次沒存到資料夾的草稿（${dr.cards.length} 張，${dr.at}），要還原嗎？\n（只有文字資料，新放的卡圖要重新指定）`)){
+    const byNo=new Map(S.items.map(i=>[i.r.cardNumber,i]));
+    S.items=dr.cards.map((r,k)=>{const o=byNo.get(dr.orig[k]);const it=newItem(r,dr.orig[k]||null);if(o){it.diskFile=o.diskFile;it.img=o.img;}S.changed.add(r.cardNumber);return it;});
+    setDirty(true);
+  }
+  S.cur=S.items.length?0:-1;renderList();fillForm();
+  $('#stat').textContent=`自訂卡 ${S.items.length} 張・官方 ${S.off.size} 張`;
+}
+async function loadDiskImg(it){
+  const m=String(it.r.cardImg||'').match(/^custom\/(.+)$/);if(!m){it.img={state:'none'};return;}
+  const h=await tryGet(S.cdir,m[1]);
+  if(!h){it.img={state:'missing',file:m[1]};return;}
+  try{const url=URL.createObjectURL(await h.getFile());it.img={state:'disk',src:await loadImage(url)};it.diskFile=m[1];}catch(e){it.img={state:'missing',file:m[1]};}
+}
+function buildRefData(cards){
+  S.off.clear();S.feats.clear();S.nameMap.clear();
+  const sets=new Map(),tags=new Map(),names=new Set();
+  for(const r of cards){
+    if(!r||!r.cardNumber)continue;
+    if(!S.off.has(r.cardNumber))S.off.set(r.cardNumber,r);
+    for(const f of featsOf(r))S.feats.set(f,(S.feats.get(f)||0)+1);
+    if(r.cardOfferType&&/【[^】]+】/.test(r.cardOfferType))sets.set(r.cardOfferType,Math.max(sets.get(r.cardOfferType)||0,r.id||0));
+    for(const m of String(r.cardTextDesc||'').matchAll(/【[^】]{1,10}】/g))tags.set(m[0],(tags.get(m[0])||0)+1);
+    if(r.cardName)names.add(r.cardName);
+    if(r.cardNameTw&&r.cardName&&(!r.lang||r.lang==='cn')){S.nameMap.set(r.cardNameTw,r.cardName);S.nameMap.set(t2s(r.cardNameTw),r.cardName);}
+  }
+  S.sets=[...sets.keys()].sort((a,b)=>b.localeCompare(a,'zh'));
+  if(tags.size)S.tagList=[...tags.entries()].sort((a,b)=>b[1]-a[1]).slice(0,22).map(x=>x[0]);
+  S.allNames=[...names];
+  refreshLists();
+}
+function refreshLists(){
+  const fm=new Map(S.feats);for(const it of S.items)for(const f of featsOf(it.r))fm.set(f,(fm.get(f)||0)+1);
+  $('#dlFeat').innerHTML=[...fm.entries()].sort((a,b)=>b[1]-a[1]).map(([f,n])=>`<option value="${esc(f)}">${n} 張</option>`).join('');
+  // 自訂卡是未發售卡，系列一定是新系列 → 只建議自己填過的系列名稱
+  const cs=[...new Set(S.items.map(i=>splitSet(i.r.cardOfferType).name).filter(Boolean))];
+  $('#dlSet').innerHTML=cs.map(s=>`<option value="${esc(s)}">`).join('');
+  $('#dlName').innerHTML=(S.allNames||[]).map(n=>`<option value="${esc(n)}">`).join('');
+  $('#dlNo').innerHTML=[...S.items.map(i=>i.r.cardNumber),...S.off.keys()].filter(Boolean).map(n=>`<option value="${esc(n)}">${esc((S.off.get(n)||{}).cardName||'')}</option>`).join('');
+  $('#tags').innerHTML=S.tagList.map(t=>`<button type="button" data-t="${esc(t)}">${esc(t)}</button>`).join('');
+}
+
+/* ---------- 清單 ---------- */
+function sortItems(){const c=cur();S.items.sort((a,b)=>(a.r.cardNumber||'~').localeCompare(b.r.cardNumber||'~'));if(c)S.cur=S.items.indexOf(c);}
+function renderList(){
+  const q=t2s($('#q').value.trim()).toLowerCase();
+  $('#list').innerHTML=S.items.map((it,i)=>{
+    const r=it.r;if(q&&!(r.cardNumber+' '+r.cardName).toLowerCase().includes(q))return '';
+    const v=check(it);const st=v.err.length?'bad':v.warn.length?'warn':'';
+    const dots=colorsOf(r).map(c=>`<i style="background:${COLOR_HEX[c]||'#666'}"></i>`).join('');
+    const hasImg=it.img.state==='disk'||it.img.state==='new';
+    return `<div class="it${i===S.cur?' on':''}" data-i="${i}"><span class="st ${st}" title="${esc([...v.err,...v.warn].join('\n'))}"></span><div class="t"><div class="no">${esc(r.cardNumber||'（無卡號）')} <span class="dots" style="display:inline-flex">${dots}</span></div><div class="nm">${esc(r.cardName||'（未命名）')}・${esc(TYPE_T[r.cardType]||'')}</div></div><span class="im${hasImg?' y':''}">${hasImg?'圖':'文'}</span></div>`;
+  }).join('')||'<div class="empty">還沒有自訂卡</div>';
+  const on=$('#list .it.on');if(on)on.scrollIntoView({block:'nearest'});
+}
+$('#list').onclick=e=>{const d=e.target.closest('.it');if(!d)return;S.cur=+d.dataset.i;renderList();fillForm();};
+$('#q').oninput=renderList;
+
+/* ---------- 表單 ---------- */
+function seg(id,vals,labels,multi,cb){const el=$(id);el._multi=multi;el.innerHTML=vals.map((v,i)=>`<button type="button" data-v="${esc(v)}">${labels[i]}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(multi)b.classList.toggle('on');else el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));(cb||onForm)();};}
+const segGet=id=>{const el=$(id);const on=[...el.querySelectorAll('button.on')].map(b=>b.dataset.v);return el._multi?on:(on[0]??'');};
+const segSet=(id,v)=>{const s=new Set(Array.isArray(v)?v:[v]);$(id).querySelectorAll('button').forEach(b=>b.classList.toggle('on',s.has(b.dataset.v)));};
+seg('#fType',TYPES,TYPES.map(t=>TYPE_T[t]),false);
+seg('#fColor',COLORS,COLORS.map(c=>COLOR_T[c]),true);
+$('#fColor').querySelectorAll('button').forEach(b=>b.style.setProperty('--cc',COLOR_HEX[b.dataset.v]));
+seg('#fCounter',['-','反击+1000','反击+2000'],['無','+1000','+2000'],false);
+seg('#fAttr',ATTRS,ATTRS.map(a=>ATTR_T[a]),true);
+seg('#fRar',['',...RARITIES],['未公布',...RARITIES],false);
+const styleColors=()=>$('#fColor').querySelectorAll('button').forEach(b=>{b.style.background=b.classList.contains('on')?COLOR_HEX[b.dataset.v]:'';b.style.borderColor=b.classList.contains('on')?COLOR_HEX[b.dataset.v]:'';});
+
+let FEATS=[];
+function renderFeats(){const known=new Set(S.feats.keys());S.items.forEach(it=>{if(it!==cur())featsOf(it.r).forEach(f=>known.add(f));});
+  $('#fFeat').querySelectorAll('.chip').forEach(c=>c.remove());
+  const inp=$('#fFeatIn');
+  FEATS.forEach((f,i)=>{const c=document.createElement('span');c.className='chip'+(S.feats.size&&!known.has(f)?' new':'');c.title=c.classList.contains('new')?'現有資料沒有這個特徵，確認是不是官方簡中用詞':'';c.innerHTML=`${esc(f)}<b data-rm="${i}">✕</b>`;$('#fFeat').insertBefore(c,inp);});}
+function addFeat(v){v=conv(String(v||'').trim());if(!v)return;v.split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean).forEach(f=>{if(!FEATS.includes(f))FEATS.push(f);});$('#fFeatIn').value='';renderFeats();onForm();}
+$('#fFeatIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addFeat(e.target.value);}else if(e.key==='Backspace'&&!e.target.value&&FEATS.length){FEATS.pop();renderFeats();onForm();}});
+$('#fFeatIn').addEventListener('change',e=>{if(S.feats.has(e.target.value))addFeat(e.target.value);});
+$('#fFeatIn').addEventListener('blur',e=>{if(e.target.value.trim())addFeat(e.target.value);});
+$('#fFeat').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){FEATS.splice(+b.dataset.rm,1);renderFeats();onForm();}else $('#fFeatIn').focus();});
+
+function fillForm(){
+  const it=cur();
+  $('#fwrap').hidden=!it;$('#noCard').hidden=!!it||!S.site;
+  if(!it)return;
+  const r=it.r;
+  $('#fNo').value=r.cardNumber;$('#fName').value=r.cardName;
+  segSet('#fType',r.cardType);segSet('#fColor',colorsOf(r));styleColors();
+  $('#fCost').value=r.cardLife;$('#fPow').value=r.cardPower==='-'?'':r.cardPower;
+  segSet('#fCounter',r.cardAttack||'-');segSet('#fAttr',r.cardAttribute||[]);segSet('#fRar',r.cardRarity||'');
+  FEATS=featsOf(r);renderFeats();
+  $('#fText').value=r.cardTextDesc;$('#fTrig').value=r.cardTrigger;$('#fBlock').value=r.subscript;
+  {const sp=splitSet(r.cardOfferType),auto=codeFromNo(r.cardNumber);$('#fSetName').value=sp.name;$('#fSetCode').value=sp.code||auto;$('#fSetCode').dataset.auto=(!sp.code||sp.code===auto)?'1':'';}
+  $('#fCopyFrom').value='';
+  updVis();drawPreview();showIssues();
+}
+function updVis(){const t=segGet('#fType');
+  $('#lCost').textContent=t==='领袖'?'生命':'費用';
+  $('#wPow').style.visibility=(t==='事件'||t==='舞台')?'hidden':'';
+  $('#wCounter').hidden=t!=='角色';$('#wAttr').hidden=t==='事件'||t==='舞台';}
+function readForm(){
+  const it=cur();if(!it)return;const r=it.r;
+  r.cardNumber=$('#fNo').value.trim().toUpperCase();
+  r.cardName=$('#fName').value.trim();
+  const t=r.cardType=segGet('#fType');
+  const cols=COLORS.filter(c=>segGet('#fColor').includes(c));r.cardColor=cols.join('/');r.mixedColor=cols.length>1?1:0;
+  r.cardLife=$('#fCost').value.trim().replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-65248));
+  r.cardPower=(t==='事件'||t==='舞台')?'-':$('#fPow').value.trim().replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-65248));
+  r.cardAttack=t==='角色'?(segGet('#fCounter')||'-'):'-';
+  r.cardAttribute=(t==='事件'||t==='舞台')?[]:ATTRS.filter(a=>segGet('#fAttr').includes(a));
+  r.cardFeatures=FEATS.join('/');
+  r.cardTextDesc=$('#fText').value.trim();
+  r.cardTrigger=$('#fTrig').value.trim().replace(/^\s*【(触发|觸發)】\s*/,'');
+  r.cardRarity=segGet('#fRar');r.subscript=$('#fBlock').value.trim();
+  if($('#fSetCode').dataset.auto==='1')$('#fSetCode').value=codeFromNo(r.cardNumber);
+  const sn=$('#fSetName').value.trim(),sc=$('#fSetCode').value.trim().toUpperCase();r.cardOfferType=sc?`${sn}【${sc}】`:sn;
+}
+let drawQ=0;
+function onForm(){const it=cur();if(!it)return;const before=it.r.cardNumber;readForm();if(before)S.changed.add(before);S.changed.add(it.r.cardNumber);
+  styleColors();updVis();setDirty();cancelAnimationFrame(drawQ);drawQ=requestAnimationFrame(()=>{drawPreview();showIssues();renderList();saveDraft();});}
+['#fNo','#fName','#fCost','#fPow','#fText','#fTrig','#fSetName','#fBlock'].forEach(s=>$(s).addEventListener('input',onForm));
+$('#fSetCode').addEventListener('input',e=>{e.target.dataset.auto=e.target.value.trim()?'':'1';onForm();});
+$('#fNo').addEventListener('blur',()=>{$('#fNo').value=$('#fNo').value.trim().toUpperCase().replace(/[－—–]/g,'-');onForm();sortItems();renderList();});
+// 離開欄位時轉簡中；卡名、「」裡的卡名對照官方繁中→簡中
+const fixNames=s=>s.replace(/「([^」]+)」/g,(m,n)=>'「'+(S.nameMap.get(n)||S.nameMap.get(t2s(n))||n)+'」');
+$('#fName').addEventListener('blur',e=>{const v=e.target.value.trim();if(!v)return;const nv=S.nameMap.get(v)||S.nameMap.get(t2s(v))||conv(v);if(nv!==v){e.target.value=nv;onForm();}});
+['#fText','#fTrig','#fSetName'].forEach(s=>$(s).addEventListener('blur',e=>{if(!$('#optT2S').checked)return;const v=e.target.value;const nv=fixNames(t2s(v));if(nv!==v){e.target.value=nv;onForm();}}));
+$('#tags').onclick=e=>{const b=e.target.closest('button');if(!b)return;const ta=$('#fText');const s=ta.selectionStart??ta.value.length,en=ta.selectionEnd??s;ta.value=ta.value.slice(0,s)+b.dataset.t+ta.value.slice(en);ta.focus();ta.selectionStart=ta.selectionEnd=s+b.dataset.t.length;onForm();};
+
+/* ---------- 檢查 ---------- */
+function check(it){
+  const r=it.r,err=[],warn=[],info=[];const no=r.cardNumber,t=r.cardType;
+  if(!no)err.push('沒有卡號');else if(!NO_RE.test(no))err.push('卡號格式不對（例 EB05-001、OP18-120）');
+  if(no&&S.items.some(o=>o!==it&&o.r.cardNumber===no))err.push('卡號和另一張自訂卡重複');
+  if(!r.cardName)err.push('沒有卡名');
+  if(!TYPES.includes(t))err.push('沒選類型');
+  const cols=colorsOf(r);if(!cols.length)err.push('沒選顏色');else if(cols.length>2)warn.push('選了 3 色以上');
+  if(!/^\d+$/.test(r.cardLife))err.push(t==='领袖'?'生命要填數字':'費用要填數字');
+  if((t==='领袖'||t==='角色')&&!/^\d+$/.test(r.cardPower))err.push('力量要填數字');
+  if(it.img.state==='missing')err.push(`卡圖檔 custom/${it.img.file} 不存在`);
+  if(!r.cardTextDesc&&t!=='角色')warn.push('效果文是空的');
+  if(!splitSet(r.cardOfferType).name)warn.push('沒填系列名稱（網站會只顯示代號'+(splitSet(r.cardOfferType).code?'【'+splitSet(r.cardOfferType).code+'】':'')+'）');
+  if(S.feats.size){const known=new Set(S.feats.keys());const nf=featsOf(r).filter(f=>!known.has(f)&&!S.items.some(o=>o!==it&&featsOf(o.r).includes(f)));if(nf.length)warn.push('新特徵（現有資料沒有）：'+nf.join('、'));}
+  if(/[達爾龍羅綠藍紅黃戰鬥擊護團盜軍將隊門鐵場時對發從應觸費啟這個為與來無區棄換態種類開關間備屬]/.test(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))warn.push('有繁體字，比對特徵／搜尋可能對不上');
+  if(r.cardName&&S.allNames&&S.allNames.length>500&&!S.allNames.includes(r.cardName))info.push('官方資料沒有同名卡（新角色可以忽略；舊角色請確認是簡中官方譯名，例「路飞」不是「鲁夫」）');
+  if(no&&S.off.has(no))warn.push(`官方資料已有 ${no}「${S.off.get(no).cardName}」：網站以官方為準，這張自訂卡不會顯示，下次雙週更新會自動刪掉`);
+  return {err,warn,info};
+}
+function showIssues(){const it=cur();if(!it)return;const v=check(it);
+  $('#issues').innerHTML=[...v.err.map(x=>`<div class="e">✕ ${esc(x)}</div>`),...v.warn.map(x=>`<div class="w">！${esc(x)}</div>`),...v.info.map(x=>`<div class="i">・${esc(x)}</div>`)].join('')||'<div style="color:var(--ok)">✓ 資料完整</div>';
+  const st={none:'沒有卡圖：網站會自動畫文字卡面（左邊預覽就是）',disk:`卡圖：custom/${it.diskFile||''}`,new:`新卡圖（${it.img.srcName||'貼上的圖'}），儲存時寫入 custom/${it.r.cardNumber||'卡號'}.jpg`,missing:'卡圖檔不見了'}[it.img.state];
+  $('#imgState').textContent=st;}
+
+/* ---------- 卡面預覽 ---------- */
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function wrapText(g,text,maxW){const out=[];for(const para of String(text||'').split(/\n/)){let line='';for(const ch of para){const t=line+ch;if(g.measureText(t).width>maxW&&line){out.push(line);line=ch;}else line=t;}out.push(line);}return out;}
+// 與網站 genFace() 相同的文字卡面
+function drawFace(g,r){
+  const font='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+  const colors=colorsOf(r).filter(c=>COLOR_HEX[c]);const cols=colors.map(c=>COLOR_HEX[c]);if(!cols.length)cols.push('#5a6b80');
+  const isL=r.cardType==='领袖';
+  if(cols.length>1){g.fillStyle=cols[0];g.fillRect(0,0,W/2,H);g.fillStyle=cols[1];g.fillRect(W/2,0,W/2,H);}
+  else{const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,cols[0]);bg.addColorStop(1,'#1a1a1a');g.fillStyle=bg;g.fillRect(0,0,W,H);}
+  g.fillStyle='#0C1A2Bd9';rr(g,18,18,W-36,H-36,16);g.fill();g.strokeStyle='#ffffff55';g.lineWidth=2;rr(g,18,18,W-36,H-36,16);g.stroke();
+  g.fillStyle='#000';g.beginPath();g.arc(58,58,30,0,Math.PI*2);g.fill();g.strokeStyle='#E8B84A';g.lineWidth=3;g.stroke();
+  g.fillStyle='#fff';g.font=`900 30px ${font}`;g.textAlign='center';g.textBaseline='middle';g.fillText(String(r.cardLife||'-'),58,59);
+  g.font=`700 11px ${font}`;g.fillStyle='#E8B84A';g.fillText(isL?'生命':'費用',58,96);
+  g.textAlign='right';g.textBaseline='alphabetic';g.font=`700 18px ${font}`;g.fillStyle='#fff';g.fillText(TYPE_T[r.cardType]||r.cardType||'',W-34,52);
+  const at=r.cardAttribute||[];g.font=`500 13px ${font}`;g.fillStyle='#cfd8e3';g.fillText(colors.map(c=>COLOR_T[c]).join('／')+(at.length?'　'+at.map(a=>ATTR_T[a]||a).join('／'):''),W-34,74);
+  if(r.cardRarity)g.fillText(r.cardRarity,W-34,94);
+  g.textAlign='left';g.fillStyle='#fff';let fs=34;g.font=`900 ${fs}px ${font}`;const nm=(r.cardName||'').trim()||'（未命名）';while(g.measureText(nm).width>W-80&&fs>18){fs-=2;g.font=`900 ${fs}px ${font}`;}
+  g.fillText(nm,40,160);g.fillStyle='#E8B84A';g.fillRect(40,172,W-80,2);
+  g.font=`500 15px ${font}`;g.fillStyle='#9FB3C8';const ft=featsOf(r).join('／');if(ft)g.fillText('特徵：'+ft,40,196);
+  g.fillStyle='#EAF1F8';let tf=19;g.font=`400 ${tf}px ${font}`;
+  let body=(r.cardTextDesc||'').trim();if(r.cardTrigger)body+=(body?'\n\n':'')+'【觸發】'+r.cardTrigger;
+  let lines=wrapText(g,body,W-80);while(lines.length>Math.floor((H-340)/(tf*1.45))&&tf>13){tf--;g.font=`400 ${tf}px ${font}`;lines=wrapText(g,body,W-80);}
+  lines.slice(0,Math.floor((H-340)/(tf*1.45))).forEach((l,i)=>g.fillText(l,40,228+i*tf*1.45));
+  if(!body){g.fillStyle='#6B8199';g.font=`400 16px ${font}`;g.fillText('（效果未公布）',40,232);}
+  g.fillStyle='#000a';g.fillRect(18,H-96,W-36,78);
+  const showPow=r.cardPower&&r.cardPower!=='-'&&r.cardType!=='事件'&&r.cardType!=='舞台';
+  if(showPow){g.fillStyle='#fff';g.font=`900 36px ${font}`;g.fillText(String(r.cardPower),40,H-48);g.font=`700 13px ${font}`;g.fillStyle='#9FB3C8';g.fillText('力量',40,H-28);}
+  const ctr=(String(r.cardAttack||'').match(/\d+/)||[])[0];
+  if(ctr){g.textAlign='right';g.fillStyle='#E8B84A';g.font=`900 24px ${font}`;g.fillText('+'+ctr,W-40,H-48);g.font=`700 13px ${font}`;g.fillStyle='#9FB3C8';g.fillText('反擊',W-40,H-28);}
+  g.textAlign='center';g.fillStyle='#cfd8e3';g.font=`700 14px ${font}`;g.fillText(r.cardNumber||'',W/2,H-48);
+  g.font=`500 11px ${font}`;g.fillStyle='#6B8199';g.fillText(r.cardOfferType||'自訂卡',W/2,H-28);g.textAlign='left';
+}
+function drawCrop(g,m){
+  const iw=m.src.naturalWidth||m.src.width,ih=m.src.naturalHeight||m.src.height;
+  const s0=m.mode==='cover'?Math.max(W/iw,H/ih):Math.min(W/iw,H/ih);const s=s0*m.zoom,dw=iw*s,dh=ih*s;
+  g.fillStyle=m.bg||'#000';g.fillRect(0,0,W,H);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+  g.drawImage(m.src,(W-dw)/2+m.ox,(H-dh)/2+m.oy,dw,dh);
+}
+function paintCard(g,it){g.clearRect(0,0,W,H);
+  if(it.img.state==='new')drawCrop(g,it.img);
+  else if(it.img.state==='disk'){g.imageSmoothingQuality='high';g.drawImage(it.img.src,0,0,W,H);}
+  else drawFace(g,it.r);}
+function drawPreview(){const it=cur();if(!it)return;paintCard($('#facePrev').getContext('2d'),it);}
+
+/* ---------- 卡圖 ---------- */
+const ratioOff=im=>Math.abs(((im.naturalWidth||im.width)/(im.naturalHeight||im.height))/(W/H)-1);
+async function setCardImage(src,name){const it=cur();if(!it)return toast('先選一張卡');
+  const im=src instanceof HTMLImageElement?src:await loadImage(src);
+  it.img={state:'new',src:im,srcName:name||'',mode:'cover',zoom:1,ox:0,oy:0,bg:'#000000'};
+  S.changed.add(it.r.cardNumber);setDirty();drawPreview();showIssues();renderList();renderInbox();
+  if(ratioOff(im)>0.02)openCrop();else toast('已設為卡圖');}
+$('#btnPickImg').onclick=()=>$('#fileImg').click();
+$('#fileImg').onchange=e=>{const f=e.target.files[0];if(f)setCardImage(URL.createObjectURL(f),f.name);e.target.value='';};
+$('#btnNoImg').onclick=()=>{const it=cur();if(!it||it.img.state==='none')return;if(!confirm('這張改用網站自動產生的文字卡面？（儲存時會刪掉舊卡圖檔）'))return;it.img={state:'none'};S.changed.add(it.r.cardNumber);setDirty();drawPreview();showIssues();renderList();renderInbox();};
+const faceBox=$('#faceBox');
+faceBox.addEventListener('dragover',e=>{e.preventDefault();faceBox.classList.add('drop');});
+faceBox.addEventListener('dragleave',()=>faceBox.classList.remove('drop'));
+faceBox.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();faceBox.classList.remove('drop');const f=[...e.dataTransfer.files].find(f=>f.type.startsWith('image/'));if(f)setCardImage(URL.createObjectURL(f),f.name);});
+
+// 裁切視窗
+seg('#cMode',['cover','contain'],['填滿裁切','完整顯示'],false,()=>{const m=cur().img;m.mode=segGet('#cMode');m.zoom=1;m.ox=m.oy=0;cropSync();});
+seg('#cBg',['#000000','#ffffff'],['黑','白'],false,()=>{cur().img.bg=segGet('#cBg');cropSync();});
+function openCrop(){const it=cur();if(!it)return;
+  if(it.img.state==='disk')it.img={state:'new',src:it.img.src,srcName:it.diskFile,mode:'cover',zoom:1,ox:0,oy:0,bg:'#000000'};
+  if(it.img.state!=='new')return toast('這張沒有卡圖。先從參考圖「設為這張的卡圖」，或選檔案');
+  const im=it.img.src;const off=ratioOff(im);
+  $('#cropRatio').textContent=`原圖 ${im.naturalWidth}×${im.naturalHeight}`+(off>0.02?`，比例和卡片（63:88）差 ${(off*100).toFixed(0)}%：選「填滿裁切」會切掉邊，「完整顯示」會留邊`:'');
+  cropSync();$('#cropDlg').showModal();}
+function cropSync(){const m=cur().img;segSet('#cMode',m.mode);segSet('#cBg',m.bg);$('#cZoom').value=m.zoom;$('#cZoomV').textContent=Math.round(m.zoom*100)+'%';drawCrop($('#cropCv').getContext('2d'),m);drawPreview();}
+$('#btnCrop').onclick=openCrop;
+$('#cZoom').oninput=e=>{cur().img.zoom=+e.target.value;setDirty();cropSync();};
+$('#cReset').onclick=()=>{Object.assign(cur().img,{zoom:1,ox:0,oy:0});cropSync();};
+$('#cDone').onclick=()=>{$('#cropDlg').close();S.changed.add(cur().r.cardNumber);setDirty();showIssues();renderList();};
+{const cv=$('#cropCv');let d=null;
+  cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!d)return;const k=W/cv.clientWidth,m=cur().img;m.ox+=(e.clientX-d.x)*k;m.oy+=(e.clientY-d.y)*k;d={x:e.clientX,y:e.clientY};cropSync();});
+  cv.addEventListener('pointerup',()=>{d=null;setDirty();});
+  cv.addEventListener('wheel',e=>{e.preventDefault();const m=cur().img;const k=W/cv.clientWidth;const px=e.offsetX*k-W/2,py=e.offsetY*k-H/2;const z0=m.zoom,z1=Math.min(6,Math.max(.3,z0*Math.exp(-e.deltaY*.0015)));const f=z1/z0;m.ox=px-(px-m.ox)*f;m.oy=py-(py-m.oy)*f;m.zoom=z1;cropSync();},{passive:false});}
+
+/* ---------- 參考圖 ---------- */
+const RV={s:1,x:0,y:0};
+function refApply(){$('#refImg').style.transform=`translate(${RV.x}px,${RV.y}px) scale(${RV.s})`;}
+function refFit(){const im=$('#refImg'),box=$('#ref');if(!im.naturalWidth)return;const s=Math.min(box.clientWidth/im.naturalWidth,box.clientHeight/im.naturalHeight);RV.s=s;RV.x=(box.clientWidth-im.naturalWidth*s)/2;RV.y=(box.clientHeight-im.naturalHeight*s)/2;refApply();}
+function showRef(ref){S.ref=ref;const im=$('#refImg');im.hidden=!ref;$('#refEmpty').hidden=!!ref;$('#refName').textContent=ref?ref.name:'參考圖';
+  $('#refSetImg').disabled=$('#refNewCard').disabled=!ref||!S.site;
+  if(ref){im.onload=refFit;im.src=ref.url;}renderInbox();}
+$('#refFit').onclick=refFit;
+{const box=$('#ref');let d=null;
+  box.addEventListener('wheel',e=>{if(!S.ref)return;e.preventDefault();const r=box.getBoundingClientRect();const px=e.clientX-r.left,py=e.clientY-r.top;const f=Math.exp(-e.deltaY*.0015);const s1=Math.min(12,Math.max(.05,RV.s*f));const k=s1/RV.s;RV.x=px-(px-RV.x)*k;RV.y=py-(py-RV.y)*k;RV.s=s1;refApply();},{passive:false});
+  box.addEventListener('pointerdown',e=>{if(!S.ref)return;d={x:e.clientX,y:e.clientY};box.classList.add('drag');box.setPointerCapture(e.pointerId);});
+  box.addEventListener('pointermove',e=>{if(!d)return;RV.x+=e.clientX-d.x;RV.y+=e.clientY-d.y;d={x:e.clientX,y:e.clientY};refApply();});
+  box.addEventListener('pointerup',()=>{d=null;box.classList.remove('drag');});
+  box.addEventListener('dblclick',refFit);
+  box.addEventListener('dragover',e=>{e.preventDefault();box.classList.add('drop');});
+  box.addEventListener('dragleave',()=>box.classList.remove('drop'));
+  box.addEventListener('drop',e=>{e.preventDefault();box.classList.remove('drop');addPasted([...e.dataTransfer.files]);});
+  new ResizeObserver(()=>{if(S.ref)refFit();}).observe(box);}
+function addPasted(files){const imgs=files.filter(f=>f.type.startsWith('image/'));if(!imgs.length)return false;
+  for(const f of imgs){const ref={name:'貼上：'+(f.name&&f.name!=='image.png'?f.name:new Date().toLocaleTimeString()),url:URL.createObjectURL(f),pasted:true};S.pasted.unshift(ref);showRef(ref);}return true;}
+document.addEventListener('paste',e=>{const files=[...(e.clipboardData?.files||[])];if(files.some(f=>f.type.startsWith('image/'))){e.preventDefault();addPasted(files);toast('已貼上參考圖');}});
+$('#refSetImg').onclick=()=>{if(S.ref)setCardImage(S.ref.url,S.ref.name);};
+$('#refNewCard').onclick=()=>{if(!S.ref)return;newCard();setCardImage(S.ref.url,S.ref.name);};
+
+async function loadInbox(){
+  S.inbox.forEach(x=>URL.revokeObjectURL(x.url));S.inbox=[];
+  if(!S.root||S.root===S.site){renderInbox();return;}
+  const dir=await S.root.getDirectoryHandle('_inbox',{create:true});
+  async function walk(d,p){for await(const [name,h] of d.entries()){if(name.startsWith('.'))continue;
+    if(h.kind==='directory')await walk(h,p+name+'/');else if(/\.(png|jpe?g|webp|gif|avif)$/i.test(name))S.inbox.push({name:p+name,url:URL.createObjectURL(await h.getFile())});}}
+  await walk(dir,'');S.inbox.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));renderInbox();
+}
+function renderInbox(){const used=new Set(S.items.map(i=>i.img.srcName).filter(Boolean));const all=[...S.pasted,...S.inbox];
+  $('#inboxN').textContent=all.length?`${S.inbox.length} 張${S.pasted.length?'＋貼上 '+S.pasted.length:''}`:'（空）';
+  $('#inbox').innerHTML=all.map((x,i)=>`<div class="ib${S.ref&&S.ref.url===x.url?' on':''}${used.has(x.name)?' used':''}" data-i="${i}" title="${esc(x.name)}"><img src="${x.url}" loading="lazy" alt=""><span>${esc(x.name.split('/').pop())}</span></div>`).join('');}
+$('#inbox').onclick=e=>{const d=e.target.closest('.ib');if(!d)return;showRef([...S.pasted,...S.inbox][+d.dataset.i]);};
+$('#btnInboxReload').onclick=()=>loadInbox().then(()=>toast('_inbox 已重新讀取'));
+
+/* ---------- 新增／複製／刪除／下一張 ---------- */
+const bump=no=>{const m=String(no||'').match(/^(.*-)(\d{3})$/);return m?m[1]+String(+m[2]+1).padStart(3,'0'):'';};
+function newCard(base,carry){const c=cur();const r=emptyRaw();
+  if(c){r.cardOfferType=c.r.cardOfferType;if(carry){r.cardColor=c.r.cardColor;r.mixedColor=c.r.mixedColor;r.cardType=c.r.cardType==='领袖'?'角色':c.r.cardType;}let n=bump(c.r.cardNumber);while(n&&S.items.some(i=>i.r.cardNumber===n))n=bump(n);r.cardNumber=n;}
+  if(base)Object.assign(r,base);
+  const it=newItem(r);S.items.push(it);sortItems();S.cur=S.items.indexOf(it);S.changed.add(r.cardNumber);setDirty();renderList();fillForm();
+  $(r.cardNumber?'#fName':'#fNo').focus();return it;}
+$('#btnNew').onclick=()=>newCard();
+$('#btnNew').title='沿用目前這張的系列';
+$('#btnNext').onclick=()=>{const c=cur();if(!c)return newCard();const n=bump(c.r.cardNumber);const ex=S.items.findIndex(i=>i.r.cardNumber===n);
+  if(ex>=0){S.cur=ex;renderList();fillForm();$('#fName').focus();}else newCard(null,true);};
+$('#btnDup').onclick=()=>{const c=cur();if(!c)return;const r=JSON.parse(JSON.stringify(c.r));let n=bump(r.cardNumber);while(n&&S.items.some(i=>i.r.cardNumber===n))n=bump(n);r.cardNumber=n;r.cardImg='';newCard(r,true);};
+$('#btnDel').onclick=()=>{const c=cur();if(!c)return;if(!confirm(`刪除 ${c.r.cardNumber||'這張'}「${c.r.cardName}」？（儲存後才會真的從檔案移除，卡圖檔一起刪）`))return;
+  if(c.diskFile)S.deletedFiles.add(c.diskFile);if(c.origNo)S.changed.add(c.origNo);S.items.splice(S.cur,1);S.cur=Math.min(S.cur,S.items.length-1);setDirty();renderList();fillForm();saveDraft();};
+$('#btnCopyFrom').onclick=()=>{const c=cur();if(!c)return;const no=$('#fCopyFrom').value.trim().toUpperCase();const src=(S.items.find(i=>i.r.cardNumber===no&&i!==c)||{}).r||S.off.get(no);
+  if(!src)return toast('找不到 '+no);
+  const keep={cardNumber:c.r.cardNumber,cardImg:c.r.cardImg,cardOfferType:c.r.cardOfferType||src.cardOfferType};
+  const pick={};for(const k of FIELDS)if(src[k]!=null)pick[k]=JSON.parse(JSON.stringify(src[k]));
+  // 官方資料的反擊有純數字寫法、觸發帶前綴、稀有度有「普通（C）」寫法 → 轉成 custom.json 的標準值
+  const n=(String(pick.cardAttack||'').match(/\d+/)||[])[0];pick.cardAttack=n==='1000'||n==='2000'?'反击+'+n:'-';
+  pick.cardTrigger=String(pick.cardTrigger||'').replace(/^\s*【(触发|觸發)】\s*/,'');
+  const rm=String(pick.cardRarity||'').match(/[（(]([A-Z]+)[)）]/);if(rm)pick.cardRarity=rm[1];if(pick.cardRarity==='U')pick.cardRarity='UC';if(!RARITIES.includes(pick.cardRarity))pick.cardRarity='';
+  pick.cardAttribute=[...new Set((pick.cardAttribute||[]).flatMap(a=>String(a).split(/[\/／]/)).map(a=>a==='知'?'智':a.trim()).filter(a=>ATTRS.includes(a)))];
+  Object.assign(c.r,pick,keep);fillForm();onForm();toast('已帶入 '+no+' 的資料');};
+
+/* ---------- 儲存 ---------- */
+let draftT;function saveDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{if(!S.site)return;idb.set('draft',S.dirty?{dir:S.root.name,at:new Date().toLocaleString(),cards:S.items.map(i=>i.r),orig:S.items.map(i=>i.origNo)}:null);},400);}
+function cropBlob(m){const cv=document.createElement('canvas');cv.width=W;cv.height=H;drawCrop(cv.getContext('2d'),m);return new Promise(ok=>cv.toBlob(ok,'image/jpeg',.88));}
+async function saveAll(){
+  if(!S.site)return toast('先開啟資料夾');
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  readForm();
+  const bad=S.items.filter(i=>check(i).err.length);
+  if(bad.length&&!confirm(`${bad.length} 張有錯誤（${bad.slice(0,6).map(i=>i.r.cardNumber||'無卡號').join('、')}${bad.length>6?'…':''}），網站上可能顯示不正常。還是要儲存？`))return;
+  const nos=S.items.map(i=>i.r.cardNumber);if(new Set(nos).size!==nos.length)return alert('有重複的卡號，先改掉再存。');
+  try{
+    const oldFiles=new Set([...S.deletedFiles,...S.items.map(i=>i.diskFile).filter(Boolean)]);
+    for(const it of S.items){const no=it.r.cardNumber;const fn=no+'.jpg';
+      if(it.img.state==='new'){await writeFile(S.cdir,fn,await cropBlob(it.img));it.r.cardImg='custom/'+fn;}
+      else if(it.img.state==='disk'){if(it.diskFile!==fn){const f=await (await S.cdir.getFileHandle(it.diskFile)).getFile();await writeFile(S.cdir,fn,f);}it.r.cardImg='custom/'+fn;}
+      else if(it.img.state==='none')it.r.cardImg='';
+    }
+    const keep=new Set(S.items.map(i=>String(i.r.cardImg).replace(/^custom\//,'')).filter(Boolean));
+    for(const f of oldFiles)if(!keep.has(f)){try{await S.cdir.removeEntry(f);}catch(e){}}
+    sortItems();
+    const out={_readme:S.readme,updatedAt:taipeiISO(),cards:S.items.map(i=>canon(i.r))};
+    await writeFile(S.site,'custom.json',JSON.stringify(out,null,1)+'\n');
+    const savedNos=diffNos();
+    for(const it of S.items){it.origNo=it.r.cardNumber;await loadDiskImg(it);}
+    S.lastSaved=savedNos;takeSnap();S.deletedFiles.clear();setDirty(false);idb.set('draft',null);
+    renderList();fillForm();refreshLists();renderInbox();
+    $('#stat').textContent=`自訂卡 ${S.items.length} 張・官方 ${S.off.size} 張`;
+    toast(`已儲存 ${S.items.length} 張到 site/custom.json。要上線：按「複製上線指令」貼到 Terminal`,5000);
+  }catch(e){console.error(e);alert('儲存失敗：'+e.message);}
+}
+$('#btnSave').onclick=saveAll;
+$('#btnGit').onclick=async()=>{
+  if(S.dirty&&!confirm('還有未儲存的改動，指令只會上傳已儲存的部分。繼續複製？'))return;
+  const list=(S.lastSaved&&S.lastSaved.length?S.lastSaved:[]);const msg='自訂卡：'+(list.length?list.slice(0,12).join('、')+(list.length>12?` 等 ${list.length} 張`:''):`共 ${S.items.length} 張`);
+  const cmd=`cd ~/Sites/opcg-futuredeck && git add -A site/custom.json site/custom && git commit -m "${msg.replace(/"/g,'')}" && git pull --rebase --autostash && git push`;
+  try{await navigator.clipboard.writeText(cmd);toast('已複製，貼到 Terminal 執行；約一分鐘後線上版更新',4000);}catch(e){prompt('複製這行到 Terminal：',cmd);}
+};
+
+/* ---------- 快捷鍵 ---------- */
+document.addEventListener('keydown',e=>{const mod=e.metaKey||e.ctrlKey;
+  if(mod&&e.key.toLowerCase()==='s'){e.preventDefault();saveAll();}
+  else if(mod&&e.key==='Enter'){e.preventDefault();if(S.site){document.activeElement.blur&&document.activeElement.blur();$('#btnNext').click();}}
+  else if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')&&S.items.length){e.preventDefault();document.activeElement.blur&&document.activeElement.blur();S.cur=Math.max(0,Math.min(S.items.length-1,S.cur+(e.key==='ArrowUp'?-1:1)));renderList();fillForm();}});
+window.addEventListener('beforeunload',e=>{if(S.dirty){e.preventDefault();e.returnValue='';}});
+
+/* ---------- 啟動 ---------- */
+refreshLists();
+(async()=>{const last=await idb.get('root').catch(()=>null);if(last){$('#btnOpen').textContent=`開啟「${last.name}」`;try{if(await last.queryPermission({mode:'readwrite'})==='granted')openRoot(last);}catch(e){}}})();
+</script>
+</body>
+</html>

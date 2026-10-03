@@ -528,7 +528,7 @@ const ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const MAX_COPIES=4, DECK_SIZE=50;
 const DB_KEY='opcg.db', CUR_KEY='opcg.current', DECKS_KEY='opcg.decks';
-const APP_VERSION='v3.8';
+const APP_VERSION='v3.9';
 const BUNDLED_URL='cards.json'; // 與 index.html 同資料夾的內建卡片資料（部署到 Netlify 時一起放）
 const CUSTOM_URL='custom.json'; // 站長維護的自訂卡（未發售卡）：{updatedAt, cards:[raw…]}，卡圖放 custom/ 資料夾
 const BCUSTOM_KEY='opcg.bcustom', DECKW_KEY='opcg.deckW', DECKMODE_KEY='opcg.deckMode';
@@ -741,14 +741,15 @@ function faceFor(c){
 const isPRSet=c=>!c.custom&&!!c.set&&!SET_CODE_RE.test(c.set);
 function buildIndex(){
   const rawCards=RAW?RAW.cards:[];
-  const customCards=(BCUSTOM&&BCUSTOM.cards||[]).map(r=>{const c=Object.assign(norm(r),{custom:true});if(!c.img)c.img=faceFor(c);return c;});
+  // 官方資料為主：官方（含繁中／日版補卡）已收錄的卡號，自訂卡不再顯示（雙週更新也會把它從 custom.json 刪掉）
+  const offNos=new Set(rawCards.map(r=>r.cardNumber));
+  const customCards=(BCUSTOM&&BCUSTOM.cards||[]).filter(r=>!offNos.has(r.cardNumber)).map(r=>{const c=Object.assign(norm(r),{custom:true});if(!c.img)c.img=faceFor(c);return c;});
   CARDS=[...rawCards.map(norm),...customCards].filter(c=>c.no);
   BYNO=new Map();
   for(const c of CARDS){
     c.search=searchStr(c);
     const k=BYNO.get(c.no);
     if(!k){c.imgs=[c.img];c.prints=1;BYNO.set(c.no,c);}
-    else if(c.custom&&!k.custom){c.imgs=[c.img,...k.imgs.filter(u=>u!==c.img)];c.prints=k.prints+1;BYNO.set(c.no,c);} // 自訂卡覆蓋同卡號的官方資料，官方圖保留為異畫
     else{if(!k.imgs.includes(c.img))k.imgs.push(c.img);k.prints++;fillMissing(k,c);}
   }
   setDataDate();

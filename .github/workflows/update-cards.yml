@@ -62,6 +62,10 @@ jobs:
         if: steps.gate.outputs.run == 'true'
         run: node scripts/fetch-cards.mjs --out site/cards.json --prev site/cards.json --summary site/last-run.json
 
+      - name: 移除官方已收錄的自訂卡
+        if: steps.gate.outputs.run == 'true'
+        run: node scripts/prune-custom.mjs --cards site/cards.json --custom site/custom.json --summary site/last-run.json
+
       - name: 上傳執行摘要（artifact）
         if: steps.gate.outputs.run == 'true' && always()
         uses: actions/upload-artifact@v4
@@ -76,9 +80,9 @@ jobs:
         run: |
           git config user.name "opcg-cards-bot"
           git config user.email "opcg-cards-bot@users.noreply.github.com"
-          git add site/cards.json site/last-run.json
+          git add -A site/cards.json site/last-run.json site/custom.json site/custom
           if git diff --cached --quiet; then echo "沒有任何變動"; exit 0; fi
-          if git diff --cached --quiet -- site/cards.json; then
+          if git diff --cached --quiet -- site/cards.json site/custom.json; then
             msg="cards $(TZ=Asia/Taipei date +%F)：資料無變動（只更新 last-run.json）"
             echo "- 卡片資料與上次相同，只更新執行摘要" >> "$GITHUB_STEP_SUMMARY"
           else

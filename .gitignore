@@ -4,3 +4,4 @@ node_modules/
 tmp/
 .netlify/
 _to_delete*/
+_inbox/

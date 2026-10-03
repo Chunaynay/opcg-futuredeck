@@ -29,5 +29,5 @@ scripts/test/             ← 離線測試：mock-fetch fixtures、jsdom 煙霧�
 ```bash
 node --import ./scripts/test/mock-fetch.mjs scripts/fetch-cards.mjs --out /tmp/t/cards.json --prev scripts/test/fixtures/prev_cards.json --summary /tmp/t/last-run.json
 FAIL_HOSTS=webadmin.windoent.com node --import ./scripts/test/mock-fetch.mjs scripts/fetch-cards.mjs --out /tmp/t2/cards.json --prev /tmp/t/cards.json
-npm i jsdom && node scripts/test/smoke_test.js site/index.html && node scripts/test/smoke_v37.js site/index.html /tmp/t/cards.json
+npm i jsdom canvas && node scripts/test/smoke_v37.js site/index.html && node scripts/test/smoke_v38_merged.js site/index.html /tmp/t/cards.json   # v37：31 項版面／自訂卡；v38_merged：19 項三源合併資料
 ```

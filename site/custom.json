@@ -1,5 +1,162 @@
 {
  "_readme": "網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同：cardNumber、cardName、cardType（领袖/角色/事件/舞台）、cardColor（红/绿/蓝/紫/黑/黄，雙色用 /）、cardLife（領袖＝生命，其他＝費用）、cardPower、cardAttack（反击+1000 / 反击+2000 / -）、cardAttribute（[打,斩,射,特,智]）、cardFeatures（用 / 分隔）、cardTextDesc、cardTrigger、cardRarity、cardOfferType（建議含【OP-18】這種代號）、cardImg（custom/卡號.jpg，454×635；空字串＝自動產生文字卡面）。同卡號會覆蓋官方資料。",
- "updatedAt": "2026-10-03T00:00:00+08:00",
- "cards": []
+ "updatedAt": "2026-10-04T02:05:53+08:00",
+ "cards": [
+  {
+   "cardNumber": "EB05-014",
+   "cardName": "白星",
+   "cardType": "角色",
+   "cardColor": "绿",
+   "cardLife": "1",
+   "cardPower": "0",
+   "cardAttack": "-",
+   "cardAttribute": [
+    "智"
+   ],
+   "cardFeatures": "人鱼族/鱼人岛",
+   "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张「梅卡洛」或具有<海王类>特征的卡加入手牌，然后将剩余的卡放至弃牌区。\n【启动主要】可以休息这名角色：自己最多１名力量６０００以下具有特征<海王类>的角色本回合中获得【速攻】",
+   "cardTrigger": "",
+   "cardRarity": "SR",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-014.jpg"
+  },
+  {
+   "cardNumber": "EB05-020",
+   "cardName": "我叫做白星！！",
+   "cardType": "事件",
+   "cardColor": "绿",
+   "cardLife": "1",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "人鱼族/鱼人岛",
+   "cardTextDesc": "【启动主要】可以休息自己的领袖「白星」：抽两张卡",
+   "cardTrigger": "",
+   "cardRarity": "R",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-020.jpg"
+  },
+  {
+   "cardNumber": "EB05-044",
+   "cardName": "Miss 父亲节",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "2",
+   "cardPower": "2000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "射"
+   ],
+   "cardFeatures": "B・W/巴洛克工作室",
+   "cardTextDesc": "【登场时】自己的领袖特征包含[B.W]且对手有费用0的角色时，对手的领袖本回合中力量 -1000。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-044.jpg"
+  },
+  {
+   "cardNumber": "EB05-045",
+   "cardName": "Miss 星期一",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "2",
+   "cardPower": "3000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "B・W/巴洛克工作室",
+   "cardTextDesc": "【登场时】ＫＯ自己最多１名特征包含「Ｂ．Ｗ」的角色\n【KO时】查看自己牌库上方３张卡，公开展示最多１张特征包含「Ｂ．Ｗ」的卡并加入手牌。然后将剩余的卡放至弃牌区。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-045.jpg"
+  },
+  {
+   "cardNumber": "EB05-046",
+   "cardName": "大和",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "4",
+   "cardPower": "5000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "和之国",
+   "cardTextDesc": "对手有原力量8000以上的角色时，这名角色获得【阻挡者】・力量+3000・\n【对方的攻击时】 可以舍弃自己1张手牌：自己的\n弃牌有10张以上时，自己的领袖本回合中力量改为7000。",
+   "cardTrigger": "",
+   "cardRarity": "SR",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-046.jpg"
+  },
+  {
+   "cardNumber": "EB05-047",
+   "cardName": "莉普里",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "4",
+   "cardPower": "4000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "智"
+   ],
+   "cardFeatures": "巨人族/埃鲁巴夫",
+   "cardTextDesc": "这名角色费用+12\n【登场时】可以舍弃自己１张手牌：从自己的弃牌堆登场最多１名费用２以下的角色卡",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-047.jpg"
+  },
+  {
+   "cardNumber": "EB05-048",
+   "cardName": "刺猬炸弹",
+   "cardType": "事件",
+   "cardColor": "黑",
+   "cardLife": "1",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "B・W/巴洛克工作室",
+   "cardTextDesc": "【启动主要】可以休息自己1个咚！！，KO自己1名\n特徴包含『B・W』的角色：对手所有费用0\n的角色本回合中无法发动 【阻挡者】效果。\n【反击】自己的领袖本次战斗中力量+3000",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-048.jpg"
+  },
+  {
+   "cardNumber": "EB05-053",
+   "cardName": "夏洛特．普莱丽芮",
+   "cardType": "角色",
+   "cardColor": "黄",
+   "cardLife": "4",
+   "cardPower": "5000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "智"
+   ],
+   "cardFeatures": "鱼人岛/人鱼族/太阳海盗团",
+   "cardTextDesc": "【攻击时】<一回一次>对手的手牌为9张以上时，将自己最多１张手牌加入生命区上方。",
+   "cardTrigger": "可以舍弃自己１张手牌：自己的生命卡为２张以下时，将这张卡登场",
+   "cardRarity": "",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-053.jpg"
+  }
+ ]
 }

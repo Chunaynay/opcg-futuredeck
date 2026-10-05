@@ -1,6 +1,6 @@
 {
  "_readme": "網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同：cardNumber、cardName、cardType（领袖/角色/事件/舞台）、cardColor（红/绿/蓝/紫/黑/黄，雙色用 /）、cardLife（領袖＝生命，其他＝費用）、cardPower、cardAttack（反击+1000 / 反击+2000 / -）、cardAttribute（[打,斩,射,特,智]）、cardFeatures（用 / 分隔）、cardTextDesc、cardTrigger、cardRarity、cardOfferType（建議含【OP-18】這種代號）、cardImg（custom/卡號.jpg，454×635；空字串＝自動產生文字卡面）。同卡號會覆蓋官方資料。",
- "updatedAt": "2026-10-05T19:55:00+08:00",
+ "updatedAt": "2026-10-06T00:57:26+08:00",
  "cards": [
   {
    "cardNumber": "EB05-001",
@@ -17,7 +17,7 @@
    "cardTextDesc": "【登场时】自己的领袖具有特征《超新星》时抽2张卡，从自己手牌中登场最多2名力量2000以下的角色卡。\n【启动主要】【每回合1次】对手最多1名力量6000以上的领袖或角色本回合中力量-1000。",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-001.jpg"
@@ -37,7 +37,7 @@
    "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张费用２以上具有特征<海军>的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方，然后舍弃自己一张手牌。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-002.jpg"
@@ -57,7 +57,7 @@
    "cardTextDesc": "【每回合1次】自己原力量6000以下的角色因对手的效果而离场时，作为取代可以将自己生命牌库上方1张卡加入手牌。\n【登场时】从自己手牌中登场最多1名红色费用2以下的角色卡。",
    "cardTrigger": "",
    "cardRarity": "SEC",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-003.jpg"
@@ -77,7 +77,7 @@
    "cardTextDesc": "【登场时】可以公开展示自己手牌中的2张事件卡：抽2张卡。\n【KO时】从自己手牌中已休息状态登场最多1名力量6000以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-004.jpg"
@@ -97,7 +97,7 @@
    "cardTextDesc": "【登场时】自己最多3名同时具有特征《革命军》和【触发】效果的角色，本回合中力量+2000。\n【启动主要】可以将这名角色放至弃牌堆：对手最多1名角色本回合中力量-2000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-005.jpg"
@@ -117,7 +117,7 @@
    "cardTextDesc": "【启动主要】【每回合1次】自己可以将生命牌库上方1张卡加入手牌：选择以下1项：\n・最多1名角色本回合中力量+3000。\n・最多1名角色本回合中力量-4000。",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-006.jpg"
@@ -137,7 +137,7 @@
    "cardTextDesc": "【登场时】可以公开展示手牌中合计3张事件卡或具有特征《庞克哈萨德》的卡：抽1张卡。\n【我方的回合结束时】这名角色到下个对手结束阶段完结时力量+5000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-007.jpg"
@@ -155,7 +155,7 @@
    "cardTextDesc": "【主要】自己所有原力量4000以下的角色，到下个对手结束阶段完结时，力量+1000。\n【反击】自己的领袖本次战斗中力量+3000。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-009.jpg"
@@ -175,7 +175,7 @@
    "cardTextDesc": "【每回合1次】自己持有属性(智)且不具有【阻挡者】效果的角色被KO时，将自己牌库上方最多1张卡加入生命牌库上方。\n【启动主要】【每回合1次】重整自己最多1名力量6000以下持有属性(智)的角色。",
    "cardTrigger": "",
    "cardRarity": "L",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 1,
    "cardImg": "custom/EB05-010.jpg"
@@ -195,7 +195,7 @@
    "cardTextDesc": "【登场时】自己的领袖为「白星」时，可以将自己生命牌库上方１张卡翻至背面朝上：休息对手最多１名费用５以下的角色。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-011.jpg"
@@ -215,7 +215,7 @@
    "cardTextDesc": "【登场时】休息对手最多1名费用6以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-012.jpg"
@@ -235,7 +235,7 @@
    "cardTextDesc": "【对方的攻击时】【每回合1次】可以休息自己1个咚!!：自己具有特征《鱼人族》或《人鱼族》的领袖本次战斗中力量+2000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-013.jpg"
@@ -255,7 +255,7 @@
    "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张「梅卡洛」或具有<海王类>特征的卡加入手牌，然后将剩余的卡放至弃牌区。\n【启动主要】可以休息这名角色：自己最多１名力量６０００以下具有特征<海王类>的角色本回合中获得【速攻】",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-014.jpg"
@@ -275,7 +275,7 @@
    "cardTextDesc": "【我方的回合中】【登场时】从自己手牌中登场最多1名费用5以下持有属性(知)的角色。",
    "cardTrigger": "休息对手最多1名费用6以下的角色。",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-016.jpg"
@@ -295,7 +295,7 @@
    "cardTextDesc": "【对方的攻击时】可以休息自己1个咚!!，将这名角色放至弃牌堆：自己具有特征《鱼人族》或《人鱼族》的领袖本次战斗中力量+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-017.jpg"
@@ -311,11 +311,11 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "德雷斯罗萨",
+   "cardFeatures": "德莱斯罗兹",
    "cardTextDesc": "【登场时】对手最多1名费用6以下的休息角色，在下个对手重整阶段无法进行重整。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-018.jpg"
@@ -333,7 +333,7 @@
    "cardTextDesc": "【启动主要】可以休息自己的领袖「白星」：抽两张卡",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-020.jpg"
@@ -353,7 +353,7 @@
    "cardTextDesc": "【登场时】抽2张卡，从自己手牌中登场最多1名费用8以下具有特征《十字公会》的角色卡，本回合中自己无法再登场角色卡。\n【攻击时】对手最多1名角色本回合中的效果无效。",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-021.jpg"
@@ -373,7 +373,7 @@
    "cardTextDesc": "【KO时】抽2张卡。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-022.jpg"
@@ -393,7 +393,7 @@
    "cardTextDesc": "【登场时】可以舍弃自己手牌中2张事件卡：抽3张卡。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-023.jpg"
@@ -413,7 +413,7 @@
    "cardTextDesc": "自己的领袖具有特征《推进城》时，这名角色获得【阻挡者】，费用+2。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-024.jpg"
@@ -433,7 +433,7 @@
    "cardTextDesc": "【登场时】查看自己牌库上方3张卡，公开展示最多1张具有特征《推进城》的卡并加入手牌。然后将剩余的卡按任意顺序放至牌库下方。",
    "cardTrigger": "发动这张卡的【登场时】效果。",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-025.jpg"
@@ -449,11 +449,11 @@
    "cardAttribute": [
     "射"
    ],
-   "cardFeatures": "海军/SWORD",
+   "cardFeatures": "海军/利刃",
    "cardTextDesc": "【登场时】抽3张卡，舍弃自己2张手牌。然后将最多1名费用2以下的角色返回拥有者牌库下方。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-027.jpg"
@@ -473,7 +473,7 @@
    "cardTextDesc": "【登场时】对手的手牌为9张以上时，对手自己舍弃4张手牌。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-028.jpg"
@@ -491,7 +491,7 @@
    "cardTextDesc": "【主要】可以舍弃自己1张手牌：对手最多1名费用6以下的角色，本回合中的效果无效，返回拥有者手牌。",
    "cardTrigger": "抽2张卡，舍弃自己1张手牌。",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-029.jpg"
@@ -511,7 +511,7 @@
    "cardTextDesc": "【登场时】咚!!-1：自己的领袖具有特征《文斯莫克家族》时，将自己牌库上方10张卡放至弃牌堆。\n【启动主要】可以将这名角色放至弃牌堆：对手有原力量8000以上的角色时，从咚!!牌库追加最多4个活动的咚!!进场。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-031.jpg"
@@ -531,7 +531,7 @@
    "cardTextDesc": "【登场时】自己的领袖具有特征《草帽一伙》且自己场上的咚!!数量比对手场上的咚!!少6个以上时抽3张卡，舍弃2张手牌。然后从自己的咚!!牌库追加最多4个休息的咚!!进场。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-032.jpg"
@@ -551,7 +551,7 @@
    "cardTextDesc": "【登场时】咚!!-2：自己有7个以上的咚!!时，对手最多1名角色本回合中力量-4000。",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-034.jpg"
@@ -571,7 +571,7 @@
    "cardTextDesc": "【登场时】咚!!-1：查看自己牌库上方5张卡，公开展示最多2张具有特征《SMILE》的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方。然后从自己手牌中登场最多2名力量5000以下具有特征《SMILE》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-035.jpg"
@@ -591,7 +591,7 @@
    "cardTextDesc": "【登场时】自己的领袖具有特征《海军》时，抽1张卡，从咚!!牌库追加最多1个休息的咚!!进场。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-036.jpg"
@@ -611,7 +611,7 @@
    "cardTextDesc": "【登场时】查看自己牌库上方3张卡，公开展示最多1张具有特征《百兽海盗团》的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-037.jpg"
@@ -631,7 +631,7 @@
    "cardTextDesc": "【登场时】自己最多1名「赛诺尔·平克」本回合中力量+3000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-038.jpg"
@@ -649,7 +649,7 @@
    "cardTextDesc": "【主要】咚!!-1：自己的领袖具有特征《文斯莫克家族》时，对手最多1名角色本回合中力量-4000。\n【反击】咚!!-1：自己的领袖本次战斗中力量+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-039.jpg"
@@ -669,7 +669,7 @@
    "cardTextDesc": "【登场时】抽2张卡，舍自己2张手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-042.jpg"
@@ -689,7 +689,7 @@
    "cardTextDesc": "【KO时】KO或休息对手最多1名费用6以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-043.jpg"
@@ -709,7 +709,7 @@
    "cardTextDesc": "【登场时】自己的领袖特征包含[B.W]且对手有费用0的角色时，对手的领袖本回合中力量 -1000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-044.jpg"
@@ -729,7 +729,7 @@
    "cardTextDesc": "【登场时】ＫＯ自己最多１名特征包含「Ｂ．Ｗ」的角色\n【KO时】查看自己牌库上方３张卡，公开展示最多１张特征包含「Ｂ．Ｗ」的卡并加入手牌。然后将剩余的卡放至弃牌区。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-045.jpg"
@@ -749,7 +749,7 @@
    "cardTextDesc": "对手有原力量8000以上的角色时，这名角色获得【阻挡者】・力量+3000・\n【对方的攻击时】 可以舍弃自己1张手牌：自己的\n弃牌有10张以上时，自己的领袖本回合中力量改为7000。",
    "cardTrigger": "",
    "cardRarity": "SR",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-046.jpg"
@@ -769,7 +769,7 @@
    "cardTextDesc": "这名角色费用+12\n【登场时】可以舍弃自己１张手牌：从自己的弃牌堆登场最多１名费用２以下的角色卡",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-047.jpg"
@@ -787,7 +787,7 @@
    "cardTextDesc": "【启动主要】可以休息自己1个咚！！，KO自己1名\n特徴包含『B・W』的角色：对手所有费用0\n的角色本回合中无法发动 【阻挡者】效果。\n【反击】自己的领袖本次战斗中力量+3000",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-048.jpg"
@@ -805,7 +805,7 @@
    "cardTextDesc": "【主要】可以KO自己1名具有特征《恐怖之船海盗团》的角色：最多1名对手的角色本回合中费用-3。\n【反击】可以KO自己1名具有特征《恐怖之船海盗团》的角色：自己的领袖或最多1名角色本次战斗中力量+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-049.jpg"
@@ -825,7 +825,7 @@
    "cardTextDesc": "【登场时】查看自己牌库上方4张卡，公开展示最多1张具有属性(智)的卡并加入手牌。然后将剩余的卡按任意顺序放至牌库下方。",
    "cardTrigger": "发动这张卡的【登场时】效果。",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-050.jpg"
@@ -845,7 +845,7 @@
    "cardTextDesc": "【登场时】休息对手最多1名费用为双方生命卡数量总和的角色。",
    "cardTrigger": "将这张卡登场。",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-051.jpg"
@@ -865,7 +865,7 @@
    "cardTextDesc": "自己承受伤害时，作为取代可以将这名角色放至弃牌堆。",
    "cardTrigger": "抽2张卡，舍弃自己1张手牌。",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-052.jpg"
@@ -885,7 +885,7 @@
    "cardTextDesc": "【攻击时】<一回一次>对手的手牌为9张以上时，将自己最多１张手牌加入生命区上方。",
    "cardTrigger": "可以舍弃自己１张手牌：自己的生命卡为２张以下时，将这张卡登场",
    "cardRarity": "",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-053.jpg"
@@ -905,7 +905,7 @@
    "cardTextDesc": "",
    "cardTrigger": "从自己手牌中登场最多2名力量4000以下具有特征《大妈海盗团》的角色卡。",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-054.jpg"
@@ -925,7 +925,7 @@
    "cardTextDesc": "【我方的回合中】【登场时】自己的领袖持有属性(智)时，将自己牌库上方最多1张卡加入生命牌库上方。",
    "cardTrigger": "可以舍弃自己1张手牌：自己的生命卡为2张以下时，将这张卡登场。",
    "cardRarity": "SR",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-055.jpg"
@@ -945,7 +945,7 @@
    "cardTextDesc": "【登场时】可以舍弃自己手牌中１张具有【触发】效果的卡：自己的领袖为「妮可．罗宾」时，抽２张卡",
    "cardTrigger": "将这张卡登场",
    "cardRarity": "C",
-   "cardOfferType": "eb05",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-056.jpg"
@@ -965,7 +965,7 @@
    "cardTextDesc": "【启动主要】【每回合1次】附加最多1个休息的咚!!到自己1名具有属性(特)或(智)的领袖或角色上。",
    "cardTrigger": "自己的生命卡为2张以下时，从自己手牌中登场最多1名力量6000以下且具有【触发】效果的角色卡。",
    "cardRarity": "R",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-057.jpg"
@@ -983,7 +983,7 @@
    "cardTextDesc": "【主要】可以将自己1张费用5以上具有特征《蛋头岛》的角色放至弃牌堆：将自己牌库上方最多1张卡加入生命牌库上方。\n【反击】可以将自己生命牌库上方1张卡翻至正面朝上：自己的领袖或最多1名角色本次战斗中力量+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "eb05【EB-05】",
+   "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-060.jpg"
@@ -1243,7 +1243,7 @@
    "cardTextDesc": "【咚!!×1】这名角色力量+1000。\n【登场时】抽1张卡，舍弃自己1张手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
-   "cardOfferType": "op-18【OP-18】",
+   "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/OP18-044.jpg"

@@ -63,6 +63,7 @@ header .sp{flex:1}
 .chip b{cursor:pointer;color:var(--ink3);padding:0 4px;font-weight:400}
 #tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
 #tags button{padding:1px 7px;font-size:12px;background:var(--sea2)}
+#tags button.pin{font-weight:700;outline:1px solid var(--gold,#e0b84a)}
 #issues{margin:10px 0;font-size:13px}
 #issues div{padding:3px 0}
 #issues .e{color:var(--bad)}#issues .w{color:var(--warn)}#issues .i{color:var(--ink3)}
@@ -212,7 +213,9 @@ const ATTRS=['打','斩','射','特','智'],ATTR_T={'打':'打','斩':'斬','射
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const NO_RE=/^[A-Z]{1,6}\d{0,2}-\d{3}$/;
 const FIELDS=['cardNumber','cardName','cardType','cardColor','cardLife','cardPower','cardAttack','cardAttribute','cardFeatures','cardTextDesc','cardTrigger','cardRarity','cardOfferType','subscript','mixedColor','cardImg'];
-const DEFAULT_TAGS=['【登场时】','【启动主要】','【阻挡者】','【速攻】','【回合1次】','【对方的回合中】','【自己的回合中】','【攻击时】','【KO时】','【反击】','【主要】','【咚!!×1】'];
+// 常用標記固定排最前面（按鈕顯示簡稱，插入官方簡中寫法）
+const PIN_TAGS=[['【每回合1次】','一回一次'],['【咚!!×1】','咚!!×1'],['【咚!!×2】','咚!!×2'],['【咚!!×3】','咚!!×3']];
+const DEFAULT_TAGS=['【登场时】','【启动主要】','【阻挡者】','【速攻】','【每回合1次】','【对方的回合中】','【自己的回合中】','【攻击时】','【KO时】','【反击】','【主要】','【咚!!×1】','【咚!!×2】','【咚!!×3】'];
 // 簡中官方用字修正（OpenCC 轉出來和官方不同的詞）
 const OFFICIAL_FIX=[['海贼团','海盗团']];
 const DEFAULT_README='網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同。同卡號會覆蓋官方資料。';
@@ -319,7 +322,8 @@ function refreshLists(){
   $('#dlSet').innerHTML=cs.map(s=>`<option value="${esc(s)}">`).join('');
   $('#dlName').innerHTML=(S.allNames||[]).map(n=>`<option value="${esc(n)}">`).join('');
   $('#dlNo').innerHTML=[...S.items.map(i=>i.r.cardNumber),...S.off.keys()].filter(Boolean).map(n=>`<option value="${esc(n)}">${esc((S.off.get(n)||{}).cardName||'')}</option>`).join('');
-  $('#tags').innerHTML=S.tagList.map(t=>`<button type="button" data-t="${esc(t)}">${esc(t)}</button>`).join('');
+  const pinT=new Set(PIN_TAGS.map(x=>x[0]));
+  $('#tags').innerHTML=PIN_TAGS.map(([t,l])=>`<button type="button" class="pin" data-t="${esc(t)}" title="插入 ${esc(t)}">${esc(l)}</button>`).join('')+S.tagList.filter(t=>!pinT.has(t)).map(t=>`<button type="button" data-t="${esc(t)}">${esc(t)}</button>`).join('');
 }
 
 /* ---------- 清單 ---------- */

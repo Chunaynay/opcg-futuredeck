@@ -218,6 +218,31 @@ sources.jp = { status: jp.status, count: jp.rows ? jp.rows.length : null, fill: 
 
 for (const c of cn) { const a = twName.get(c.cardNumber), b = jpName.get(c.cardNumber); if (a) c.cardNameTw = a; else delete c.cardNameTw; if (b) c.cardNameJp = b; else delete c.cardNameJp; }
 for (const c of twFill) { const b = jpName.get(c.cardNumber); if (b) c.cardNameJp = b; }
+
+// 簡中 API 偶有效果文缺漏（例 EB02-030、EB01-021、EB01-040 的 cardTextDesc 是「-」）→ 依卡號先用同號其他簡中印刷、再繁中、再日版的效果文補上（後兩者標 textLang）
+const blankT = v => !v || /^[-—ー\s]*$/.test(String(v));
+const cnText = new Map(), twText = new Map(), jpText = new Map();
+for (const c of cn) if (!c.textLang && !blankT(c.cardTextDesc) && !cnText.has(c.cardNumber)) cnText.set(c.cardNumber, c);
+if (tw.rows) for (const c of tw.rows) if (!twText.has(c.cardNumber) && !blankT(c.text)) twText.set(c.cardNumber, c);
+if (jp.rows) for (const c of jp.rows) if (!jpText.has(c.cardNumber) && !blankT(c.text)) jpText.set(c.cardNumber, c);
+const prevTextById = new Map(prevCards.filter(c => c.textLang).map(c => [c.id, c]));
+const textFilled = [];
+for (const c of cn) {
+  if (!c.textLang && !blankT(c.cardTextDesc)) continue;
+  const sib = cnText.get(c.cardNumber); // 同卡號其他簡中印刷（異圖）有效果文 → 直接沿用
+  if (sib) { c.cardTextDesc = sib.cardTextDesc; if (blankT(c.cardTrigger) && !blankT(sib.cardTrigger)) c.cardTrigger = sib.cardTrigger; delete c.textLang; textFilled.push(c.cardNumber); continue; }
+  const r = twText.get(c.cardNumber) || jpText.get(c.cardNumber);
+  if (r) {
+    c.cardTextDesc = r.text; c.textLang = twText.has(c.cardNumber) ? 'tw' : 'jp';
+    const trg = (r.trigger || '').replace(/^\s*【(触发|觸發器?|トリガー)】\s*/, '');
+    if (blankT(c.cardTrigger) && trg) c.cardTrigger = trg;
+    textFilled.push(c.cardNumber);
+  } else if (!c.textLang) {
+    const p = prevTextById.get(c.id);
+    if (p) { c.cardTextDesc = p.cardTextDesc; c.cardTrigger = p.cardTrigger; c.textLang = p.textLang; textFilled.push(c.cardNumber); }
+  }
+}
+if (textFilled.length) LOG(`簡中缺效果文、補上 ${new Set(textFilled).size} 張：${[...new Set(textFilled)].join('、')}`);
 const cards = [...cn, ...twFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber)), ...jpFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber))];
 
 // 全部來源都失敗且沒有舊檔 → 不要輸出
@@ -238,7 +263,7 @@ const stamp = now.slice(0, 10);
 const srcLine = ['cn', 'tw', 'jp'].map(k => `${k.toUpperCase()} ${sources[k].status}${sources[k].count != null ? ' ' + sources[k].count : ''}`).join(' / ');
 const commitMessage = `cards ${stamp}：${nos.size} 張（簡中 ${byLang.cn}、補繁中 ${byLang.tw}、補日文 ${byLang.jp}）${newNos.length ? `，新增 ${newNos.length} 張` : '，無新卡'}${newSets.length ? '：' + newSets.slice(0, 4).join('、') : ''} [${srcLine}]`;
 
-const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length }, cards };
+const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length, textFilled: [...new Set(textFilled)] }, cards };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(out));
 const summary = { ranAt: now, ok: true, changed: JSON.stringify(prevCards) !== JSON.stringify(cards), sources, stats: out.stats, newCards: newNos.slice(0, 300), removedCards: goneNos.slice(0, 100), commitMessage };

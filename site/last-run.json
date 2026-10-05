@@ -1,26 +1,26 @@
 {
-  "ranAt": "2026-10-05T11:06:17.118Z",
+  "ranAt": "2026-10-05T11:55:35.310Z",
   "ok": true,
-  "changed": true,
+  "changed": false,
   "sources": {
     "cn": {
       "status": "ok",
       "count": 4927,
-      "fetchedAt": "2026-10-05T11:06:17.118Z",
+      "fetchedAt": "2026-10-05T11:55:35.310Z",
       "note": "詳情失敗 0、沿用舊資料 0"
     },
     "tw": {
       "status": "ok",
       "count": 4915,
       "fill": 2,
-      "fetchedAt": "2026-10-05T11:06:17.118Z",
+      "fetchedAt": "2026-10-05T11:55:35.310Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     },
     "jp": {
       "status": "ok",
       "count": 4997,
       "fill": 7,
-      "fetchedAt": "2026-10-05T11:06:17.118Z",
+      "fetchedAt": "2026-10-05T11:55:35.310Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     }
   },

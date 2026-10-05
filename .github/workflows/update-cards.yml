@@ -80,7 +80,7 @@ jobs:
         run: |
           git config user.name "opcg-cards-bot"
           git config user.email "opcg-cards-bot@users.noreply.github.com"
-          git add -A site/cards.json site/last-run.json site/custom.json site/custom
+          git add -A site/cards.json site/last-run.json site/terms.json site/custom.json site/custom
           if git diff --cached --quiet; then echo "沒有任何變動"; exit 0; fi
           if git diff --cached --quiet -- site/cards.json site/custom.json; then
             msg="cards $(TZ=Asia/Taipei date +%F)：資料無變動（只更新 last-run.json）"

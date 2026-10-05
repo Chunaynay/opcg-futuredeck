@@ -1,3 +1,4 @@
+// （v3.8～v3.9 版的預期；v4.0 起卡圖改簡中優先、標記改「簡」，請改用 smoke_v40_text.js）
 // v3.7 煙霧測試：合併資料（lang／alt／sources）、搜尋別名、來源標示、卡圖候選
 // 用法：先用 mock-fetch 產出合併 cards.json，再  node scripts/test/smoke_v37.js site/index.html <merged cards.json>
 const {JSDOM}=require('jsdom');const fs=require('fs');

@@ -1,7 +1,47 @@
 {
  "_readme": "網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同：cardNumber、cardName、cardType（领袖/角色/事件/舞台）、cardColor（红/绿/蓝/紫/黑/黄，雙色用 /）、cardLife（領袖＝生命，其他＝費用）、cardPower、cardAttack（反击+1000 / 反击+2000 / -）、cardAttribute（[打,斩,射,特,智]）、cardFeatures（用 / 分隔）、cardTextDesc、cardTrigger、cardRarity、cardOfferType（建議含【OP-18】這種代號）、cardImg（custom/卡號.jpg，454×635；空字串＝自動產生文字卡面）。同卡號會覆蓋官方資料。",
- "updatedAt": "2026-10-04T02:05:53+08:00",
+ "updatedAt": "2026-10-05T18:43:15+08:00",
  "cards": [
+  {
+   "cardNumber": "EB05-002",
+   "cardName": "豺狼",
+   "cardType": "角色",
+   "cardColor": "红",
+   "cardLife": "1",
+   "cardPower": "2000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "海军",
+   "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张费用２以上具有特征<海军>的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方，然后舍弃自己一张手牌。",
+   "cardTrigger": "",
+   "cardRarity": "R",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-002.jpg"
+  },
+  {
+   "cardNumber": "EB05-011",
+   "cardName": "乙姫",
+   "cardType": "角色",
+   "cardColor": "绿",
+   "cardLife": "1",
+   "cardPower": "0",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "智"
+   ],
+   "cardFeatures": "人鱼族/鱼人岛",
+   "cardTextDesc": "【登场时】自己的领袖为「白星」时，可以将自己生命牌库上方１张卡翻至背面朝上：休息对手最多１名费用５以下的角色。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-011.jpg"
+  },
   {
    "cardNumber": "EB05-014",
    "cardName": "白星",
@@ -157,6 +197,26 @@
    "subscript": "",
    "mixedColor": 0,
    "cardImg": "custom/EB05-053.jpg"
+  },
+  {
+   "cardNumber": "EB05-056",
+   "cardName": "妮可．欧尔比雅",
+   "cardType": "角色",
+   "cardColor": "黄",
+   "cardLife": "1",
+   "cardPower": "0",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "智"
+   ],
+   "cardFeatures": "奥哈拉",
+   "cardTextDesc": "【登场时】可以舍弃自己手牌中１张具有【触发】效果的卡：自己的领袖为「妮可．罗宾」时，抽２张卡",
+   "cardTrigger": "将这张卡登场",
+   "cardRarity": "C",
+   "cardOfferType": "eb05",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-056.jpg"
   }
  ]
 }

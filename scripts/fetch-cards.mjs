@@ -8,12 +8,13 @@
 // 合併規則（使用者 2026-10-03 決定）：簡中優先；簡中沒有的卡號補繁中、再補日文。
 // 補進來的卡一律轉成簡中 API 的 raw 欄位格式（cardType 领袖／cardColor 红 …），構築器的 norm() 不用改。
 // 每筆多一個 lang 欄位（cn／tw／jp）標示文字來源；簡中卡另帶 cardNameTw／cardNameJp 當搜尋別名。
+// v4.0：頂層另有 tw（卡號 → 繁中卡名／效果／觸發／特徵）、twSets、twFeats，構築器以繁中顯示；site/terms.json 為用語比對報告。
 //
 // 用法：node scripts/fetch-cards.mjs [--out site/cards.json] [--prev site/cards.json]
 //                                   [--summary site/last-run.json] [--only cn,tw,jp] [--series-limit N]
 // 任一來源失敗（連不上、數量異常）→ 沿用 --prev 裡該來源的舊資料，絕不輸出殘缺檔。
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 
 const args = Object.fromEntries(process.argv.slice(2).map((a, i, arr) => a.startsWith('--') ? [a.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : 'true'] : []).filter(Boolean));
 const OUT = args.out || 'site/cards.json';
@@ -243,6 +244,55 @@ for (const c of cn) {
   }
 }
 if (textFilled.length) LOG(`簡中缺效果文、補上 ${new Set(textFilled).size} 張：${[...new Set(textFilled)].join('、')}`);
+
+// v4.0 繁中全文（使用者 2026-10-05 決定：卡片文字一律以繁中官方規格顯示，卡圖以簡中為主；繁中官網沒有的卡保留簡中原文）
+// 輸出 out.tw：卡號 → {n 卡名, t 效果, g 觸發（去掉【觸發器】前綴）, f 特徵（/ 分隔）}，只收簡中卡（補卡本身就是繁中／日文）。
+// 另以「簡中＋繁中都有」的卡自動比對出 系列名、特徵、【】關鍵字 對照 → out.twSets、out.twFeats、site/terms.json（供人工確認用語）。
+const TRIG_RE = /^\s*【(触发|觸發器?|トリガー)】\s*/;
+const vote = (m, a, b) => { if (!a || !b) return; let x = m.get(a); if (!x) m.set(a, x = new Map()); x.set(b, (x.get(b) || 0) + 1); };
+const topOf = m => { const out = {}, rows = []; for (const [a, x] of m) { const arr = [...x].sort((p, q) => q[1] - p[1]); const tot = arr.reduce((s, v) => s + v[1], 0); out[a] = arr[0][0]; rows.push({ sc: a, tw: arr[0][0], n: arr[0][1], total: tot, share: +(arr[0][1] / tot).toFixed(3), alts: arr.slice(1, 4).map(([k, v]) => `${k}×${v}`) }); } rows.sort((p, q) => q.total - p.total); return { map: out, rows }; };
+const TWX = {}; let twSets = {}, twFeats = {}, terms = null;
+if (tw.rows) {
+  const best = new Map();
+  for (const c of tw.rows) { // 同卡號多個印刷：取效果文最長的那筆（再版頁偶有佔位文字）
+    const sc = (blankT(c.text) || c.text === '重複印刷' ? 0 : c.text.length) * 2 + (c.id.includes('_') ? 0 : 1);
+    const cur = best.get(c.cardNumber); if (!cur || sc > cur.sc) best.set(c.cardNumber, { sc, c });
+  }
+  const setV = new Map(), featV = new Map(), kwV = new Map();
+  const cnFirst = new Map(), cnSets = new Map();
+  for (const c of cn) { if (!cnFirst.has(c.cardNumber)) cnFirst.set(c.cardNumber, c); let s = cnSets.get(c.cardNumber); if (!s) cnSets.set(c.cardNumber, s = new Set()); if (c.cardOfferType) s.add(c.cardOfferType); }
+  const twSetsByNo = new Map(); for (const c of tw.rows) { let s = twSetsByNo.get(c.cardNumber); if (!s) twSetsByNo.set(c.cardNumber, s = new Set()); const nm = c.getInfo || c.seriesName; if (nm) s.add(nm); }
+  for (const [no, { c }] of best) {
+    if (!cnNos.has(no)) continue;
+    const o = {}; if (c.name) o.n = c.name;
+    if (!blankT(c.text) && c.text !== '重複印刷') o.t = c.text;
+    const g = (c.trigger || '').replace(TRIG_RE, '').trim(); if (g) o.g = g;
+    if (c.feature) o.f = c.feature.replace(/\n/g, '/');
+    TWX[no] = o;
+    const s = cnFirst.get(no);
+    // 特徵：同位置配對
+    const fa = (s.cardFeatures || '').split(/[\/／]/).map(x => x.trim()).filter(Boolean), fb = (o.f || '').split('/').map(x => x.trim()).filter(Boolean);
+    if (fa.length && fa.length === fb.length) fa.forEach((x, i) => vote(featV, x, fb[i]));
+    // 【】關鍵字：依出現順序配對（數量相同才比）
+    if (o.t != null && s.textLang == null) {
+      const ka = ((s.cardTextDesc || '') + (s.cardTrigger ? '【触发】' + s.cardTrigger : '')).match(/【[^】]+】/g) || [];
+      const kb = ((o.t || '') + (o.g ? '【觸發器】' + o.g : '')).match(/【[^】]+】/g) || [];
+      if (ka.length && ka.length === kb.length) ka.forEach((x, i) => vote(kwV, x, kb[i]));
+    }
+    // 系列名：兩邊都只有一個系列的卡號才配對
+    const sa = cnSets.get(no), sb = twSetsByNo.get(no);
+    // 系列名：兩邊都只有一個系列的卡號才配對；有【代號】的必須代號相同（避免把再版系列配錯）
+    const code = x => (String(x).match(/【([^】]+)】/) || [])[1] || '';
+    if (sa && sb && sa.size === 1 && sb.size === 1) { const a = [...sa][0], b = [...sb][0]; if (code(a) === code(b)) vote(setV, a, b); }
+  }
+  const S = topOf(setV), Fm = topOf(featV), K = topOf(kwV);
+  twSets = {}; for (const r of S.rows) if (/【[^】]+】/.test(r.sc) || (r.n >= 2 && r.share >= 0.8)) twSets[r.sc] = r.tw; // 無代號的系列要 2 張以上且 8 成一致才收
+  twFeats = {}; for (const r of Fm.rows) if (r.share >= 0.6) twFeats[r.sc] = r.tw;
+  terms = { generatedAt: now, note: '由簡中＋繁中官網同卡號自動比對產生；share＜0.95 的列為 conflicts，需人工確認', keywords: K.rows, features: Fm.rows, sets: S.rows,
+    conflicts: [...K.rows, ...Fm.rows].filter(r => r.share < 0.95 && r.total >= 3).map(r => `${r.sc} → ${r.tw}（${Math.round(r.share * 100)}%；另有 ${r.alts.join('、')}）`) };
+} else if (prev && prev.tw) { Object.assign(TWX, prev.tw); twSets = prev.twSets || {}; twFeats = prev.twFeats || {}; }
+for (const no of Object.keys(TWX)) if (!cnNos.has(no)) delete TWX[no];
+LOG(`繁中全文 ${Object.keys(TWX).length} 張、系列對照 ${Object.keys(twSets).length}、特徵對照 ${Object.keys(twFeats).length}${terms ? '、用語待確認 ' + terms.conflicts.length : ''}`);
 const cards = [...cn, ...twFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber)), ...jpFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber))];
 
 // 全部來源都失敗且沒有舊檔 → 不要輸出
@@ -263,10 +313,11 @@ const stamp = now.slice(0, 10);
 const srcLine = ['cn', 'tw', 'jp'].map(k => `${k.toUpperCase()} ${sources[k].status}${sources[k].count != null ? ' ' + sources[k].count : ''}`).join(' / ');
 const commitMessage = `cards ${stamp}：${nos.size} 張（簡中 ${byLang.cn}、補繁中 ${byLang.tw}、補日文 ${byLang.jp}）${newNos.length ? `，新增 ${newNos.length} 張` : '，無新卡'}${newSets.length ? '：' + newSets.slice(0, 4).join('、') : ''} [${srcLine}]`;
 
-const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length, textFilled: [...new Set(textFilled)] }, cards };
+const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length, textFilled: [...new Set(textFilled)], twText: Object.keys(TWX).length, termConflicts: terms ? terms.conflicts.length : null }, cards, tw: TWX, twSets, twFeats };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(out));
-const summary = { ranAt: now, ok: true, changed: JSON.stringify(prevCards) !== JSON.stringify(cards), sources, stats: out.stats, newCards: newNos.slice(0, 300), removedCards: goneNos.slice(0, 100), commitMessage };
+const summary = { ranAt: now, ok: true, changed: JSON.stringify(prevCards) !== JSON.stringify(cards) || JSON.stringify(prev?.tw || {}) !== JSON.stringify(TWX), sources, stats: out.stats, newCards: newNos.slice(0, 300), removedCards: goneNos.slice(0, 100), commitMessage };
+if (terms) writeFileSync(join(dirname(OUT), 'terms.json'), JSON.stringify(terms, null, 1));
 mkdirSync(dirname(SUMMARY), { recursive: true });
 writeFileSync(SUMMARY, JSON.stringify(summary, null, 2));
 

@@ -201,6 +201,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,Consolas,monospace;font
 .matchBox{padding:10px 12px;border:1px solid var(--gold2);border-radius:8px;background:#e8b84a14;margin-bottom:8px;line-height:1.8}
 .tile .custom{position:absolute;bottom:6px;right:6px;background:#0c1a2bdd;color:var(--gold);font-size:10px;padding:1px 5px;border-radius:4px}
 .tile .lang{color:#9fd3ff;border:1px solid #9fd3ff66}
+.cnOrig{margin-top:10px;font-size:12px;color:var(--ink3)}.cnOrig summary{cursor:pointer;user-select:none}.cnOrig .txt{margin-top:6px;opacity:.85}
 .mobTabs{display:none}
 
 /* 標題資料日期 */
@@ -528,7 +529,7 @@ const ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const MAX_COPIES=4, DECK_SIZE=50;
 const DB_KEY='opcg.db', CUR_KEY='opcg.current', DECKS_KEY='opcg.decks';
-const APP_VERSION='v3.9';
+const APP_VERSION='v4.0';
 const BUNDLED_URL='cards.json'; // 與 index.html 同資料夾的內建卡片資料（部署到 Netlify 時一起放）
 const CUSTOM_URL='custom.json'; // 站長維護的自訂卡（未發售卡）：{updatedAt, cards:[raw…]}，卡圖放 custom/ 資料夾
 const BCUSTOM_KEY='opcg.bcustom', DECKW_KEY='opcg.deckW', DECKMODE_KEY='opcg.deckMode';
@@ -549,7 +550,9 @@ const idb={
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 
 /* ---------- 狀態 ---------- */
-let RAW=null;        // {fetchedAt, cards:[raw]}
+let RAW=null;        // {fetchedAt, cards:[raw], tw, twSets, twFeats}
+// v4.0 繁中文字（cards.json 頂層，由抓取腳本從繁中官網產生）：TWD 卡號→{n,t,g,f}、TWSETS 簡中系列名→繁中、TWFEATS 簡中特徵→繁中
+let TWD={},TWSETS={},TWFEATS={},TW_ON=false; // TW_ON：cards.json 已含繁中文字（舊資料沒有時不標「簡」，免得滿版都是標記）
 let BCUSTOM={updatedAt:'',cards:[]}; // 網站內建自訂卡（custom.json，raw 格式；cardImg 為 custom/xxx.jpg 相對路徑，空字串＝自動產生文字卡面）
 let CARDS=[];        // 正規化後（每個印刷一筆）
 let BYNO=new Map();  // 卡號 → 代表卡（含 imgs）
@@ -568,7 +571,7 @@ function normRarity(r){r=String(r||'').trim();const m=r.match(RAR_RE);let code=(
 const imgOf=(c,ref)=>{if(!c)return '';if(ref&&ref.startsWith('i:')){const u=c.imgs?.[+ref.slice(2)];if(u)return u;}else if(ref&&!ref.startsWith('data:'))return ref;return c.img;};
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);};
 
-/* ---------- 卡圖來源：繁中官網優先 → 簡中 CDN；網站代理；縮圖快取；可見優先載入；背景預載 ---------- */
+/* ---------- 卡圖來源：v4.0 起簡中 CDN 優先 → 繁中／日版官網備援（下方舊註解保留歷史）；網站代理；縮圖快取；可見優先載入；背景預載 ---------- */
 // 實測（2026-10-01）：簡中 CDN source.windoent.com 從台灣常要 2 秒～逾時；繁中官網 asia-tw.onepiece-cardgame.com 的卡圖 100～200 ms，
 // 但只到 TW 已發售的彈（新彈 404）且不開 CORS。所以：顯示用繁中優先、404 退回簡中；canvas（牌組一圖）要 CORS，走網站的 _redirects 代理
 // （/twimg/、/cnimg/，同源就沒有 CORS 問題），本機 file:// 沒代理時 canvas 只能用簡中 CDN。載過的圖縮成 JPEG 存 IndexedDB，之後不再打 CDN。
@@ -601,10 +604,10 @@ function imgCands(c,ref,purpose){
   // 官網（繁中 tw／日版 jp）候選：代理有 CORS；直連沒有，canvas 不能用。key＝圖檔名（不含 .png），404 過的不再試
   const official=(tag,key)=>{if(!key||MISS[tag].has(key))return;if(PROXY_OK)out.push({url:'/'+tag+'img/'+key+'.png',cors:true,tag,key});else if(purpose!=='canvas')out.push({url:(tag==='tw'?TW_DIRECT:JP_DIRECT)+key+'.png',cors:false,tag,key});};
   if(u.startsWith(CN_DIRECT)){
-    // 簡中資料：代表印刷先試繁中、再日版官網（檔名＝卡號），最後簡中 CDN（代理→直連）
-    if(rep&&!c.custom){official('tw',c.no);official('jp',c.no);}
+    // v4.0 使用者決定卡圖以簡中為主：簡中 CDN（代理→直連）優先，載不到才退回繁中、日版官網（只有代表印刷，檔名＝卡號）
     if(PROXY_OK)out.push({url:'/cnimg/'+u.slice(CN_DIRECT.length),cors:true,tag:'cnp'});
     out.push({url:u,cors:true,tag:'cn'});
+    if(rep&&!c.custom){official('tw',c.no);official('jp',c.no);}
   }else if(u.startsWith(TW_DIRECT)||u.startsWith(JP_DIRECT)){
     // 繁中／日版補進來的卡（簡中還沒有）：檔名含異畫後綴（OP18-001_p1），兩個官網互為備援
     const key=u.slice(u.lastIndexOf('/')+1).replace(/\.png$/i,'');
@@ -630,7 +633,7 @@ function setImg(el,cands,no){
 const THUMB_W=360,THUMB_H=503;
 const thumbs={
   cached:new Set(),urls:new Map(),
-  async init(){try{const d=await idb.open();const keys=await new Promise((res,rej)=>{const t=d.transaction('thumbs').objectStore('thumbs').getAllKeys();t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error);});keys.forEach(k=>this.cached.add(k));}catch(e){}},
+  async init(){if(ls.get('opcg.thumbVer',0)<4){await this.clear();ls.set('opcg.thumbVer',4);}try{const d=await idb.open();const keys=await new Promise((res,rej)=>{const t=d.transaction('thumbs').objectStore('thumbs').getAllKeys();t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error);});keys.forEach(k=>this.cached.add(k));}catch(e){}},
   async get(k){if(!this.cached.has(k))return null;try{const d=await idb.open();return await new Promise((res,rej)=>{const t=d.transaction('thumbs').objectStore('thumbs').get(k);t.onsuccess=()=>res(t.result||null);t.onerror=()=>rej(t.error);});}catch(e){return null;}},
   async put(k,b){try{const d=await idb.open();await new Promise((res,rej)=>{const t=d.transaction('thumbs','readwrite').objectStore('thumbs').put(b,k);t.onsuccess=res;t.onerror=()=>rej(t.error);});this.cached.add(k);}catch(e){}},
   async clear(){try{const d=await idb.open();await new Promise((res,rej)=>{const t=d.transaction('thumbs','readwrite').objectStore('thumbs').clear();t.onsuccess=res;t.onerror=()=>rej(t.error);});}catch(e){}this.cached.clear();this.urls.forEach(u=>URL.revokeObjectURL(u));this.urls.clear();},
@@ -695,7 +698,7 @@ function norm(i){
   const type=i.cardType||'';
   const colors=(i.cardColor||'').split(/[\/／,，]/).map(s=>s.trim()).filter(c=>COLORS.includes(c));
   const isL=type==='领袖';
-  return {
+  return twify({
     id:i.id,no:i.cardNumber||'',name:i.cardName||'',type,colors,
     cost:isL?null:num(i.cardLife),life:isL?num(i.cardLife):null,
     power:num(i.cardPower),
@@ -709,11 +712,31 @@ function norm(i){
     // v3.8 合併資料：lang＝文字來源（cn 簡中／tw 繁中／jp 日版，簡中沒有的卡才會是 tw／jp）；alt＝其他語言的卡名，只用來搜尋
     lang:i.lang||'cn',alt:[i.cardNameTw,i.cardNameJp].filter(Boolean),
     search:''
-  };
+  },i);
 }
+// v4.0：卡片文字以繁中官方為準。tl＝實際顯示文字的語言（tw 繁中／cn 簡中原文／jp 日文）；cn＝簡中原文（有繁中時保留給「簡中原文」與搜尋）；
+// fk＝篩選用特徵（簡中原文卡的特徵經 TWFEATS 對到繁中，讓同一特徵只出現一次）；setCn＝簡中系列名
+function twify(c,i){
+  c.cn=null;c.setCn=c.set;
+  const w=c.lang==='cn'&&!i.textLang?TWD[c.no]:null;
+  if(c.lang==='tw'||i.textLang==='tw')c.tl='tw';else if(c.lang==='jp'||i.textLang==='jp')c.tl='jp';else c.tl='cn';
+  if(w&&(w.n||w.t!=null)){
+    c.cn={name:c.name,text:c.text,trigger:c.trigger,feats:c.feats};
+    if(w.n)c.name=w.n;
+    if(w.t!=null){c.text=w.t;c.trigger=w.g||'';c.tl='tw';}
+    if(w.f)c.feats=w.f.split('/').map(s=>s.trim()).filter(Boolean);
+  }
+  if(c.lang==='cn'&&TWSETS[c.set])c.set=TWSETS[c.set];
+  c.fk=c.tl==='cn'?c.feats.map(f=>TWFEATS[f]||f):c.feats.slice();
+  if(c.cn&&c.cn.name&&c.cn.name!==c.name)c.alt.unshift(c.cn.name);
+  c.alt=[...new Set(c.alt.filter(a=>a&&a!==c.name))];
+  return c;
+}
+const TRIG_LABEL=c=>c.tl==='cn'?'【触发】':c.tl==='jp'?'【トリガー】':'【觸發器】';
 const LANG_T={cn:'簡中官網',tw:'繁中官網',jp:'日版官網'};
-const LANG_SHORT={tw:'繁',jp:'日'};
-const searchStr=c=>(c.name+' '+c.alt.join(' ')+' '+c.no+' '+c.text+' '+c.feats.join(' ')+' '+c.trigger).toLowerCase();
+const LANG_SHORT={cn:'簡',jp:'日'}; // v4.0：標示「不是繁中官方文字」的卡（cn＝簡中原文、jp＝日文原文）
+const TL_T={tw:'繁中官網',cn:'簡中官網',jp:'日版官網'};
+const searchStr=c=>(c.name+' '+c.alt.join(' ')+' '+c.no+' '+c.text+' '+c.feats.join(' ')+' '+c.fk.join(' ')+' '+c.trigger+(c.cn?' '+c.cn.text+' '+c.cn.feats.join(' ')+' '+c.cn.trigger:'')).toLowerCase();
 // 同卡號的第一筆當代表；官方資料偶有某個印刷缺欄位（反擊、力量、效果文…），用其他印刷補齊
 function fillMissing(k,c){
   if(k.custom||c.custom)return;
@@ -721,10 +744,10 @@ function fillMissing(k,c){
   if(k.power==null&&c.power!=null)k.power=c.power;
   if(k.cost==null&&c.cost!=null)k.cost=c.cost;
   if(k.life==null&&c.life!=null)k.life=c.life;
-  if(!k.text&&c.text)k.text=c.text;
+  if(!k.text&&c.text){k.text=c.text;if(k.tl!==c.tl&&!k.cn)k.tl=c.tl;}
   if(!k.trigger&&c.trigger)k.trigger=c.trigger;
   if(!k.attrs.length&&c.attrs.length)k.attrs=c.attrs;
-  if(!k.feats.length&&c.feats.length)k.feats=c.feats;
+  if(!k.feats.length&&c.feats.length){k.feats=c.feats;k.fk=c.fk;}
   if(!k.colors.length&&c.colors.length)k.colors=c.colors;
   let alt=false;for(const a of c.alt)if(!k.alt.includes(a)){k.alt.push(a);alt=true;}
   if(k.search!==undefined&&(alt||k.text!==c.text||k.trigger!==c.trigger))k.search=searchStr(k);
@@ -735,12 +758,13 @@ function faceFor(c){
   const key=JSON.stringify([c.no,c.name,c.type,c.colors,c.attrs,c.rarity,c.cost,c.life,c.power,c.counter,c.feats,c.text,c.trigger,c.set]);
   const hit=FACE_CACHE.get(c.no);if(hit&&hit.key===key)return hit.url;
   let url='';
-  try{url=genFace({no:c.no,name:c.name,type:c.type,colors:new Set(c.colors),attrs:new Set(c.attrs),rar:c.rarity,cost:c.cost??'',life:c.life??'',power:c.power??'',counter:c.counter?String(c.counter):'',feats:c.feats.join('/'),text:c.text,trig:c.trigger,set:c.set});}catch(e){url='';}
+  try{url=genFace({no:c.no,name:c.name,type:c.type,colors:new Set(c.colors),attrs:new Set(c.attrs),rar:c.rarity,cost:c.cost??'',life:c.life??'',power:c.power??'',counter:c.counter?String(c.counter):'',feats:c.feats.join('/'),text:c.text,trig:c.trigger,trigLabel:TRIG_LABEL(c),set:c.set});}catch(e){url='';}
   FACE_CACHE.set(c.no,{key,url});return url;
 }
 const isPRSet=c=>!c.custom&&!!c.set&&!SET_CODE_RE.test(c.set);
 function buildIndex(){
   const rawCards=RAW?RAW.cards:[];
+  TWD=RAW&&RAW.tw||{};TWSETS=RAW&&RAW.twSets||{};TWFEATS=RAW&&RAW.twFeats||{};TW_ON=Object.keys(TWD).length>0;
   // 官方資料為主：官方（含繁中／日版補卡）已收錄的卡號，自訂卡不再顯示（雙週更新也會把它從 custom.json 刪掉）
   const offNos=new Set(rawCards.map(r=>r.cardNumber));
   const customCards=(BCUSTOM&&BCUSTOM.cards||[]).filter(r=>!offNos.has(r.cardNumber)).map(r=>{const c=Object.assign(norm(r),{custom:true});if(!c.img)c.img=faceFor(c);return c;});
@@ -758,7 +782,7 @@ function buildIndex(){
   const feats=new Map(),sets=[],blocks=new Set(),pows=new Set();
   const seenSet=new Set();let prN=0;const customSets=[];
   for(const c of BYNO.values()){
-    c.feats.forEach(f=>feats.set(f,(feats.get(f)||0)+1));
+    c.fk.forEach(f=>feats.set(f,(feats.get(f)||0)+1));
     if(c.set){if(isPRSet(c))prN++;else if(!seenSet.has(c.set)){seenSet.add(c.set);(c.custom?customSets:sets).push(c.set);}}
     if(c.block!==''&&c.block!=null)blocks.add(c.block);if(c.power!=null)pows.add(c.power);
   }
@@ -773,8 +797,8 @@ function buildIndex(){
   for(const [id,k] of [['fFeat','feat'],['fSet','set'],['fBlock','block']]){const sel=$('#'+id);if(F[k]&&![...sel.options].some(o=>o.value===F[k])){F[k]='';}sel.value=F[k];}
   renderPicks();
   const cc=customCards.length;
-  const fill=[...BYNO.values()].reduce((m,c)=>{if(!c.custom&&c.lang!=='cn')m[c.lang]=(m[c.lang]||0)+1;return m;},{});
-  const fillTxt=[fill.tw?'補繁中 '+fill.tw:'',fill.jp?'補日文 '+fill.jp:''].filter(Boolean).join('・');
+  const fill=[...BYNO.values()].reduce((m,c)=>{if(!c.custom&&c.tl!=='tw')m[c.tl]=(m[c.tl]||0)+1;return m;},{});
+  const fillTxt=[!TW_ON&&rawCards.length?'繁中文字待下次自動更新':fill.cn?'簡中原文 '+fill.cn:'',fill.jp?'日文原文 '+fill.jp:''].filter(Boolean).join('・');
   $('#dbStatus').textContent=`${BYNO.size} 張卡（${CARDS.length} 個印刷）${fillTxt?'・'+fillTxt:''}${cc?'・自訂 '+cc+' 張':''}`;
   $('#dbStatus').classList.remove('empty');
 }
@@ -901,7 +925,7 @@ function applyFilters(){
     if(F.trigger&&!c.trigger)return false;
     if(F.custom&&!c.custom)return false;
     if(leaderFirst&&c.type!=='领袖')return false;
-    if(F.feat&&!c.feats.includes(F.feat))return false;
+    if(F.feat&&!c.fk.includes(F.feat))return false;
     if(F.set&&(F.set===PR_SET?!isPRSet(c):c.set!==F.set))return false;
     if(F.block!==''&&String(c.block)!==F.block)return false;
     if(onlyLegal&&c.type!=='领袖'&&!legalColor(c))return false;
@@ -925,7 +949,7 @@ function tile(c){
     <div class="pic"><img data-no="${esc(c.no)}" data-ref="${esc(ref)}" data-lazy alt="${esc(c.name)}" decoding="async">
     <div class="cnt">${isL?(isLeaderNow?'L':''):(n||'')}</div>
     <div class="add">${ops}</div>
-    <div class="dots">${dots}</div>${c.custom?'<span class="custom">自訂</span>':LANG_SHORT[c.lang]?`<span class="custom lang" title="簡中官網尚未收錄，資料來自${LANG_T[c.lang]}">${LANG_SHORT[c.lang]}</span>`:''}</div>
+    <div class="dots">${dots}</div>${c.custom?'<span class="custom">自訂</span>':LANG_SHORT[c.tl]&&(c.tl!=='cn'||TW_ON)?`<span class="custom lang" title="繁中官網尚未收錄，顯示${TL_T[c.tl]}原文">${LANG_SHORT[c.tl]}</span>`:''}</div>
     <div class="meta"><b>${esc(c.name)}</b><small>${esc(c.no)}・${esc(TYPE_T[c.type]||c.type)}${c.prints>1?'・'+c.prints+'版':''}</small><br><small>${sub}</small></div>
   </div>`;
 }
@@ -954,9 +978,9 @@ const HV=$('#hover');let hvT=null,hvNo=null;
 const canHover=!!(window.matchMedia&&matchMedia('(hover:hover)').matches);
 function hoverHTML(c){
   const isL=c.type==='领袖';
-  const tags=[...c.colors.map(x=>`<span class="tag c" style="background:var(--c-${x})">${COLOR_T[x]}</span>`),`<span class="tag">${TYPE_T[c.type]||c.type}</span>`,c.rarity?`<span class="tag">${esc(c.rarity)}</span>`:'',...c.attrs.map(a=>`<span class="tag">${ATTR_T[a]||a}</span>`),c.custom?'<span class="tag" style="color:var(--gold)">自訂</span>':'',!c.custom&&c.lang!=='cn'?`<span class="tag" style="color:#9fd3ff">${LANG_T[c.lang]}資料</span>`:''].join('');
+  const tags=[...c.colors.map(x=>`<span class="tag c" style="background:var(--c-${x})">${COLOR_T[x]}</span>`),`<span class="tag">${TYPE_T[c.type]||c.type}</span>`,c.rarity?`<span class="tag">${esc(c.rarity)}</span>`:'',...c.attrs.map(a=>`<span class="tag">${ATTR_T[a]||a}</span>`),c.custom?'<span class="tag" style="color:var(--gold)">自訂</span>':'',!c.custom&&c.tl!=='tw'?`<span class="tag" style="color:#9fd3ff">${c.tl==='jp'?'日文原文':'簡中原文'}</span>`:''].join('');
   const stat=isL?`生命 ${c.life??'-'}　力量 ${c.power??'-'}`:`費用 ${c.cost??'-'}　力量 ${c.power??'-'}　反擊 ${c.counter?'+'+c.counter:'—'}`;
-  return `<img alt="" data-hv><div><h4>${esc(c.name)}</h4><div class="no">${esc(c.no)}　${esc(c.set)}</div><div class="tags">${tags}</div><div class="st">${stat}${c.feats.length?'<br>特徵：'+c.feats.map(esc).join('／'):''}</div><div class="txt">${esc(c.text)||'（無效果文字）'}${c.trigger?`\n\n【觸發】${esc(c.trigger)}`:''}</div></div>`;
+  return `<img alt="" data-hv><div><h4>${esc(c.name)}</h4><div class="no">${esc(c.no)}　${esc(c.set)}</div><div class="tags">${tags}</div><div class="st">${stat}${c.feats.length?'<br>特徵：'+c.feats.map(esc).join('／'):''}</div><div class="txt">${esc(c.text)||'（無效果文字）'}${c.trigger?`\n\n${TRIG_LABEL(c)}${esc(c.trigger)}`:''}</div></div>`;
 }
 function placeHover(x,y){
   const w=HV.offsetWidth,h=HV.offsetHeight,vw=innerWidth,vh=innerHeight;
@@ -1111,9 +1135,10 @@ function openCard(no){
   $('#cdTitle').textContent=c.name;
   $('#cdBody').innerHTML=`<div class="cardView"><div><img id="cdImg" alt="">${c.imgs.length>1?`<div class="alts">${c.imgs.map((u,i)=>`<img data-u="${esc(u)}" data-i="${i}" class="${u===cur?'on':''}" alt="">`).join('')}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">點選版本可指定牌組使用的圖</div>`:''}${c.custom?`<div style="margin-top:8px;font-size:12px"><span class="tag" style="color:var(--gold)">自訂卡</span>　<span style="color:var(--ink3)">網站內建的未發售卡，資料以官方公布為準</span></div>`:''}</div>
   <div><h3>${esc(c.name)}</h3><div class="no">${esc(c.no)}　${esc(c.set)}</div><div class="tags">${tags}</div><div style="margin:6px 0">${stat}</div>${c.feats.length?`<div style="color:var(--ink2);margin-bottom:8px">特徵：${c.feats.map(esc).join('／')}</div>`:''}
-  <div class="txt">${esc(c.text)||'（無效果文字）'}${c.trigger?`\n\n【觸發】${esc(c.trigger)}`:''}</div>
+  <div class="txt">${esc(c.text)||'（無效果文字）'}${c.trigger?`\n\n${TRIG_LABEL(c)}${esc(c.trigger)}`:''}</div>
+  ${c.cn&&c.tl==='tw'&&(c.cn.text||c.cn.trigger)?`<details class="cnOrig"><summary>簡中原文</summary><div class="txt">${esc(c.cn.name)}${c.cn.feats.length?'　'+c.cn.feats.map(esc).join('／'):''}\n\n${esc(c.cn.text)||'（無效果文字）'}${c.cn.trigger?`\n\n【触发】${esc(c.cn.trigger)}`:''}</div></details>`:''}
   <div class="ops">${isL?`<button class="primary" id="cdLead">${deck.leader===no?'移除領袖':'設為領袖'}</button>`:`<button id="cdSub">−</button><b id="cdN">${deck.main[no]||0}</b><button id="cdAdd" class="primary">＋ 加入</button><span style="color:var(--ink3);font-size:12px">最多 ${MAX_COPIES} 張</span>`}</div>
-  ${c.custom?'':`<div style="margin-top:14px;font-size:12px;color:var(--ink3)">資料來源：${LANG_T[c.lang]||'簡中官網'}${c.lang!=='cn'?'（簡中官網尚未收錄這張卡，等簡中收錄後會自動換成簡中資料）':''}${c.alt.length?'　其他語言卡名：'+c.alt.map(esc).join('／'):''}　<a href="${c.lang==='tw'?'https://asia-tc.onepiece-cardgame.com/cardlist/':c.lang==='jp'?'https://www.onepiece-cardgame.com/cardlist/':'https://www.onepiece-cardgame.cn/cardlist'}" target="_blank" rel="noopener">在官方卡牌一覽查看</a></div>`}</div></div>`;
+  ${c.custom?'':`<div style="margin-top:14px;font-size:12px;color:var(--ink3)">文字：${TL_T[c.tl]}${c.tl==='cn'?'（繁中官網尚未收錄，顯示簡中原文）':c.tl==='jp'?'（繁中、簡中官網尚未收錄，顯示日文原文）':''}　卡圖：${LANG_T[c.lang]||'簡中官網'}${c.alt.length?'　其他語言卡名：'+c.alt.map(esc).join('／'):''}　<a href="${c.tl==='tw'?'https://asia-tc.onepiece-cardgame.com/cardlist/':c.tl==='jp'?'https://www.onepiece-cardgame.com/cardlist/':'https://www.onepiece-cardgame.cn/cardlist'}" target="_blank" rel="noopener">在官方卡牌一覽查看</a></div>`}</div></div>`;
   fullInto($('#cdImg'),c,curRef);
   if(isL)$('#cdLead').onclick=()=>{setLeader(no);$('#cdLead').textContent=deck.leader===no?'移除領袖':'設為領袖';};
   else{$('#cdAdd').onclick=()=>addCard(no);$('#cdSub').onclick=()=>removeCard(no);}
@@ -1259,7 +1284,7 @@ function genFace(w){
   g.font=`500 15px ${font}`;g.fillStyle='#9FB3C8';const ft=(w.feats||'').trim().replace(/[／,，]/g,'／');if(ft)g.fillText('特徵：'+ft,40,196);
   // 效果文
   g.fillStyle='#EAF1F8';let tf=19;g.font=`400 ${tf}px ${font}`;
-  let body=(w.text||'').trim();if(w.trig&&w.trig.trim())body+=(body?'\n\n':'')+'【觸發】'+w.trig.trim();
+  let body=(w.text||'').trim();if(w.trig&&w.trig.trim())body+=(body?'\n\n':'')+(w.trigLabel||'【觸發器】')+w.trig.trim();
   let lines=wrapText(g,body,W-80);const maxLines=Math.floor((H-110-230)/ (tf*1.45));
   while(lines.length>maxLines&&tf>13){tf-=1;g.font=`400 ${tf}px ${font}`;lines=wrapText(g,body,W-80);}
   lines.slice(0,Math.floor((H-110-230)/(tf*1.45))).forEach((l,i)=>g.fillText(l,40,228+i*tf*1.45));

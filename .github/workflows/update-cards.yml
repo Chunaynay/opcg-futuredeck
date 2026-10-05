@@ -30,6 +30,8 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 推送前可能要 rebase，淺層 clone 會失敗
 
       - name: 雙週判斷（週一為補跑）
         id: gate
@@ -90,5 +92,11 @@ jobs:
             echo "- 卡片資料有變動，已更新" >> "$GITHUB_STEP_SUMMARY"
           fi
           git commit -m "$msg"
-          git push
+          # 執行期間若有人推了新 commit（例如網站改版），先 rebase 到最新再推，最多試 3 次
+          for i in 1 2 3; do
+            if git push; then break; fi
+            if [ "$i" = "3" ]; then echo "推送失敗 3 次"; exit 1; fi
+            echo "遠端有新 commit，rebase 後重推（第 $i 次）"
+            git pull --rebase origin "${GITHUB_REF_NAME:-main}" || { git rebase --abort; echo "rebase 衝突，請手動處理"; exit 1; }
+          done
           echo "- 已推送，Netlify 會自動部署" >> "$GITHUB_STEP_SUMMARY"

@@ -1,10 +1,10 @@
 {
- "_readme": "網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同：cardNumber、cardName、cardType（领袖/角色/事件/舞台）、cardColor（红/绿/蓝/紫/黑/黄，雙色用 /）、cardLife（領袖＝生命，其他＝費用）、cardPower、cardAttack（反击+1000 / 反击+2000 / -）、cardAttribute（[打,斩,射,特,智]）、cardFeatures（用 / 分隔）、cardTextDesc、cardTrigger、cardRarity、cardOfferType（建議含【OP-18】這種代號）、cardImg（custom/卡號.jpg，454×635；空字串＝自動產生文字卡面）。同卡號會覆蓋官方資料。",
- "updatedAt": "2026-10-06T00:57:26+08:00",
+ "_readme": "網站內建自訂卡（已公布、未發售的卡）。cards 內每筆欄位與 cards.json 相同；文字為繁中官方用語（textLang:\"tw\"）。官方 cards.json 已有同卡號時網站以官方為準，雙週更新會自動移除。",
+ "updatedAt": "2026-10-09T00:58:21+08:00",
  "cards": [
   {
    "cardNumber": "EB05-001",
-   "cardName": "珠宝·波妮",
+   "cardName": "珠寶・波妮",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "5",
@@ -13,14 +13,15 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "超新星/邦妮海盗团",
-   "cardTextDesc": "【登场时】自己的领袖具有特征《超新星》时抽2张卡，从自己手牌中登场最多2名力量2000以下的角色卡。\n【启动主要】【每回合1次】对手最多1名力量6000以上的领袖或角色本回合中力量-1000。",
+   "cardFeatures": "超新星/波妮海賊團",
+   "cardTextDesc": "【登場時】自己的領航卡擁有特徵《超新星》時抽2張卡，從自己手牌中登場最多2名力量2000以下的角色卡。\n【啟動主要】【每回合1次】最多1張對手力量值6000以上的領航卡或角色卡，在下一個對手結束階段結束前，力量值-1000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-001.jpg"
+   "cardImg": "custom/EB05-001.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-002",
@@ -33,38 +34,40 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "海军",
-   "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张费用２以上具有特征<海军>的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方，然后舍弃自己一张手牌。",
+   "cardFeatures": "海軍",
+   "cardTextDesc": "【登場時】查看自己卡組上面5張卡，公開展示最多2張費用2以上擁有特徵《海軍》的卡並加入手牌，將剩餘的卡按任意順序放至卡組下面，然後廢棄自己一張手牌。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-002.jpg"
+   "cardImg": "custom/EB05-002.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-003",
-   "cardName": "奈美",
+   "cardName": "帕西亞",
    "cardType": "角色",
    "cardColor": "红",
-   "cardLife": "3",
-   "cardPower": "4000",
-   "cardAttack": "反击+2000",
+   "cardLife": "1",
+   "cardPower": "3000",
+   "cardAttack": "反击+1000",
    "cardAttribute": [
-    "特"
+    "智"
    ],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【每回合1次】自己原力量6000以下的角色因对手的效果而离场时，作为取代可以将自己生命牌库上方1张卡加入手牌。\n【登场时】从自己手牌中登场最多1名红色费用2以下的角色卡。",
+   "cardFeatures": "香波地群島",
+   "cardTextDesc": "",
    "cardTrigger": "",
-   "cardRarity": "SEC",
+   "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
-   "subscript": "",
+   "subscript": "5",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-003.jpg"
+   "cardImg": "custom/EB05-003.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-004",
-   "cardName": "Baby 5",
+   "cardName": "BABY5",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "4",
@@ -73,18 +76,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "庞克哈萨德/堂吉诃德海盗团",
-   "cardTextDesc": "【登场时】可以公开展示自己手牌中的2张事件卡：抽2张卡。\n【KO时】从自己手牌中已休息状态登场最多1名力量6000以下的角色。",
+   "cardFeatures": "龐克哈薩特/唐吉訶德海賊團",
+   "cardTextDesc": "【登場時】可以公開展示自己手牌中的2張事件卡：抽2張卡。\n【KO時】從自己手牌中已休息狀態登場最多1名力量6000以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-004.jpg"
+   "cardImg": "custom/EB05-004.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-005",
-   "cardName": "贝洛·贝蒂",
+   "cardName": "貝洛・蓓媞",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "2",
@@ -93,18 +97,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "革命军",
-   "cardTextDesc": "【登场时】自己最多3名同时具有特征《革命军》和【触发】效果的角色，本回合中力量+2000。\n【启动主要】可以将这名角色放至弃牌堆：对手最多1名角色本回合中力量-2000。",
+   "cardFeatures": "革命軍",
+   "cardTextDesc": "【登場時】自己最多3名同時擁有特徵《革命軍》和【觸發器】效果的角色，這個回合力量值+2000。\n【啟動主要】可以將這名角色放至廢棄區：對手最多1名角色這個回合力量值-2000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-005.jpg"
+   "cardImg": "custom/EB05-005.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-006",
-   "cardName": "Miss·芭金戈姆·斯图西",
+   "cardName": "白金漢絲媞希女士",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "2",
@@ -113,18 +118,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "洛克斯海盗团",
-   "cardTextDesc": "【启动主要】【每回合1次】自己可以将生命牌库上方1张卡加入手牌：选择以下1项：\n・最多1名角色本回合中力量+3000。\n・最多1名角色本回合中力量-4000。",
+   "cardFeatures": "洛克斯海賊團",
+   "cardTextDesc": "【啟動主要】【每回合1次】自己可以將生命卡組上面1張卡加入手牌：選擇以下1項：\n・最多1名角色這個回合力量值+3000。\n・最多1名角色這個回合力量值-4000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-006.jpg"
+   "cardImg": "custom/EB05-006.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-007",
-   "cardName": "莫奈",
+   "cardName": "莫內",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "2",
@@ -133,36 +139,57 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "庞克哈萨德/唐吉诃德海盗团",
-   "cardTextDesc": "【登场时】可以公开展示手牌中合计3张事件卡或具有特征《庞克哈萨德》的卡：抽1张卡。\n【我方的回合结束时】这名角色到下个对手结束阶段完结时力量+5000。",
+   "cardFeatures": "龐克哈薩特/唐吉訶德海賊團",
+   "cardTextDesc": "【登場時】可以公開展示手牌中合計3張事件卡或擁有特徵《龐克哈薩特》的卡：抽1張卡。\n【我方回合結束時】這名角色到下個對手結束階段完結時力量值+5000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-007.jpg"
+   "cardImg": "custom/EB05-007.jpg",
+   "textLang": "tw"
   },
   {
-   "cardNumber": "EB05-009",
-   "cardName": "请你们跟我一起死吧!!!",
+   "cardNumber": "EB05-008",
+   "cardName": "魯夫，現在是好機會",
    "cardType": "事件",
    "cardColor": "红",
    "cardLife": "1",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "东海/草帽一伙",
-   "cardTextDesc": "【主要】自己所有原力量4000以下的角色，到下个对手结束阶段完结时，力量+1000。\n【反击】自己的领袖本次战斗中力量+3000。",
+   "cardFeatures": "王下七武海/九蛇海賊團",
+   "cardTextDesc": "【主要】可以附加1張自己活動狀態的咚‼卡在自己的領航卡，並公開2張自己手牌中的紅色事件卡：最多1張對手休息狀態的角色卡，在這個回合，力量值-7000。\n【反擊】若自己沒有費用5以上的角色卡時，最多1張自己的領航卡或角色卡，在這場對戰中，力量值+4000。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-008.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-009",
+   "cardName": "請你們跟我一起死吧!!!",
+   "cardType": "事件",
+   "cardColor": "红",
+   "cardLife": "1",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "東方藍/草帽一行人",
+   "cardTextDesc": "【主要】自己所有原力量4000以下的角色，到下個對手結束階段完結時，力量值+1000。\n【反擊】自己的領航卡在這場對戰中力量值+3000。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-009.jpg"
+   "cardImg": "custom/EB05-009.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-010",
-   "cardName": "妮古·罗宾",
+   "cardName": "妮可・羅賓",
    "cardType": "领袖",
    "cardColor": "绿/黄",
    "cardLife": "4",
@@ -171,18 +198,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【每回合1次】自己持有属性(智)且不具有【阻挡者】效果的角色被KO时，将自己牌库上方最多1张卡加入生命牌库上方。\n【启动主要】【每回合1次】重整自己最多1名力量6000以下持有属性(智)的角色。",
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【每回合1次】自己持有屬性(智)且不擁有【防禦】效果的角色被KO時，將自己卡組上面最多1張卡加入生命卡組上面。\n【啟動主要】【每回合1次】重整自己最多1名力量6000以下持有屬性(智)的角色。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 1,
-   "cardImg": "custom/EB05-010.jpg"
+   "cardImg": "custom/EB05-010.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-011",
-   "cardName": "乙姫",
+   "cardName": "乙姬",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "1",
@@ -191,18 +219,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【登场时】自己的领袖为「白星」时，可以将自己生命牌库上方１张卡翻至背面朝上：休息对手最多１名费用５以下的角色。",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【登場時】自己的領航卡為「白星」時，可以將自己生命卡組上面1張卡翻至背面朝上：休息對手最多1名費用5以下的角色。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-011.jpg"
+   "cardImg": "custom/EB05-011.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-012",
-   "cardName": "凯米",
+   "cardName": "海咪",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "3",
@@ -211,18 +240,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【登场时】休息对手最多1名费用6以下的角色。",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【登場時】休息對手最多1名費用6以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-012.jpg"
+   "cardImg": "custom/EB05-012.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-013",
-   "cardName": "夏莉",
+   "cardName": "雪莉",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "3",
@@ -231,14 +261,15 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【对方的攻击时】【每回合1次】可以休息自己1个咚!!：自己具有特征《鱼人族》或《人鱼族》的领袖本次战斗中力量+2000。",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【對方攻擊時】【每回合1次】可以休息自己1個咚‼：自己擁有特徵《魚人族》或《人魚族》的領航卡在這場對戰中力量值+2000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-013.jpg"
+   "cardImg": "custom/EB05-013.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-014",
@@ -251,18 +282,40 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【登场时】查看自己牌库上方５张卡，公开展示最多２张「梅卡洛」或具有<海王类>特征的卡加入手牌，然后将剩余的卡放至弃牌区。\n【启动主要】可以休息这名角色：自己最多１名力量６０００以下具有特征<海王类>的角色本回合中获得【速攻】",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【登場時】查看自己卡組上面5張卡，公開展示最多2張「梅卡洛」或擁有《海王類》特徵的卡加入手牌，然後將剩餘的卡放至廢棄區。\n【啟動主要】可以休息這名角色：自己最多1名力量6000以下擁有特徵《海王類》的角色這個回合獲得【速攻】",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-014.jpg"
+   "cardImg": "custom/EB05-014.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-015",
+   "cardName": "達斯琪",
+   "cardType": "角色",
+   "cardColor": "绿",
+   "cardLife": "5",
+   "cardPower": "7000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "斩"
+   ],
+   "cardFeatures": "東方藍/海軍",
+   "cardTextDesc": "",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-015.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-016",
-   "cardName": "妮古·罗宾",
+   "cardName": "妮可・羅賓",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "6",
@@ -271,18 +324,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【我方的回合中】【登场时】从自己手牌中登场最多1名费用5以下持有属性(知)的角色。",
-   "cardTrigger": "休息对手最多1名费用6以下的角色。",
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【我方回合中】【登場時】從自己手牌中登場最多1名費用5以下持有屬性(知)的角色。",
+   "cardTrigger": "休息對手最多1名費用6以下的角色。",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-016.jpg"
+   "cardImg": "custom/EB05-016.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-017",
-   "cardName": "人鱼咖啡厅舞者",
+   "cardName": "人魚咖啡廳舞者",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "1",
@@ -291,18 +345,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【对方的攻击时】可以休息自己1个咚!!，将这名角色放至弃牌堆：自己具有特征《鱼人族》或《人鱼族》的领袖本次战斗中力量+4000。",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【對方攻擊時】可以休息自己1個咚‼，將這名角色放至廢棄區：自己擁有特徵《魚人族》或《人魚族》的領航卡在這場對戰中力量值+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-017.jpg"
+   "cardImg": "custom/EB05-017.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-018",
-   "cardName": "莉贝卡",
+   "cardName": "蕾貝卡",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "1",
@@ -311,14 +366,34 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "德莱斯罗兹",
-   "cardTextDesc": "【登场时】对手最多1名费用6以下的休息角色，在下个对手重整阶段无法进行重整。",
+   "cardFeatures": "多雷斯羅薩",
+   "cardTextDesc": "【登場時】對手最多1名費用6以下的休息角色，在下個對手重整階段無法進行重整。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-018.jpg"
+   "cardImg": "custom/EB05-018.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-019",
+   "cardName": "我要讓這個國家開國!!我要和妳們一起戰鬥!!!",
+   "cardType": "事件",
+   "cardColor": "绿",
+   "cardLife": "1",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "和之國",
+   "cardTextDesc": "【反擊】可將1張自己的卡片置為休息狀態：最多1張自己擁有《和之國》特徵的領航卡或角色卡，在這場對戰中，力量值+4000。",
+   "cardTrigger": "若對手的生命值卡在3張以下時，使最多1張自己手牌中力量值6000以下擁有《和之國》特徵的角色卡登場。",
+   "cardRarity": "R",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-019.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-020",
@@ -329,18 +404,19 @@
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "人鱼族/鱼人岛",
-   "cardTextDesc": "【启动主要】可以休息自己的领袖「白星」：抽两张卡",
+   "cardFeatures": "人魚族/魚人島",
+   "cardTextDesc": "【啟動主要】可以休息自己的領航卡「白星」：抽兩張卡",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-020.jpg"
+   "cardImg": "custom/EB05-020.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-021",
-   "cardName": "爱比达",
+   "cardName": "亞爾麗塔",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "9",
@@ -349,14 +425,15 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "十字公会",
-   "cardTextDesc": "【登场时】抽2张卡，从自己手牌中登场最多1名费用8以下具有特征《十字公会》的角色卡，本回合中自己无法再登场角色卡。\n【攻击时】对手最多1名角色本回合中的效果无效。",
+   "cardFeatures": "十字公會",
+   "cardTextDesc": "【登場時】抽2張卡，從自己手牌中登場最多1名費用8以下擁有特徵《十字公會》的角色卡，這個回合自己無法再登場角色卡。\n【攻擊時】對手最多1名角色這個回合的效果無效。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-021.jpg"
+   "cardImg": "custom/EB05-021.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-022",
@@ -369,14 +446,15 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "鱼人族/鱼人岛",
-   "cardTextDesc": "【KO时】抽2张卡。",
+   "cardFeatures": "魚人族/魚人島",
+   "cardTextDesc": "【KO時】抽2張卡。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-022.jpg"
+   "cardImg": "custom/EB05-022.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-023",
@@ -389,18 +467,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "和之国",
-   "cardTextDesc": "【登场时】可以舍弃自己手牌中2张事件卡：抽3张卡。",
+   "cardFeatures": "和之國",
+   "cardTextDesc": "【登場時】可以廢棄自己手牌中2張事件卡：抽3張卡。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-023.jpg"
+   "cardImg": "custom/EB05-023.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-024",
-   "cardName": "小萨迪",
+   "cardName": "小莎蒂",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "1",
@@ -409,18 +488,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "推进城",
-   "cardTextDesc": "自己的领袖具有特征《推进城》时，这名角色获得【阻挡者】，费用+2。",
+   "cardFeatures": "推進城",
+   "cardTextDesc": "自己的領航卡擁有特徵《推進城》時，這名角色獲得【防禦】，費用+2。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-024.jpg"
+   "cardImg": "custom/EB05-024.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-025",
-   "cardName": "多米诺",
+   "cardName": "托米諾",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "2",
@@ -429,18 +509,40 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "推进城",
-   "cardTextDesc": "【登场时】查看自己牌库上方3张卡，公开展示最多1张具有特征《推进城》的卡并加入手牌。然后将剩余的卡按任意顺序放至牌库下方。",
-   "cardTrigger": "发动这张卡的【登场时】效果。",
+   "cardFeatures": "推進城",
+   "cardTextDesc": "【登場時】查看自己卡組上面3張卡，公開展示最多1張擁有特徵《推進城》的卡並加入手牌。然後將剩餘的卡按任意順序放至卡組下面。",
+   "cardTrigger": "發動這張卡的【登場時】效果。",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-025.jpg"
+   "cardImg": "custom/EB05-025.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-026",
+   "cardName": "希娜",
+   "cardType": "角色",
+   "cardColor": "蓝",
+   "cardLife": "7",
+   "cardPower": "8000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "特"
+   ],
+   "cardFeatures": "海軍",
+   "cardTextDesc": "",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-026.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-027",
-   "cardName": "云雀",
+   "cardName": "雲雀",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "5",
@@ -449,18 +551,19 @@
    "cardAttribute": [
     "射"
    ],
-   "cardFeatures": "海军/利刃",
-   "cardTextDesc": "【登场时】抽3张卡，舍弃自己2张手牌。然后将最多1名费用2以下的角色返回拥有者牌库下方。",
+   "cardFeatures": "海軍/SWORD",
+   "cardTextDesc": "【登場時】抽3張卡，廢棄自己2張手牌。然後將最多1名費用2以下的角色返回擁有者卡組下面。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-027.jpg"
+   "cardImg": "custom/EB05-027.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-028",
-   "cardName": "波尔·汉库珂",
+   "cardName": "波雅・漢考克",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "4",
@@ -469,36 +572,57 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "推进城/王下七武海/九蛇海盗团",
-   "cardTextDesc": "【登场时】对手的手牌为9张以上时，对手自己舍弃4张手牌。",
+   "cardFeatures": "推進城/王下七武海/九蛇海賊團",
+   "cardTextDesc": "【登場時】對手的手牌為9張以上時，對手自己廢棄4張手牌。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-028.jpg"
+   "cardImg": "custom/EB05-028.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-029",
-   "cardName": "袷羽槛",
+   "cardName": "袷羽檻",
    "cardType": "事件",
    "cardColor": "蓝",
    "cardLife": "5",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "海军",
-   "cardTextDesc": "【主要】可以舍弃自己1张手牌：对手最多1名费用6以下的角色，本回合中的效果无效，返回拥有者手牌。",
-   "cardTrigger": "抽2张卡，舍弃自己1张手牌。",
+   "cardFeatures": "海軍",
+   "cardTextDesc": "【主要】可以廢棄自己1張手牌：對手最多1名費用6以下的角色，這個回合的效果無效，返回擁有者手牌。",
+   "cardTrigger": "抽2張卡，廢棄自己1張手牌。",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-029.jpg"
+   "cardImg": "custom/EB05-029.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-030",
+   "cardName": "大家都要保重喔♡",
+   "cardType": "事件",
+   "cardColor": "蓝",
+   "cardLife": "2",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "東方藍/草帽一行人",
+   "cardTextDesc": "【主要】若自己的領航卡是「娜美」時，將最多1張費用5以下的角色卡放回持有者的手牌。\n【反擊】抽1張卡片。之後，最多1張自己的領航卡或角色卡，在這個回合，力量值+1000。",
+   "cardTrigger": "",
+   "cardRarity": "R",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-030.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-031",
-   "cardName": "文斯莫克·蕾玖",
+   "cardName": "賓什莫克・蕾玖",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "4",
@@ -507,18 +631,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "文斯莫克家族/杰尔玛66",
-   "cardTextDesc": "【登场时】咚!!-1：自己的领袖具有特征《文斯莫克家族》时，将自己牌库上方10张卡放至弃牌堆。\n【启动主要】可以将这名角色放至弃牌堆：对手有原力量8000以上的角色时，从咚!!牌库追加最多4个活动的咚!!进场。",
+   "cardFeatures": "賓什莫克家/杰爾馬66",
+   "cardTextDesc": "【登場時】咚‼-1：自己的領航卡擁有特徵《賓什莫克家》時，將自己卡組上面10張卡放至廢棄區。\n【啟動主要】可以將這名角色放至廢棄區：對手有原力量8000以上的角色時，從咚‼卡組追加最多4個活動的咚‼進場。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-031.jpg"
+   "cardImg": "custom/EB05-031.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-032",
-   "cardName": "妮古·罗宾",
+   "cardName": "妮可・羅賓",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "1",
@@ -527,18 +652,40 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【登场时】自己的领袖具有特征《草帽一伙》且自己场上的咚!!数量比对手场上的咚!!少6个以上时抽3张卡，舍弃2张手牌。然后从自己的咚!!牌库追加最多4个休息的咚!!进场。",
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【登場時】自己的領航卡擁有特徵《草帽一行人》且自己場上的咚‼數量比對手場上的咚‼少6個以上時抽3張卡，廢棄2張手牌。然後從自己的咚‼卡組追加最多4個休息的咚‼進場。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-032.jpg"
+   "cardImg": "custom/EB05-032.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-033",
+   "cardName": "烏爾蒂",
+   "cardType": "角色",
+   "cardColor": "紫",
+   "cardLife": "4",
+   "cardPower": "6000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "百獸海賊團",
+   "cardTextDesc": "",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-033.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-034",
-   "cardName": "糖糖",
+   "cardName": "砂糖",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "2",
@@ -547,18 +694,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "唐吉诃德海盗团",
-   "cardTextDesc": "【登场时】咚!!-2：自己有7个以上的咚!!时，对手最多1名角色本回合中力量-4000。",
+   "cardFeatures": "唐吉訶德海賊團",
+   "cardTextDesc": "【登場時】咚‼-2：自己有7個以上的咚‼時，對手最多1名角色這個回合力量值-4000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-034.jpg"
+   "cardImg": "custom/EB05-034.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-035",
-   "cardName": "斯皮德",
+   "cardName": "史比托",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "6",
@@ -567,18 +715,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "SMILE/百兽海盗团",
-   "cardTextDesc": "【登场时】咚!!-1：查看自己牌库上方5张卡，公开展示最多2张具有特征《SMILE》的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方。然后从自己手牌中登场最多2名力量5000以下具有特征《SMILE》的角色卡。",
+   "cardFeatures": "SMILE/百獸海賊團",
+   "cardTextDesc": "【登場時】咚‼-1：查看自己卡組上面5張卡，公開展示最多2張擁有特徵《SMILE》的卡並加入手牌，將剩餘的卡按任意順序放至卡組下面。然後從自己手牌中登場最多2名力量5000以下擁有特徵《SMILE》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-035.jpg"
+   "cardImg": "custom/EB05-035.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-036",
-   "cardName": "阿鹤",
+   "cardName": "阿鶴",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "4",
@@ -587,18 +736,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "海军",
-   "cardTextDesc": "【登场时】自己的领袖具有特征《海军》时，抽1张卡，从咚!!牌库追加最多1个休息的咚!!进场。",
+   "cardFeatures": "海軍",
+   "cardTextDesc": "【登場時】自己的領航卡擁有特徵《海軍》時，抽1張卡，從咚‼卡組追加最多1個休息的咚‼進場。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-036.jpg"
+   "cardImg": "custom/EB05-036.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-037",
-   "cardName": "黑色玛利亚",
+   "cardName": "黑瑪麗亞",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "1",
@@ -607,14 +757,15 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "百兽海盗团",
-   "cardTextDesc": "【登场时】查看自己牌库上方3张卡，公开展示最多1张具有特征《百兽海盗团》的卡并加入手牌，将剩余的卡按任意顺序放至牌库下方。",
+   "cardFeatures": "百獸海賊團",
+   "cardTextDesc": "【登場時】查看自己卡組上面3張卡，公開展示最多1張擁有特徵《百獸海賊團》的卡並加入手牌，將剩餘的卡按任意順序放至卡組下面。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-037.jpg"
+   "cardImg": "custom/EB05-037.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-038",
@@ -627,14 +778,15 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "赛诺尔·平克",
-   "cardTextDesc": "【登场时】自己最多1名「赛诺尔·平克」本回合中力量+3000。",
+   "cardFeatures": "賽諾爾·平克",
+   "cardTextDesc": "【登場時】自己最多1名「粉紅先生」這個回合力量值+3000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-038.jpg"
+   "cardImg": "custom/EB05-038.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-039",
@@ -645,18 +797,59 @@
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "文斯莫克家族/杰尔玛66",
-   "cardTextDesc": "【主要】咚!!-1：自己的领袖具有特征《文斯莫克家族》时，对手最多1名角色本回合中力量-4000。\n【反击】咚!!-1：自己的领袖本次战斗中力量+4000。",
+   "cardFeatures": "賓什莫克家/杰爾馬66",
+   "cardTextDesc": "【主要】咚‼-1：自己的領航卡擁有特徵《賓什莫克家》時，對手最多1名角色這個回合力量值-4000。\n【反擊】咚‼-1：自己的領航卡在這場對戰中力量值+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-039.jpg"
+   "cardImg": "custom/EB05-039.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-040",
+   "cardName": "你需要我對吧？!!♡",
+   "cardType": "事件",
+   "cardColor": "紫",
+   "cardLife": "0",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "唐吉訶德海賊團",
+   "cardTextDesc": "【主要】可將1張自己活動狀態的咚‼卡放回咚‼卡組：若自己的領航卡擁有《唐吉訶德海賊團》特徵時，抽3張卡片，並廢棄1張自己的手牌。\n【反擊】自己的領航卡，在這場對戰中，力量值+2000。",
+   "cardTrigger": "",
+   "cardRarity": "R",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-040.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-041",
+   "cardName": "可亞拉",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "2",
+   "cardPower": "4000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "多雷斯羅薩/革命軍",
+   "cardTextDesc": "",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-041.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-042",
-   "cardName": "阿忍",
+   "cardName": "忍",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "4",
@@ -665,18 +858,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "和之国",
-   "cardTextDesc": "【登场时】抽2张卡，舍自己2张手牌。",
+   "cardFeatures": "和之國",
+   "cardTextDesc": "【登場時】抽2張卡，舍自己2張手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-042.jpg"
+   "cardImg": "custom/EB05-042.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-043",
-   "cardName": "佩罗娜",
+   "cardName": "培羅娜",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "4",
@@ -685,18 +879,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "恐怖之船海盗团",
-   "cardTextDesc": "【KO时】KO或休息对手最多1名费用6以下的角色。",
+   "cardFeatures": "恐怖三桅帆船海賊團",
+   "cardTextDesc": "【KO時】KO或休息對手最多1名費用6以下的角色。",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-043.jpg"
+   "cardImg": "custom/EB05-043.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-044",
-   "cardName": "Miss 父亲节",
+   "cardName": "Miss父親節",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "2",
@@ -705,18 +900,19 @@
    "cardAttribute": [
     "射"
    ],
-   "cardFeatures": "B・W/巴洛克工作室",
-   "cardTextDesc": "【登场时】自己的领袖特征包含[B.W]且对手有费用0的角色时，对手的领袖本回合中力量 -1000。",
+   "cardFeatures": "B・W",
+   "cardTextDesc": "【登場時】自己的領航卡特徵包含[B.W]且對手有費用0的角色時，對手的領航卡這個回合力量 -1000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-044.jpg"
+   "cardImg": "custom/EB05-044.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-045",
-   "cardName": "Miss 星期一",
+   "cardName": "Miss星期一",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "2",
@@ -725,14 +921,15 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "B・W/巴洛克工作室",
-   "cardTextDesc": "【登场时】ＫＯ自己最多１名特征包含「Ｂ．Ｗ」的角色\n【KO时】查看自己牌库上方３张卡，公开展示最多１张特征包含「Ｂ．Ｗ」的卡并加入手牌。然后将剩余的卡放至弃牌区。",
+   "cardFeatures": "B・W",
+   "cardTextDesc": "【登場時】KO自己最多1名特徵包含「B．W」的角色\n【KO時】查看自己卡組上面3張卡，公開展示最多1張特徵包含「B．W」的卡並加入手牌。然後將剩餘的卡放至廢棄區。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-045.jpg"
+   "cardImg": "custom/EB05-045.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-046",
@@ -745,14 +942,15 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "和之国",
-   "cardTextDesc": "对手有原力量8000以上的角色时，这名角色获得【阻挡者】・力量+3000・\n【对方的攻击时】 可以舍弃自己1张手牌：自己的\n弃牌有10张以上时，自己的领袖本回合中力量改为7000。",
+   "cardFeatures": "和之國",
+   "cardTextDesc": "對手有原力量8000以上的角色時，這名角色獲得【防禦】・力量值+3000・\n【對方攻擊時】 可以廢棄自己1張手牌：自己的\n棄牌有10張以上時，自己的領航卡這個回合力量改為7000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-046.jpg"
+   "cardImg": "custom/EB05-046.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-047",
@@ -765,50 +963,53 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "巨人族/埃鲁巴夫",
-   "cardTextDesc": "这名角色费用+12\n【登场时】可以舍弃自己１张手牌：从自己的弃牌堆登场最多１名费用２以下的角色卡",
+   "cardFeatures": "巨人族/艾爾帕布",
+   "cardTextDesc": "這名角色費用+12\n【登場時】可以廢棄自己1張手牌：從自己的廢棄區登場最多1名費用2以下的角色卡",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-047.jpg"
+   "cardImg": "custom/EB05-047.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-048",
-   "cardName": "刺猬炸弹",
+   "cardName": "刺蝟炸彈",
    "cardType": "事件",
    "cardColor": "黑",
    "cardLife": "1",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "B・W/巴洛克工作室",
-   "cardTextDesc": "【启动主要】可以休息自己1个咚！！，KO自己1名\n特徴包含『B・W』的角色：对手所有费用0\n的角色本回合中无法发动 【阻挡者】效果。\n【反击】自己的领袖本次战斗中力量+3000",
+   "cardFeatures": "B・W",
+   "cardTextDesc": "【啟動主要】可以休息自己1個咚‼，KO自己1名\n特徵包含『B・W』的角色：對手所有費用0\n的角色這個回合無法發動 【防禦】效果。\n【反擊】自己的領航卡在這場對戰中力量值+3000",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-048.jpg"
+   "cardImg": "custom/EB05-048.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-049",
-   "cardName": "特级幽灵",
+   "cardName": "特級幽靈",
    "cardType": "事件",
    "cardColor": "黑",
    "cardLife": "1",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "恐怖之船海盗团",
-   "cardTextDesc": "【主要】可以KO自己1名具有特征《恐怖之船海盗团》的角色：最多1名对手的角色本回合中费用-3。\n【反击】可以KO自己1名具有特征《恐怖之船海盗团》的角色：自己的领袖或最多1名角色本次战斗中力量+4000。",
+   "cardFeatures": "恐怖三桅帆船海賊團",
+   "cardTextDesc": "【主要】可以KO自己1名擁有特徵《恐怖之船海賊團》的角色：最多1名對手的角色這個回合費用-3。\n【反擊】可以KO自己1名擁有特徵《恐怖之船海賊團》的角色：自己的領航卡或最多1名角色在這場對戰中力量值+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-049.jpg"
+   "cardImg": "custom/EB05-049.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-050",
@@ -821,14 +1022,15 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "蛋头岛/科学家",
-   "cardTextDesc": "【登场时】查看自己牌库上方4张卡，公开展示最多1张具有属性(智)的卡并加入手牌。然后将剩余的卡按任意顺序放至牌库下方。",
-   "cardTrigger": "发动这张卡的【登场时】效果。",
+   "cardFeatures": "蛋頭/科學家",
+   "cardTextDesc": "【登場時】查看自己卡組上面4張卡，公開展示最多1張擁有屬性(智)的卡並加入手牌。然後將剩餘的卡按任意順序放至卡組下面。",
+   "cardTrigger": "發動這張卡的【登場時】效果。",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-050.jpg"
+   "cardImg": "custom/EB05-050.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-051",
@@ -841,18 +1043,19 @@
    "cardAttribute": [
     "射"
    ],
-   "cardFeatures": "革命军",
-   "cardTextDesc": "【登场时】休息对手最多1名费用为双方生命卡数量总和的角色。",
-   "cardTrigger": "将这张卡登场。",
+   "cardFeatures": "革命軍",
+   "cardTextDesc": "【登場時】休息對手最多1名費用為雙方生命卡數量總和的角色。",
+   "cardTrigger": "將這張卡登場。",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-051.jpg"
+   "cardImg": "custom/EB05-051.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-052",
-   "cardName": "格罗丽欧莎",
+   "cardName": "嘉蘭",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "4",
@@ -861,18 +1064,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "亚马逊·百合/洛克斯海盗团",
-   "cardTextDesc": "自己承受伤害时，作为取代可以将这名角色放至弃牌堆。",
-   "cardTrigger": "抽2张卡，舍弃自己1张手牌。",
+   "cardFeatures": "亞馬遜百合/洛克斯海賊團",
+   "cardTextDesc": "自己承受傷害時，作為取代可以將這名角色放至廢棄區。",
+   "cardTrigger": "抽2張卡，廢棄自己1張手牌。",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-052.jpg"
+   "cardImg": "custom/EB05-052.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-053",
-   "cardName": "夏洛特．普莱丽芮",
+   "cardName": "夏洛特・普萊麗芮",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "4",
@@ -881,18 +1085,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "鱼人岛/人鱼族/太阳海盗团",
-   "cardTextDesc": "【攻击时】<一回一次>对手的手牌为9张以上时，将自己最多１张手牌加入生命区上方。",
-   "cardTrigger": "可以舍弃自己１张手牌：自己的生命卡为２张以下时，将这张卡登场",
+   "cardFeatures": "魚人島/人魚族/太陽海賊團",
+   "cardTextDesc": "【攻擊時】《一回一次》對手的手牌為9張以上時，將自己最多1張手牌加入生命區上方。",
+   "cardTrigger": "可以廢棄自己1張手牌：自己的生命卡為2張以下時，將這張卡登場",
    "cardRarity": "",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-053.jpg"
+   "cardImg": "custom/EB05-053.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-054",
-   "cardName": "夏洛特·布璃叡",
+   "cardName": "夏洛特・布璃叡",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "3",
@@ -901,18 +1106,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "大妈海盗团",
+   "cardFeatures": "BIG MOM海賊團",
    "cardTextDesc": "",
-   "cardTrigger": "从自己手牌中登场最多2名力量4000以下具有特征《大妈海盗团》的角色卡。",
+   "cardTrigger": "從自己手牌中登場最多2名力量4000以下擁有特徵《大媽海賊團》的角色卡。",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-054.jpg"
+   "cardImg": "custom/EB05-054.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-055",
-   "cardName": "奈美",
+   "cardName": "娜美",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "5",
@@ -921,18 +1127,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "东海/草帽一伙",
-   "cardTextDesc": "【我方的回合中】【登场时】自己的领袖持有属性(智)时，将自己牌库上方最多1张卡加入生命牌库上方。",
-   "cardTrigger": "可以舍弃自己1张手牌：自己的生命卡为2张以下时，将这张卡登场。",
+   "cardFeatures": "東方藍/草帽一行人",
+   "cardTextDesc": "【我方回合中】【登場時】自己的領航卡持有屬性(智)時，將自己卡組上面最多1張卡加入生命卡組上面。",
+   "cardTrigger": "可以廢棄自己1張手牌：自己的生命卡為2張以下時，將這張卡登場。",
    "cardRarity": "SR",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-055.jpg"
+   "cardImg": "custom/EB05-055.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-056",
-   "cardName": "妮可．欧尔比雅",
+   "cardName": "妮可・歐爾比雅",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "1",
@@ -941,18 +1148,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "奥哈拉",
-   "cardTextDesc": "【登场时】可以舍弃自己手牌中１张具有【触发】效果的卡：自己的领袖为「妮可．罗宾」时，抽２张卡",
-   "cardTrigger": "将这张卡登场",
+   "cardFeatures": "歐哈拉",
+   "cardTextDesc": "【登場時】可以廢棄自己手牌中1張擁有【觸發器】效果的卡：自己的領航卡為「妮可．羅賓」時，抽2張卡",
+   "cardTrigger": "將這張卡登場",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-056.jpg"
+   "cardImg": "custom/EB05-056.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "EB05-057",
-   "cardName": "诺琪可",
+   "cardName": "虹子",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "2",
@@ -961,36 +1169,99 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "东海",
-   "cardTextDesc": "【启动主要】【每回合1次】附加最多1个休息的咚!!到自己1名具有属性(特)或(智)的领袖或角色上。",
-   "cardTrigger": "自己的生命卡为2张以下时，从自己手牌中登场最多1名力量6000以下且具有【触发】效果的角色卡。",
+   "cardFeatures": "東方藍",
+   "cardTextDesc": "【啟動主要】【每回合1次】附加最多1個休息的咚‼到自己1名擁有屬性(特)或(智)的領航卡或角色上。",
+   "cardTrigger": "自己的生命卡為2張以下時，從自己手牌中登場最多1名力量6000以下且擁有【觸發器】效果的角色卡。",
    "cardRarity": "R",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-057.jpg"
+   "cardImg": "custom/EB05-057.jpg",
+   "textLang": "tw"
   },
   {
-   "cardNumber": "EB05-060",
-   "cardName": "「莉莉丝」就拜托你们了!!!",
+   "cardNumber": "EB05-058",
+   "cardName": "貝爾梅爾",
+   "cardType": "角色",
+   "cardColor": "黄",
+   "cardLife": "4",
+   "cardPower": "6000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "特"
+   ],
+   "cardFeatures": "東方藍/前海軍",
+   "cardTextDesc": "",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-058.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-059",
+   "cardName": "夏洛特・普琳!!",
    "cardType": "事件",
    "cardColor": "黄",
    "cardLife": "1",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "蛋头岛/科学家",
-   "cardTextDesc": "【主要】可以将自己1张费用5以上具有特征《蛋头岛》的角色放至弃牌堆：将自己牌库上方最多1张卡加入生命牌库上方。\n【反击】可以将自己生命牌库上方1张卡翻至正面朝上：自己的领袖或最多1名角色本次战斗中力量+4000。",
+   "cardFeatures": "BIG MOM海賊團",
+   "cardTextDesc": "【主要】抽1張卡片。之後，自己所有原本力量值4000且擁有《BIG MOM海賊團》特徵的角色卡，在下一個對手結束階段結束前，不會因對戰而遭到KO。",
+   "cardTrigger": "抽1張卡片。之後，使最多1張自己手牌中力量值4000且持有【觸發器】的角色卡登場。",
+   "cardRarity": "R",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-059.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-060",
+   "cardName": "「莉莉絲」就拜託你們了!!!",
+   "cardType": "事件",
+   "cardColor": "黄",
+   "cardLife": "1",
+   "cardPower": "-",
+   "cardAttack": "-",
+   "cardAttribute": [],
+   "cardFeatures": "蛋頭/科學家",
+   "cardTextDesc": "【主要】可以將自己1張費用5以上擁有特徵《蛋頭》的角色放至廢棄區：將自己卡組上面最多1張卡加入生命卡組上面。\n【反擊】可以將自己生命卡組上面1張卡翻至正面朝上：自己的領航卡或最多1名角色在這場對戰中力量值+4000。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "EB-05【EB-05】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/EB05-060.jpg"
+   "cardImg": "custom/EB05-060.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "EB05-061",
+   "cardName": "娜美",
+   "cardType": "角色",
+   "cardColor": "红",
+   "cardLife": "3",
+   "cardPower": "4000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "特"
+   ],
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【每回合1次】自己原力量6000以下的角色因對手的效果而離場時，作為取代可以將自己生命卡組上面1張卡加入手牌。\n【登場時】從自己手牌中登場最多1名紅色費用2以下的角色卡。",
+   "cardTrigger": "",
+   "cardRarity": "SEC",
+   "cardOfferType": "EB-05【EB-05】",
+   "subscript": "",
+   "mixedColor": 0,
+   "cardImg": "custom/EB05-061.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-001",
-   "cardName": "卡鲁",
+   "cardName": "飛毛腿",
    "cardType": "领袖",
    "cardColor": "红/蓝",
    "cardLife": "4",
@@ -999,18 +1270,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "动物/阿拉巴斯坦王国",
-   "cardTextDesc": "自己所有同时具有特征《动物》和《阿拉巴斯坦王国》的角色获得【速攻】和+1000力量。\n【每回合1次】当自己具有特征《阿拉巴斯坦王国》的角色KO时，抽1张卡。",
+   "cardFeatures": "動物/阿拉巴斯坦王國",
+   "cardTextDesc": "自己所有同時擁有特徵《動物》和《阿拉巴斯坦王國》的角色獲得【速攻】和+1000力量。\n【每回合1次】當自己擁有特徵《阿拉巴斯坦王國》的角色KO時，抽1張卡。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 1,
-   "cardImg": "custom/OP18-001.jpg"
+   "cardImg": "custom/OP18-001.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-003",
-   "cardName": "海猫",
+   "cardName": "海貓",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "5",
@@ -1019,18 +1291,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "动物/阿拉巴斯坦王国",
+   "cardFeatures": "動物/阿拉巴斯坦王國",
    "cardTextDesc": "",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-003.jpg"
+   "cardImg": "custom/OP18-003.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-011",
-   "cardName": "奈菲特·薇薇",
+   "cardName": "納菲魯塔利・薇薇",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "2",
@@ -1039,18 +1312,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "阿拉巴斯坦王国",
-   "cardTextDesc": "自己所有同时具有特征《动物》和《阿拉巴斯坦王国》的角色力量+1000。\n【对方的回合中】这名角色获得【阻挡者】，力量+6000。",
+   "cardFeatures": "阿拉巴斯坦王國",
+   "cardTextDesc": "自己所有同時擁有特徵《動物》和《阿拉巴斯坦王國》的角色力量值+1000。\n【對方回合中】這名角色獲得【防禦】，力量值+6000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-011.jpg"
+   "cardImg": "custom/OP18-011.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-016",
-   "cardName": "蒙奇·D·路飞",
+   "cardName": "蒙其・D・魯夫",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "6",
@@ -1059,18 +1333,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "阿拉巴斯坦王国/草帽一伙",
-   "cardTextDesc": "【流放】\n【KO时】从自己手牌中登场最多1名力量6000以下具有特征《阿拉巴斯坦王国》的角色卡。",
+   "cardFeatures": "阿拉巴斯坦王國/草帽一行人",
+   "cardTextDesc": "【消失】\n【KO時】從自己手牌中登場最多1名力量6000以下擁有特徵《阿拉巴斯坦王國》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-016.jpg"
+   "cardImg": "custom/OP18-016.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-017",
-   "cardName": "罗罗诺亚·索隆",
+   "cardName": "羅羅亞・索隆",
    "cardType": "角色",
    "cardColor": "红",
    "cardLife": "4",
@@ -1079,18 +1354,19 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "阿拉巴斯坦王国/草帽一伙",
-   "cardTextDesc": "【每回合1次】自己具有特征《阿拉巴斯坦王国》的角色因对手的效果而离场时，作为取代可以将自己的领袖本回合中力量-2000。\n【攻击时】自己最多1名具有特征《阿拉巴斯坦王国》的角色本回合中获得【速攻】。",
+   "cardFeatures": "阿拉巴斯坦王國/草帽一行人",
+   "cardTextDesc": "【每回合1次】自己擁有特徵《阿拉巴斯坦王國》的角色因對手的效果而離場時，作為取代可以將自己的領航卡這個回合力量值-2000。\n【攻擊時】自己最多1名擁有特徵《阿拉巴斯坦王國》的角色這個回合獲得【速攻】。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-017.jpg"
+   "cardImg": "custom/OP18-017.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-021",
-   "cardName": "弗兰奇",
+   "cardName": "佛朗基",
    "cardType": "领袖",
    "cardColor": "绿/紫",
    "cardLife": "4",
@@ -1099,18 +1375,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "W7/弗兰奇一家/草帽一伙",
-   "cardTextDesc": "所有在手牌中的舞台卡获得+3000反击值。\n【启动主要】【每回合1次】咚!!-1：从自己手牌中登场最多1张费用5以下的舞台卡。",
+   "cardFeatures": "W7/佛朗基家族/草帽一行人",
+   "cardTextDesc": "所有在手牌中的舞臺卡獲得+3000反擊值。\n【啟動主要】【每回合1次】咚‼-1：從自己手牌中登場最多1張費用5以下的舞臺卡。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 1,
-   "cardImg": "custom/OP18-021.jpg"
+   "cardImg": "custom/OP18-021.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-022",
-   "cardName": "蒙奇·D·路飞",
+   "cardName": "蒙其・D・魯夫",
    "cardType": "领袖",
    "cardColor": "绿",
    "cardLife": "5",
@@ -1119,18 +1396,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "W7/草帽一伙",
-   "cardTextDesc": "【咚!!×3】【攻击时】【每回合1次】可以重整这名领袖。若这么做时，这名领袖在下个自己的重整阶段将无法进行重整。",
+   "cardFeatures": "W7/草帽一行人",
+   "cardTextDesc": "【咚‼×3】【攻擊時】【每回合1次】可以重整這名領航卡。若這麼做時，這名領航卡在下個自己的重整階段將無法進行重整。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-022.jpg"
+   "cardImg": "custom/OP18-022.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-025",
-   "cardName": "公贝",
+   "cardName": "公貝",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "1",
@@ -1139,14 +1417,15 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "动物/W7",
-   "cardTextDesc": "【我方的回合结束时】这名角色为休息状态时，重整自己的领袖。",
+   "cardFeatures": "動物/W7",
+   "cardTextDesc": "【我方回合結束時】這名角色為休息狀態時，重整自己的領航卡。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-025.jpg"
+   "cardImg": "custom/OP18-025.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-028",
@@ -1160,17 +1439,18 @@
     "智"
    ],
    "cardFeatures": "W7",
-   "cardTextDesc": "【启动主要】可以休息自己1名「公贝」：重整自己的领袖「蒙奇·D·路飞」。",
+   "cardTextDesc": "【啟動主要】可以休息自己1名「公貝」：重整自己的領航卡「蒙其・D・魯夫」。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-028.jpg"
+   "cardImg": "custom/OP18-028.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-031",
-   "cardName": "妮古·罗宾",
+   "cardName": "妮可・羅賓",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "4",
@@ -1179,18 +1459,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "W7/草帽一伙",
-   "cardTextDesc": "【对方的回合中】自己的角色因对手的效果而离场时，作为取代可以休息这名角色。\n【我方的回合结束时】重整自己最多1张具有特征《W7》的卡。",
+   "cardFeatures": "W7/草帽一行人",
+   "cardTextDesc": "【對方回合中】自己的角色因對手的效果而離場時，作為取代可以休息這名角色。\n【我方回合結束時】重整自己最多1張擁有特徵《W7》的卡。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-031.jpg"
+   "cardImg": "custom/OP18-031.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-034",
-   "cardName": "弗兰奇",
+   "cardName": "佛朗基",
    "cardType": "角色",
    "cardColor": "绿",
    "cardLife": "6",
@@ -1199,18 +1480,19 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "W7/弗兰奇一家/草帽一伙",
-   "cardTextDesc": "【登场时】从自己手牌中登场最多1张费用5以下具有特征《弗兰奇一家》或《草帽一伙》的卡。然后自己有费用5以上的舞台时，休息对手最多1名费用6以下的角色。",
+   "cardFeatures": "W7/佛朗基家族/草帽一行人",
+   "cardTextDesc": "【登場時】從自己手牌中登場最多1張費用5以下擁有特徵《弗蘭奇一家》或《草帽一行人》的卡。然後自己有費用5以上的舞臺時，休息對手最多1名費用6以下的角色。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-034.jpg"
+   "cardImg": "custom/OP18-034.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-041",
-   "cardName": "Ms.全周日",
+   "cardName": "Miss All星期天",
    "cardType": "领袖",
    "cardColor": "蓝",
    "cardLife": "5",
@@ -1220,17 +1502,18 @@
     "智"
    ],
    "cardFeatures": "B・W",
-   "cardTextDesc": "自己原力量3000以上特征包含『B・W』的角色被KO时抽1张卡，对手自己舍弃1张手牌。",
+   "cardTextDesc": "自己原力量3000以上特徵包含『B・W』的角色被KO時抽1張卡，對手自己廢棄1張手牌。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-041.jpg"
+   "cardImg": "custom/OP18-041.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-044",
-   "cardName": "Mr.小豆豆 & Miss凯瑟莲娜",
+   "cardName": "Mr.小豆豆＆Miss凱瑟蓮娜",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "3",
@@ -1240,17 +1523,18 @@
     "智"
    ],
    "cardFeatures": "B・W",
-   "cardTextDesc": "【咚!!×1】这名角色力量+1000。\n【登场时】抽1张卡，舍弃自己1张手牌。",
+   "cardTextDesc": "【咚‼×1】這名角色力量值+1000。\n【登場時】抽1張卡，廢棄自己1張手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-044.jpg"
+   "cardImg": "custom/OP18-044.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-046",
-   "cardName": "Mr.0 & Miss All 星期天",
+   "cardName": "Mr.0＆Miss All星期天",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "9",
@@ -1261,17 +1545,18 @@
     "智"
    ],
    "cardFeatures": "王下七武海/B・W",
-   "cardTextDesc": "【登场时】抽2张卡，附加最多各2个休息的咚!!到自己的领袖和所有角色上。\n【对方的攻击时】可以舍弃自己1张手牌：自己特征包含『B・W』的领袖本回合中，原力量改为7000。",
+   "cardTextDesc": "【登場時】抽2張卡，附加最多各2個休息的咚‼到自己的領航卡和所有角色上。\n【對方攻擊時】可以廢棄自己1張手牌：自己特徵包含『B・W』的領航卡這個回合，原力量改為7000。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-046.jpg"
+   "cardImg": "custom/OP18-046.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-048",
-   "cardName": "Mr.1 & Miss双手指",
+   "cardName": "Mr.1＆Miss雙手指",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "6",
@@ -1281,17 +1566,40 @@
     "斩"
    ],
    "cardFeatures": "B・W",
-   "cardTextDesc": "【速攻】\n【登场时】从自己手牌中登场最多1名费用5以下特征包含『B・W』的角色卡。",
+   "cardTextDesc": "【速攻】\n【登場時】從自己手牌中登場最多1名費用5以下特徵包含『B・W』的角色卡。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-048.jpg"
+   "cardImg": "custom/OP18-048.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "OP18-055",
+   "cardName": "Mr.9＆Miss星期三",
+   "cardType": "角色",
+   "cardColor": "蓝",
+   "cardLife": "3",
+   "cardPower": "4000",
+   "cardAttack": "反击+1000",
+   "cardAttribute": [
+    "斩",
+    "打"
+   ],
+   "cardFeatures": "B・W",
+   "cardTextDesc": "【咚‼×1】這張角色卡的力量值+1000。\n【登場時】將最多1張對手費用2以下的角色卡放回持有者的手牌。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "OP-18【OP-18】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/OP18-055.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-056",
-   "cardName": "Mr.13&Ms.星期五",
+   "cardName": "Mr.13&Miss星期五",
    "cardType": "角色",
    "cardColor": "蓝",
    "cardLife": "2",
@@ -1300,18 +1608,19 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "动物/B・W",
-   "cardTextDesc": "【咚!!×1】这名角色力量+1000。\n【登场时】可以将自己这名角色以外1名特征包含『B・W』的角色放至牌库下方：对手自己舍弃1张手牌。",
+   "cardFeatures": "動物/B・W",
+   "cardTextDesc": "【咚‼×1】這名角色力量值+1000。\n【登場時】可以將自己這名角色以外1名特徵包含『B・W』的角色放至卡組下面：對手自己廢棄1張手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-056.jpg"
+   "cardImg": "custom/OP18-056.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-060",
-   "cardName": "军子宫",
+   "cardName": "軍子宮",
    "cardType": "领袖",
    "cardColor": "紫",
    "cardLife": "4",
@@ -1320,18 +1629,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "天龙人/神领骑士团",
-   "cardTextDesc": "【每回合1次】从自己的弃牌堆登场角色时抽2张卡，舍弃自己1张手牌。\n【启动主要】【每回合1次】可以舍弃自己1张手牌：自己有原力量8000以上的角色时，从咚!!牌库追加最多1个活动的咚!!进场。",
+   "cardFeatures": "天龍人/神領騎士團",
+   "cardTextDesc": "【每回合1次】從自己的廢棄區登場角色時抽2張卡，廢棄自己1張手牌。\n【啟動主要】【每回合1次】可以廢棄自己1張手牌：自己有原力量8000以上的角色時，從咚‼卡組追加最多1個活動的咚‼進場。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-060.jpg"
+   "cardImg": "custom/OP18-060.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-061",
-   "cardName": "阿斯巴古",
+   "cardName": "艾斯巴古",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "2",
@@ -1340,36 +1650,38 @@
    "cardAttribute": [
     "智"
    ],
-   "cardFeatures": "W7/七水之城/卡雷拉公司",
-   "cardTextDesc": "【登场时】查看自己牌库上方5张卡，公开展示最多合计2张舞台或具有特征《W7》的卡并加入手牌。然后将剩余的卡按任意顺序放至牌库下方。",
+   "cardFeatures": "W7/GC",
+   "cardTextDesc": "【登場時】查看自己卡組上面5張卡，公開展示最多合計2張舞臺或擁有特徵《W7》的卡並加入手牌。然後將剩餘的卡按任意順序放至卡組下面。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-061.jpg"
+   "cardImg": "custom/OP18-061.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-065",
-   "cardName": "军子宫",
+   "cardName": "軍子宮",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "10",
    "cardPower": "11000",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "天龙人/神领骑士团",
-   "cardTextDesc": "【阻挡者】\n【登场时】咚!!-1：从自己的弃牌堆登场最多1名力量6000以下具有特征《天龙人》的角色卡。",
+   "cardFeatures": "天龍人/神領騎士團",
+   "cardTextDesc": "【防禦】\n【登場時】咚‼-1：從自己的廢棄區登場最多1名力量6000以下擁有特徵《天龍人》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-065.jpg"
+   "cardImg": "custom/OP18-065.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-066",
-   "cardName": "赞巴",
+   "cardName": "贊拜",
    "cardType": "角色",
    "cardColor": "紫",
    "cardLife": "5",
@@ -1378,54 +1690,78 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "W7/弗兰奇一家/七水之城",
-   "cardTextDesc": "【启动主要】可以KO自己1张费用5以下的舞台：这名角色本回合中获得【速攻】。",
+   "cardFeatures": "W7/佛朗基家族",
+   "cardTextDesc": "【啟動主要】可以KO自己1張費用5以下的舞臺：這名角色這個回合獲得【速攻】。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-066.jpg"
+   "cardImg": "custom/OP18-066.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "OP18-069",
+   "cardName": "索多姆＆哥摩拉",
+   "cardType": "角色",
+   "cardColor": "紫",
+   "cardLife": "1",
+   "cardPower": "2000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "打"
+   ],
+   "cardFeatures": "動物/W7/佛朗基家族",
+   "cardTextDesc": "若自己擁有《佛朗基家族》特徵的角色卡即將遭到KO時，可以替換成咚‼-1，並將這張角色卡置為休息狀態。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "OP-18【OP-18】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/OP18-069.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-076",
-   "cardName": "鲨鱼潜艇三号",
+   "cardName": "鯊魚潛艇三號",
    "cardType": "舞台",
    "cardColor": "紫",
    "cardLife": "5",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【登场时】抽1张卡，然后从自己的咚!!牌库追加最多1个休息的咚!!进场。\n【对方的攻击时】可以休息这张舞台：自己力量5000以下的领袖或最多2名角色本回合中力量+1000。",
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【登場時】抽1張卡，然後從自己的咚‼卡組追加最多1個休息的咚‼進場。\n【對方攻擊時】可以休息這張舞臺：自己力量5000以下的領航卡或最多2名角色這個回合力量值+1000。",
    "cardTrigger": "",
    "cardRarity": "UC",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-076.jpg"
+   "cardImg": "custom/OP18-076.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-078",
-   "cardName": "迷你梅利二号",
+   "cardName": "迷你梅利2號",
    "cardType": "舞台",
    "cardColor": "紫",
    "cardLife": "5",
    "cardPower": "-",
    "cardAttack": "-",
    "cardAttribute": [],
-   "cardFeatures": "草帽一伙",
-   "cardTextDesc": "【登场时】抽1张卡，然后从自己的咚!!牌库追加最多1个休息的咚!!进场。\n【启动主要】可以休息这张舞台：附加最多各1个咚!!到自己最多4名领袖或角色上。",
+   "cardFeatures": "草帽一行人",
+   "cardTextDesc": "【登場時】抽1張卡，然後從自己的咚‼卡組追加最多1個休息的咚‼進場。\n【啟動主要】可以休息這張舞臺：附加最多各1個咚‼到自己最多4名領航卡或角色上。",
    "cardTrigger": "",
    "cardRarity": "UC",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-078.jpg"
+   "cardImg": "custom/OP18-078.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-079",
-   "cardName": "斯潘达姆",
+   "cardName": "斯潘達姆",
    "cardType": "领袖",
    "cardColor": "黑/黄",
    "cardLife": "4",
@@ -1435,17 +1771,18 @@
     "斩"
    ],
    "cardFeatures": "CP9",
-   "cardTextDesc": "【启动主要】可以休息自己2个咚!!和这名领袖，舍弃1张特征包含『CP』的手牌：将自己牌库上方最多1张卡加入生命牌库上方。",
+   "cardTextDesc": "【啟動主要】可以休息自己2個咚‼和這名領航卡，廢棄1張特徵包含『CP』的手牌：將自己卡組上面最多1張卡加入生命卡組上面。",
    "cardTrigger": "",
    "cardRarity": "L",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 1,
-   "cardImg": "custom/OP18-079.jpg"
+   "cardImg": "custom/OP18-079.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-084",
-   "cardName": "军子宫",
+   "cardName": "軍子宮",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "1",
@@ -1454,14 +1791,15 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "天龙人/神领骑士团",
-   "cardTextDesc": "【登场时】查看自己牌库上方4张卡，公开展示最多1张具有特征《神领骑士团》的卡并加入手牌。然后将剩余的卡放至弃牌堆。\n【启动主要】可以休息自己4个咚!!：从自己的弃牌登场最多1名费用6以下具有特征《神领骑士团》的角色卡。",
+   "cardFeatures": "天龍人/神領騎士團",
+   "cardTextDesc": "【登場時】查看自己卡組上面4張卡，公開展示最多1張擁有特徵《神領騎士團》的卡並加入手牌。然後將剩餘的卡放至廢棄區。\n【啟動主要】可以休息自己4個咚‼：從自己的棄牌登場最多1名費用6以下擁有特徵《神領騎士團》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-084.jpg"
+   "cardImg": "custom/OP18-084.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-086",
@@ -1474,14 +1812,15 @@
    "cardAttribute": [
     "打"
    ],
-   "cardFeatures": "巨人族/新巨兵海盗团/埃鲁巴夫",
-   "cardTextDesc": "这名角色费用+12。\n【KO时】KO对手最多1名费用4以下的角色。",
+   "cardFeatures": "巨人族/新巨兵海賊團/艾爾帕布",
+   "cardTextDesc": "這名角色費用+12。\n【KO時】KO對手最多1名費用4以下的角色。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-086.jpg"
+   "cardImg": "custom/OP18-086.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-089",
@@ -1494,14 +1833,36 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "巨人族/巨兵海盗团/埃鲁巴夫",
-   "cardTextDesc": "这名角色费用+12。\n【登场时】可以舍弃自己1张手牌：对手自己舍弃1张手牌。",
+   "cardFeatures": "巨人族/巨兵海賊團/艾爾帕布",
+   "cardTextDesc": "這名角色費用+12。\n【登場時】可以廢棄自己1張手牌：對手自己廢棄1張手牌。",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-089.jpg"
+   "cardImg": "custom/OP18-089.jpg",
+   "textLang": "tw"
+  },
+  {
+   "cardNumber": "OP18-091",
+   "cardName": "布洛基",
+   "cardType": "角色",
+   "cardColor": "黑",
+   "cardLife": "4",
+   "cardPower": "5000",
+   "cardAttack": "反击+2000",
+   "cardAttribute": [
+    "斩"
+   ],
+   "cardFeatures": "巨人族/艾爾帕布/巨兵海賊團",
+   "cardTextDesc": "這張角色卡的費用+12。\n【攻擊時】可以廢棄1張自己的手牌：將最多1張自己廢棄區中費用2以下的角色卡加入手牌。",
+   "cardTrigger": "",
+   "cardRarity": "C",
+   "cardOfferType": "OP-18【OP-18】",
+   "subscript": "5",
+   "mixedColor": 0,
+   "cardImg": "custom/OP18-091.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-093",
@@ -1514,18 +1875,19 @@
    "cardAttribute": [
     "特"
    ],
-   "cardFeatures": "埃鲁巴夫",
-   "cardTextDesc": "规则上，这张卡可以不限数量放入牌组。\n【阻挡者】",
+   "cardFeatures": "艾爾帕布",
+   "cardTextDesc": "規則上，這張卡可以不限數量放入卡組。\n【防禦】",
    "cardTrigger": "",
    "cardRarity": "R",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-093.jpg"
+   "cardImg": "custom/OP18-093.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-100",
-   "cardName": "佳妮法",
+   "cardName": "卡莉法",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "6",
@@ -1535,17 +1897,18 @@
     "特"
    ],
    "cardFeatures": "CP9",
-   "cardTextDesc": "【登场时】抽1张卡，将自己手牌中最多1张特征包含『CP』的卡正面朝上追加到自己生命牌库上方或下方。",
-   "cardTrigger": "自己的领袖特征包含『CP』时，抽1张卡，休息对手的领袖或最多1名角色。",
+   "cardTextDesc": "【登場時】抽1張卡，將自己手牌中最多1張特徵包含『CP』的卡正面朝上追加到自己生命卡組上面或下方。",
+   "cardTrigger": "自己的領航卡特徵包含『CP』時，抽1張卡，休息對手的領航卡或最多1名角色。",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-100.jpg"
+   "cardImg": "custom/OP18-100.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-106",
-   "cardName": "杜伯曼",
+   "cardName": "鬥犬",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "7",
@@ -1554,18 +1917,19 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "中将/海军",
-   "cardTextDesc": "【双重攻击】",
+   "cardFeatures": "中將/海軍",
+   "cardTextDesc": "【雙重攻擊】",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-106.jpg"
+   "cardImg": "custom/OP18-106.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-112",
-   "cardName": "山火",
+   "cardName": "火燒山",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "7",
@@ -1574,18 +1938,19 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "中将/海军",
-   "cardTextDesc": "【阻挡者】",
+   "cardFeatures": "中將/海軍",
+   "cardTextDesc": "【防禦】",
    "cardTrigger": "",
    "cardRarity": "C",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-112.jpg"
+   "cardImg": "custom/OP18-112.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-113",
-   "cardName": "罗布·路基",
+   "cardName": "羅布・路基",
    "cardType": "角色",
    "cardColor": "黄",
    "cardLife": "8",
@@ -1595,17 +1960,18 @@
     "打"
    ],
    "cardFeatures": "CP9",
-   "cardTextDesc": "【登场时】/【KO时】对手生命牌库上方最多1张卡放至弃牌堆。",
-   "cardTrigger": "自己的领袖特征包含『CP』时，抽1张卡，最多1名费用8以下的角色返回拥有者牌库下方。",
+   "cardTextDesc": "【登場時】/【KO時】對手生命卡組上面最多1張卡放至廢棄區。",
+   "cardTrigger": "自己的領航卡特徵包含『CP』時，抽1張卡，最多1名費用8以下的角色返回擁有者卡組下面。",
    "cardRarity": "SR",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-113.jpg"
+   "cardImg": "custom/OP18-113.jpg",
+   "textLang": "tw"
   },
   {
    "cardNumber": "OP18-119",
-   "cardName": "夏姆洛克圣",
+   "cardName": "夏姆洛克聖",
    "cardType": "角色",
    "cardColor": "黑",
    "cardLife": "8",
@@ -1614,14 +1980,15 @@
    "cardAttribute": [
     "斩"
    ],
-   "cardFeatures": "天龙人/神领骑士团",
-   "cardTextDesc": "【KO时】可以舍弃自己1张手牌：将这张卡从弃牌堆登场。\n【启动主要】【每回合1次】这名角色登场的回合，从自己的弃牌堆登场最多1名费用6以下具有特征《神领骑士团》的角色卡。",
+   "cardFeatures": "天龍人/神領騎士團",
+   "cardTextDesc": "【KO時】可以廢棄自己1張手牌：將這張卡從廢棄區登場。\n【啟動主要】【每回合1次】這名角色登場的回合，從自己的廢棄區登場最多1名費用6以下擁有特徵《神領騎士團》的角色卡。",
    "cardTrigger": "",
    "cardRarity": "SEC",
    "cardOfferType": "OP-18【OP-18】",
    "subscript": "",
    "mixedColor": 0,
-   "cardImg": "custom/OP18-119.jpg"
+   "cardImg": "custom/OP18-119.jpg",
+   "textLang": "tw"
   }
  ]
 }

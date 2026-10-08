@@ -12,6 +12,7 @@
 //
 // 用法：node scripts/fetch-cards.mjs [--out site/cards.json] [--prev site/cards.json]
 //                                   [--summary site/last-run.json] [--only cn,tw,jp] [--series-limit N]
+//       node scripts/fetch-cards.mjs --only none --summary /tmp/x.json   ← 不抓官網，只用現有 cards.json 重算特徵對照（改了 feat-alias.json 或 custom.json 之後）
 // 任一來源失敗（連不上、數量異常）→ 沿用 --prev 裡該來源的舊資料，絕不輸出殘缺檔。
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -217,6 +218,7 @@ const jpFill = jp.rows ? jp.rows.filter(c => !cnNos.has(c.cardNumber) && !twNos.
 sources.tw = { status: tw.status, count: tw.rows ? tw.rows.length : null, fill: twFill.length, fetchedAt: tw.rows ? now : (prevSrc.tw?.fetchedAt || null), note: tw.note, error: tw.error };
 sources.jp = { status: jp.status, count: jp.rows ? jp.rows.length : null, fill: jpFill.length, fetchedAt: jp.rows ? now : (prevSrc.jp?.fetchedAt || null), note: jp.note, error: jp.error };
 
+if (ONLY.has('none') && prev?.sources) Object.assign(sources, prev.sources); // --only none＝只重算對照，資料與來源狀態沿用上次
 for (const c of cn) { const a = twName.get(c.cardNumber), b = jpName.get(c.cardNumber); if (a) c.cardNameTw = a; else delete c.cardNameTw; if (b) c.cardNameJp = b; else delete c.cardNameJp; }
 for (const c of twFill) { const b = jpName.get(c.cardNumber); if (b) c.cardNameJp = b; }
 
@@ -258,7 +260,7 @@ if (tw.rows) {
     const sc = (blankT(c.text) || c.text === '重複印刷' ? 0 : c.text.length) * 2 + (c.id.includes('_') ? 0 : 1);
     const cur = best.get(c.cardNumber); if (!cur || sc > cur.sc) best.set(c.cardNumber, { sc, c });
   }
-  const setV = new Map(), featV = new Map(), kwV = new Map();
+  const setV = new Map(), kwV = new Map();
   const cnFirst = new Map(), cnSets = new Map();
   for (const c of cn) { if (!cnFirst.has(c.cardNumber)) cnFirst.set(c.cardNumber, c); let s = cnSets.get(c.cardNumber); if (!s) cnSets.set(c.cardNumber, s = new Set()); if (c.cardOfferType) s.add(c.cardOfferType); }
   const twSetsByNo = new Map(); for (const c of tw.rows) { let s = twSetsByNo.get(c.cardNumber); if (!s) twSetsByNo.set(c.cardNumber, s = new Set()); const nm = c.getInfo || c.seriesName; if (nm) s.add(nm); }
@@ -270,9 +272,6 @@ if (tw.rows) {
     if (c.feature) o.f = c.feature.replace(/\n/g, '/');
     TWX[no] = o;
     const s = cnFirst.get(no);
-    // 特徵：同位置配對
-    const fa = (s.cardFeatures || '').split(/[\/／]/).map(x => x.trim()).filter(Boolean), fb = (o.f || '').split('/').map(x => x.trim()).filter(Boolean);
-    if (fa.length && fa.length === fb.length) fa.forEach((x, i) => vote(featV, x, fb[i]));
     // 【】關鍵字：依出現順序配對（數量相同才比）
     if (o.t != null && s.textLang == null) {
       const ka = ((s.cardTextDesc || '') + (s.cardTrigger ? '【触发】' + s.cardTrigger : '')).match(/【[^】]+】/g) || [];
@@ -282,17 +281,99 @@ if (tw.rows) {
     // 系列名：兩邊都只有一個系列的卡號才配對
     const sa = cnSets.get(no), sb = twSetsByNo.get(no);
     // 系列名：兩邊都只有一個系列的卡號才配對；有【代號】的必須代號相同（避免把再版系列配錯）
-    const code = x => (String(x).match(/【([^】]+)】/) || [])[1] || '';
+    // v4.1：簡中代號多一個 C（OPC-13／EBC-02／STC-13／PRBC-01），繁中是 OP-13／EB-02／ST-13／PRB-01 → 比對前去掉
+    const code = x => ((String(x).match(/【([^】]+)】/) || [])[1] || '').toUpperCase().replace(/^([A-Z]+?)C(?=[-\d])/, '$1').replace(/[-\s]/g, '');
     if (sa && sb && sa.size === 1 && sb.size === 1) { const a = [...sa][0], b = [...sb][0]; if (code(a) === code(b)) vote(setV, a, b); }
   }
-  const S = topOf(setV), Fm = topOf(featV), K = topOf(kwV);
+  const S = topOf(setV), K = topOf(kwV);
   twSets = {}; for (const r of S.rows) if (/【[^】]+】/.test(r.sc) || (r.n >= 2 && r.share >= 0.8)) twSets[r.sc] = r.tw; // 無代號的系列要 2 張以上且 8 成一致才收
-  twFeats = {}; for (const r of Fm.rows) if (r.share >= 0.6) twFeats[r.sc] = r.tw;
-  terms = { generatedAt: now, note: '由簡中＋繁中官網同卡號自動比對產生；share＜0.95 的列為 conflicts，需人工確認', keywords: K.rows, features: Fm.rows, sets: S.rows,
-    conflicts: [...K.rows, ...Fm.rows].filter(r => r.share < 0.95 && r.total >= 3).map(r => `${r.sc} → ${r.tw}（${Math.round(r.share * 100)}%；另有 ${r.alts.join('、')}）`) };
-} else if (prev && prev.tw) { Object.assign(TWX, prev.tw); twSets = prev.twSets || {}; twFeats = prev.twFeats || {}; }
+  terms = { generatedAt: now, note: '由簡中＋繁中官網同卡號自動比對產生；share＜0.95 的列為 conflicts，需人工確認', keywords: K.rows, sets: S.rows,
+    conflicts: K.rows.filter(r => r.share < 0.95 && r.total >= 3).map(r => `${r.sc} → ${r.tw}（${Math.round(r.share * 100)}%；另有 ${r.alts.join('、')}）`) };
+} else if (prev && prev.tw) { Object.assign(TWX, prev.tw); twSets = prev.twSets || {}; terms = prev.terms || null; }
 for (const no of Object.keys(TWX)) if (!cnNos.has(no)) delete TWX[no];
-LOG(`繁中全文 ${Object.keys(TWX).length} 張、系列對照 ${Object.keys(twSets).length}、特徵對照 ${Object.keys(twFeats).length}${terms ? '、用語待確認 ' + terms.conflicts.length : ''}`);
+
+/* ---------- v4.1 特徵統合（簡中、繁中、日文 → 一份統一的繁中特徵） ----------
+ * 目標：網站上每個特徵只出現一種寫法，而且是繁中官方寫法。
+ * 1. 繁中官網本身的寫法先正規化 canonTw()：全形英數→半形、日文漢字變體（団→團、獣→獸、学→學…）、
+ *    「原／元◯◯」→「前◯◯」（官網舊彈用「原」、新彈用「前」）、再套 scripts/feat-alias.json 的人工對照。
+ * 2. 簡中特徵 → 繁中：以同卡號的簡中／繁中特徵配對投票（數量相同依位置；數量不同時先扣掉已知配對再對剩下的），取票數最高者。
+ * 3. 沒有任何繁中對應的簡中特徵（簡中獨有宣傳卡、custom.json 的未發售卡）：先查人工對照，再用簡→繁字表＋詞彙規則
+ *    （海盗团→海賊團、胡子→鬍子…）轉字形；轉出來若剛好是已知的繁中特徵就併入。
+ * 產出：out.twFeats（簡中原文 → 統一繁中，涵蓋 cards.json 與 custom.json 出現的所有簡中特徵）、
+ *      out.twFeatAlias（繁中官網異體寫法／日文 → 統一繁中，網站執行期用它正規化繁中卡的特徵）、terms.json 的 features 區。
+ * 不重抓官網也能重算：node scripts/fetch-cards.mjs --only none（用現有 cards.json 的 tw 區）。
+ */
+const S2T_PAIRS = '万萬与與业業丛叢东東丝絲丢丟两兩严嚴丧喪个個临臨为為丽麗么麼义義乌烏乐樂乔喬乡鄉乱亂于於云雲亚亞亲親亿億仅僅仆僕从從仑侖仪儀们們优優伙夥会會传傳伤傷伦倫伪偽体體余餘儿兒兰蘭关關兹茲兽獸内內冈岡册冊军軍冲衝决決冻凍准準减減几幾凤鳳凭憑凯凱凶兇击擊则則刚剛创創别別剑劍剧劇动動势勢区區医醫华華单單卖賣卢盧卫衛厅廳历歷压壓厮廝参參双雙发發变變台臺叶葉号號吗嗎吨噸听聽启啟啧嘖啮齧啰囉喷噴团團园園国國图圖圆圓圣聖场場坏壞块塊坚堅坠墜垫墊墙牆壮壯声聲处處备備复復够夠头頭夹夾奋奮奖獎奥奧妇婦妈媽娅婭学學宝寶实實审審宫宮宾賓对對寻尋寿壽将將尔爾尘塵属屬岁歲岚嵐岛島师師带帶帮幫并並广廣库庫应應庞龐废廢开開异異弃棄张張弯彎弹彈强強当當彻徹征徵怀懷态態总總恋戀恒恆恶惡恼惱悬懸惯慣戏戲战戰户戶扑撲护護报報拟擬拥擁择擇挡擋挥揮换換据據摆擺摇搖敌敵数數斗鬥斩斬断斷无無时時术術机機杀殺杂雜权權条條来來杰傑极極枪槍标標树樹栗慄样樣档檔梦夢槛檻横橫樱櫻欢歡欧歐残殘毁毀毕畢气氣汉漢汤湯没沒泪淚泷瀧泼潑泽澤洁潔浅淺浆漿涡渦润潤温溫游遊滚滾潜潛灭滅灵靈灾災点點炽熾烟煙烦煩烧燒烩燴烬燼热熱爱愛爷爺状狀独獨狮獅狱獄猎獵猫貓猬蝟玛瑪环環现現琼瓊电電画畫瘾癮盖蓋盗盜着著砾礫确確礼禮禄祿离離种種称稱稣穌竞競笼籠简簡篮籃类類粮糧红紅约約级級纪紀纯純纲綱纳納纸紙纽紐线線练練组組终終绊絆经經结結绘繪给給绝絕绞絞继繼续續绳繩维維绵綿绿綠缓緩缘緣缝縫缪繆网網罗羅羁羈联聯肤膚胆膽胜勝胶膠脉脈脏臟脑腦脚腳脸臉舰艦节節苍蒼范範药藥莱萊莲蓮获獲营營萨薩葱蔥蓝藍虏虜虫蟲虽雖蛮蠻蝉蟬补補袭襲装裝见見规規视視觉覺触觸计計认認让讓训訓记記讲講许許证證诃訶试試诗詩诚誠诛誅话話诞誕诡詭该該语語说說请請诸諸诺諾谁誰调調谎謊谢謝谬謬谱譜贝貝负負败敗货貨贯貫费費贼賊贾賈赋賦赖賴赛賽赞贊赢贏赶趕跃躍践踐车車转轉轮輪轰轟轻輕辈輩输輸边邊达達过過运運还還这這进進远遠违違连連迹跡适適选選逊遜递遞遗遺酱醬释釋钟鍾钢鋼钩鉤钳鉗钻鑽铁鐵铠鎧铺鋪锈鏽锤錘锦錦镇鎮镝鏑镰鐮长長门門闪閃闲閒间間闷悶闻聞队隊阳陽阴陰阶階陨隕险險随隨隐隱雾霧静靜顶頂项項顺順须須顿頓预預领領颊頰频頻颓頹颜顏风風飞飛饭飯饶饒饼餅马馬骑騎鱼魚鱿魷鲁魯鲛鮫鲨鯊鳄鱷鳞鱗鸟鳥鸡雞鸣鳴鸦鴉鸭鴨鹅鵝鹏鵬鹤鶴鹰鷹麦麥黄黃鼹鼴齐齊齿齒龙龍';
+const S2T = new Map(); for (let i = 0; i < S2T_PAIRS.length; i += 2) S2T.set(S2T_PAIRS[i], S2T_PAIRS[i + 1]);
+const S2T_PHRASES = [['海盗团', '海賊團'], ['海盗', '海賊'], ['胡子', '鬍子'], ['红发', '紅髮'], ['一伙', '一行人'], ['王国', '王國'], ['骑士团', '騎士團']];
+const s2tFeat = s => { let t = s; for (const [a, b] of S2T_PHRASES) t = t.split(a).join(b); return [...t].map(ch => S2T.get(ch) || ch).join(''); };
+// 繁中官網的字形異體（日文漢字）→ 台灣寫法；全形英數 → 半形
+const JPV = { '団': '團', '獣': '獸', '学': '學', '気': '氣', '黒': '黑', '戦': '戰', '国': '國', '悪': '惡', '竜': '龍', '桜': '櫻', '鉄': '鐵', '伝': '傳', '発': '發', '変': '變', '剣': '劍', '歯': '齒', '蔵': '藏', '処': '處', '仏': '佛', '楽': '樂', '実': '實', '広': '廣', '辺': '邊', '売': '賣', '読': '讀', '斉': '齊', '沢': '澤', '円': '圓', '両': '兩', '単': '單', '対': '對', '帰': '歸', '関': '關', '険': '險', '験': '驗', '駅': '驛', '猟': '獵', '覇': '霸', '島': '島' };
+const JPV_RE = new RegExp('[' + Object.keys(JPV).join('') + ']', 'g');
+const fwHalf = s => s.replace(/[Ａ-Ｚａ-ｚ０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)).replace(/　/g, ' ');
+const splitFeat = s => String(s || '').split(/[\/／,，\n]/).map(x => x.trim()).filter(Boolean);
+let ALIAS = {};
+try { const p = join(dirname(new URL(import.meta.url).pathname), 'feat-alias.json'); if (existsSync(p)) ALIAS = JSON.parse(readFileSync(p, 'utf8')).alias || {}; } catch (e) { LOG('feat-alias.json 讀取失敗：', e.message); }
+const baseTw = f => fwHalf(f).replace(JPV_RE, ch => JPV[ch]).replace(/\s+/g, ' ').trim();
+// 第一輪：收集繁中官網所有特徵（正規化字形後）的出現次數，用來決定「原／元」→「前」與別名
+const twCount = new Map();
+for (const no of Object.keys(TWX)) for (const f of splitFeat(TWX[no].f)) { const b = baseTw(f); twCount.set(b, (twCount.get(b) || 0) + 1); }
+const twSet = new Set(twCount.keys());
+const canonCache = new Map();
+function canonTw(f) {
+  if (canonCache.has(f)) return canonCache.get(f);
+  let t = baseTw(f);
+  if (ALIAS[t]) t = baseTw(ALIAS[t]);
+  else if (ALIAS[f]) t = baseTw(ALIAS[f]);
+  const m = t.match(/^[原元](.+)$/);
+  if (m && (twSet.has('前' + m[1]) || ALIAS['前' + m[1]])) t = '前' + m[1];
+  if (ALIAS[t]) t = baseTw(ALIAS[t]);
+  canonCache.set(f, t); return t;
+}
+// 第二輪：簡中 ↔ 繁中 投票（同卡號）
+const featV = new Map(), cnFeatCount = new Map();
+const cnFirstF = new Map(); for (const c of cn) if (!cnFirstF.has(c.cardNumber)) cnFirstF.set(c.cardNumber, c);
+for (const c of cn) for (const f of splitFeat(c.cardFeatures)) cnFeatCount.set(f, (cnFeatCount.get(f) || 0) + 1);
+const pending = [];
+for (const [no, w] of Object.entries(TWX)) {
+  const s = cnFirstF.get(no); if (!s || !w.f) continue;
+  const fa = splitFeat(s.cardFeatures), fb = splitFeat(w.f).map(canonTw);
+  if (!fa.length || !fb.length) continue;
+  if (fa.length === fb.length) fa.forEach((x, i) => vote(featV, x, fb[i])); else pending.push([no, fa, fb]);
+}
+const top = m => { const arr = [...m].sort((p, q) => q[1] - p[1]); return arr.length ? arr[0][0] : null; };
+for (let round = 0; round < 2; round++) for (const [, fa, fb] of pending) { // 數量不同：扣掉已確定的配對，剩下一對一才投
+  const ra = [], rb = fb.slice();
+  for (const x of fa) { const t = featV.has(x) ? top(featV.get(x)) : null; const k = t != null ? rb.indexOf(t) : -1; if (k >= 0) rb.splice(k, 1); else ra.push(x); }
+  if (ra.length === 1 && rb.length === 1) vote(featV, ra[0], rb[0]);
+}
+twFeats = {}; const featRows = [], featFallback = [], featConflicts = [];
+const allCnFeats = new Set([...cnFeatCount.keys()]);
+let customFeatSrc = []; try { const cp = join(dirname(OUT), 'custom.json'); if (existsSync(cp)) customFeatSrc = JSON.parse(readFileSync(cp, 'utf8')).cards || []; } catch (e) { LOG('custom.json 讀取失敗（特徵統合略過自訂卡）：', e.message); }
+for (const c of customFeatSrc) if (c.textLang !== 'tw') for (const f of splitFeat(c.cardFeatures)) allCnFeats.add(f);
+for (const f of allCnFeats) {
+  const x = featV.get(f); let tw, how;
+  if (x) { const arr = [...x].sort((p, q) => q[1] - p[1]); const tot = arr.reduce((s, v) => s + v[1], 0); tw = arr[0][0]; how = 'vote';
+    featRows.push({ cn: f, tw, n: arr[0][1], total: tot, share: +(arr[0][1] / tot).toFixed(3), alts: arr.slice(1, 4).map(([k, v]) => `${k}×${v}`) });
+    if (arr[0][1] / tot < 0.8 && tot >= 3) featConflicts.push(`${f} → ${tw}（${Math.round(arr[0][1] / tot * 100)}%；另有 ${arr.slice(1, 4).map(([k, v]) => `${k}×${v}`).join('、')}）`);
+  } else if (ALIAS[f]) { tw = canonTw(ALIAS[f]); how = 'alias'; }
+  else if (twSet.has(baseTw(f))) { tw = canonTw(f); how = 'same'; } // 簡中已是繁中官網用的寫法（W7、CP0、SMILE…）
+  else { tw = canonTw(s2tFeat(f)); how = twSet.has(tw) ? 's2t→既有' : 's2t'; featFallback.push({ cn: f, tw, how, n: cnFeatCount.get(f) || 0 }); }
+  if (tw && tw !== f) twFeats[f] = tw;
+}
+// 繁中官網異體寫法／日文 → 統一名稱（網站用來正規化繁中卡與補卡的特徵）
+let twFeatAlias = {};
+for (const no of Object.keys(TWX)) for (const f of splitFeat(TWX[no].f)) { const t = canonTw(f); if (t !== f) twFeatAlias[f] = t; }
+for (const [a, b] of Object.entries(ALIAS)) { const t = canonTw(b); if (t !== a && !allCnFeats.has(a)) twFeatAlias[a] = t; }
+const canonSet = new Set([...twSet].map(canonTw).concat(Object.values(twFeats)));
+const featVariants = Object.entries(twFeatAlias).filter(([a]) => twCount.has(baseTw(a)) || twCount.has(a)).map(([a, b]) => `${a} → ${b}`);
+if (!terms) { // 這次沒抓繁中官網：沿用上次 terms.json 的關鍵字／系列比對，只重算特徵區
+  try { const tp = join(dirname(OUT), 'terms.json'); if (existsSync(tp)) { const t0 = JSON.parse(readFileSync(tp, 'utf8')); terms = { generatedAt: t0.generatedAt, note: t0.note, keywords: t0.keywords || [], sets: t0.sets || [], conflicts: (t0.conflicts || []).filter(s => !/^\[特徵\]/.test(s)) }; } } catch (e) { /* 沒有就算了 */ }
+  if (!terms) terms = { generatedAt: now, keywords: [], sets: [], conflicts: [] };
+}
+Object.assign(terms, { featuresGeneratedAt: now, features: featRows.sort((p, q) => q.total - p.total), featureFallback: featFallback, featureVariants: featVariants, featureConflicts: featConflicts, featureCount: canonSet.size });
+terms.conflicts = [...(terms.conflicts || []), ...featConflicts.map(s => '[特徵] ' + s)];
+LOG(`繁中全文 ${Object.keys(TWX).length} 張、系列對照 ${Object.keys(twSets).length}、特徵對照 ${Object.keys(twFeats).length}（投票 ${featRows.length}、字形轉換 ${featFallback.length}）、統一後特徵 ${canonSet.size} 種、繁中異體 ${featVariants.length}、特徵待確認 ${featConflicts.length}`);
 const cards = [...cn, ...twFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber)), ...jpFill.sort((a, b) => a.cardNumber.localeCompare(b.cardNumber))];
 
 // 全部來源都失敗且沒有舊檔 → 不要輸出
@@ -313,10 +394,10 @@ const stamp = now.slice(0, 10);
 const srcLine = ['cn', 'tw', 'jp'].map(k => `${k.toUpperCase()} ${sources[k].status}${sources[k].count != null ? ' ' + sources[k].count : ''}`).join(' / ');
 const commitMessage = `cards ${stamp}：${nos.size} 張（簡中 ${byLang.cn}、補繁中 ${byLang.tw}、補日文 ${byLang.jp}）${newNos.length ? `，新增 ${newNos.length} 張` : '，無新卡'}${newSets.length ? '：' + newSets.slice(0, 4).join('、') : ''} [${srcLine}]`;
 
-const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length, textFilled: [...new Set(textFilled)], twText: Object.keys(TWX).length, termConflicts: terms ? terms.conflicts.length : null }, cards, tw: TWX, twSets, twFeats };
+const out = { source: 'merged', fetchedAt: now, count: cards.length, sources, stats: { cardNumbers: nos.size, byLang, newCards: newNos.length, newSets, upgradedToCn: upgraded, removed: goneNos.length, textFilled: [...new Set(textFilled)], twText: Object.keys(TWX).length, termConflicts: terms ? terms.conflicts.length : null, features: { unified: canonSet.size, mapped: Object.keys(twFeats).length, fallback: featFallback.length, variants: featVariants.length, conflicts: featConflicts.length } }, cards, tw: TWX, twSets, twFeats, twFeatAlias };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(out));
-const summary = { ranAt: now, ok: true, changed: JSON.stringify(prevCards) !== JSON.stringify(cards) || JSON.stringify(prev?.tw || {}) !== JSON.stringify(TWX), sources, stats: out.stats, newCards: newNos.slice(0, 300), removedCards: goneNos.slice(0, 100), commitMessage };
+const summary = { ranAt: now, ok: true, changed: JSON.stringify(prevCards) !== JSON.stringify(cards) || JSON.stringify(prev?.tw || {}) !== JSON.stringify(TWX) || JSON.stringify(prev?.twFeats || {}) !== JSON.stringify(twFeats) || JSON.stringify(prev?.twFeatAlias || {}) !== JSON.stringify(twFeatAlias), sources, stats: out.stats, newCards: newNos.slice(0, 300), removedCards: goneNos.slice(0, 100), commitMessage };
 if (terms) writeFileSync(join(dirname(OUT), 'terms.json'), JSON.stringify(terms, null, 1));
 mkdirSync(dirname(SUMMARY), { recursive: true });
 writeFileSync(SUMMARY, JSON.stringify(summary, null, 2));

@@ -57,9 +57,9 @@ setTimeout(()=>{
   ok('選擇器開啟並列出特徵',d.querySelector('#pickDlg').open&&d.querySelectorAll('#pkList button').length>=3);
   d.querySelector('#pkQ').value='草帽';w.eval('renderPickList()');
   const pkBtns=[...d.querySelectorAll('#pkList button[data-v]')];
-  ok('搜尋後只剩「全部」＋草帽一伙',pkBtns.length===2&&pkBtns[1].dataset.v==='草帽一伙');
+  ok('搜尋後只剩「全部」＋草帽一行人（v4.1：自訂卡的簡中特徵也統一成繁中）',pkBtns.length===2&&pkBtns[1].dataset.v==='草帽一行人');
   pkBtns[1].click();
-  ok('選到特徵後套用',w.eval(`F.feat==='草帽一伙'&&view.length===2`)&&d.querySelector('.pick[data-pick=fFeat] .v').textContent.startsWith('草帽一伙'));
+  ok('選到特徵後套用',w.eval(`F.feat==='草帽一行人'&&view.length===2`)&&d.querySelector('.pick[data-pick=fFeat] .v').textContent.startsWith('草帽一行人'));
   d.querySelector('.pick[data-pick=fFeat] .x').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
   ok('選擇器 ✕ 清除',w.eval(`F.feat===''`));
   // 多個篩選 + 全部清除

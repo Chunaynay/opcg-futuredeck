@@ -10,10 +10,10 @@ const ok=(cond,msg)=>{console.log((cond?'PASS ':'FAIL ')+msg);if(!cond)fails++;}
 w.addEventListener('error',e=>{console.log('ERR',e.message);fails++;});
 setTimeout(()=>{
  try{
-  ok(w.eval('APP_VERSION')==='v4.0','版號 v4.0');
+  ok(/^v4\.[1-9]/.test(w.eval('APP_VERSION')),'版號 v4.1+');
   // 模擬自動比對結果：系列名與特徵對照
   merged.twSets=Object.assign({'补充包 继承的意志【OPC-13】':'補充包 繼承的意志【OP-13】'},merged.twSets);
-  merged.twFeats=Object.assign({'草帽一伙':'草帽海賊團'},merged.twFeats);
+  merged.twFeats=Object.assign({},merged.twFeats,{'草帽一伙':'草帽海賊團'}); // 測試用：故意覆蓋成另一個名稱，確認篩選走 twFeats
   // EB04-061 沒有繁中 → 保留簡中原文；給它一個特徵測試篩選對照
   merged.cards.forEach(c=>{if(c.cardNumber==='EB04-061')c.cardFeatures='草帽一伙';});
   w.eval(`RAW=${JSON.stringify({fetchedAt:merged.fetchedAt,source:'bundled',cards:merged.cards,sources:merged.sources,stats:merged.stats,tw:merged.tw,twSets:merged.twSets,twFeats:merged.twFeats})};buildIndex();$('#leaderFirst').checked=false;applyFilters();renderDeck();`);
@@ -26,7 +26,7 @@ setTimeout(()=>{
   ok(sab.cn==='萨波'&&sab.alt.includes('萨波')&&!sab.alt.includes('薩波'),'簡中卡名留在 cn 與別名，不重複');
   const lf=w.eval(`(()=>{const c=BYNO.get('EB04-061');return {n:c.name,tl:c.tl,f:c.feats.join(),fk:c.fk.join()}})()`);
   ok(lf.n==='蒙奇·D·路飞'&&lf.tl==='cn','沒有繁中的卡保留簡中原文');
-  ok(lf.f==='草帽一伙'&&lf.fk==='草帽海賊團','簡中原文卡：顯示原特徵、篩選鍵對到繁中');
+  ok(lf.f==='草帽海賊團'&&lf.fk==='草帽海賊團','簡中原文卡：特徵顯示與篩選都用統一後的繁中（v4.1）');
   ok(w.eval(`[...$('#fFeat').options].some(o=>o.value==='草帽海賊團')&&![...$('#fFeat').options].some(o=>o.value==='草帽一伙')`),'特徵選單只列繁中');
   w.eval(`F.feat='草帽海賊團';applyFilters();`);ok(w.eval('view.some(c=>c.no==="EB04-061")'),'繁中特徵篩得到簡中原文卡');w.eval(`F.feat='';applyFilters();`);
   // 標記

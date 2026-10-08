@@ -529,7 +529,7 @@ const ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const MAX_COPIES=4, DECK_SIZE=50;
 const DB_KEY='opcg.db', CUR_KEY='opcg.current', DECKS_KEY='opcg.decks';
-const APP_VERSION='v4.0';
+const APP_VERSION='v4.1';
 const BUNDLED_URL='cards.json'; // 與 index.html 同資料夾的內建卡片資料（部署到 Netlify 時一起放）
 const CUSTOM_URL='custom.json'; // 站長維護的自訂卡（未發售卡）：{updatedAt, cards:[raw…]}，卡圖放 custom/ 資料夾
 const BCUSTOM_KEY='opcg.bcustom', DECKW_KEY='opcg.deckW', DECKMODE_KEY='opcg.deckMode';
@@ -540,6 +540,20 @@ const BLOCKER_RE=/阻挡者|阻擋者/;
 const T2S='達达 爾尔 龍龙 羅罗 綠绿 藍蓝 紅红 黃黄 黑黑 鬥斗 戰战 鷹鹰 獸兽 龜龟 鳥鸟 魚鱼 馬马 貓猫 犬犬 蛇蛇 鼠鼠 虎虎 獅狮 鳳凤 鳴鸣 風风 雷雷 電电 雲云 霧雾 島岛 國国 們们 寶宝 劍剑 槍枪 艦舰 船船 團团 盜盗 軍军 將将 將将 隊队 隊队 門门 鐵铁 鋼钢 銀银 銅铜 金金 寶宝 貝贝 億亿 萬万 幾几 盡尽 開开 關关 擊击 攻攻 護护 衛卫 體体 麗丽 蘿萝 賓宾 傑杰 麗丽 羅罗 蘭兰 絲丝 絲丝 婭娅 莉莉 妮妮 娜娜 貝贝 艾艾 歐欧 亞亚 愛爱 德德 華华 紐纽 爾尔 瑪玛 麥麦 兒儿 強强 剛刚 沙沙 鱷鳄 喬乔 傳传 說说 條条 雙双 單单 頭头 頂顶 頁页 長长 陽阳 陰阴 煙烟 氣气 動动 靜静 聽听 聲声 讀读 書书 畫画 圖图 數数 點点 線线 層层 階阶 繼继 續续 結结 織织 織织 類类 終终 總总 織织 權权 稱称 擁拥 壞坏 壓压 歷历 曆历 檢检 驗验 準准 標标 處处 齊齐 貴贵 賣卖 買买 財财 賞赏 賊贼 遊游 遠远 運运 過过 進进 遺遗 選选 遲迟 鄉乡 鄰邻 醫医 釣钓 鍵键 鎖锁 鏡镜 鐘钟 閃闪 間间 隱隐 離离 難难 響响 頭头 顏颜 願愿 飛飞 飯饭 養养 餓饿 驚惊 骨骨 體体 鬼鬼 魔魔 魂魂 麼么 齒齿 龍龙 車车 轉转 輕轻 鬥斗 鬥斗 參参 嚴严 徹彻 爺爷 媽妈 姐姐 妹妹 兄兄 弟弟 師师 學学 興兴 舊旧 廣广 慶庆 廠厂 塵尘 鳳凤 無无 爲为 為为 與与 於于 這这 來来 個个 時时 會会 說说 對对 還还 麼么 後后 發发 經经 從从 當当 樂乐 應应 實实 現现 讓让 覺觉 樣样 專专 門门 業业 麗丽 齊齐 蓋盖 鳥鸟 鳳凤 凱凯 薩萨 諾诺 託托 維维 塔塔 錫锡 歐欧 盧卢 貝贝 尼尼 羅罗 賓宾 莫莫 哈哈 樓楼 鍋锅 風风 鈴铃 燒烧 幾几 齋斋 緒绪 潔洁 樹树 壽寿 誠诚 謙谦 賴赖 遜逊 鏈链 禦御 衝冲 擾扰 拋抛 擇择 擔担 擴扩 擬拟 攝摄 敵敌 曉晓 棄弃 殺杀 毀毁 濃浓 爛烂 獄狱 獲获 環环 竊窃 繩绳 聰聪 蘇苏 蟲虫 訓训 詢询 誰谁 證证 讚赞 贊赞 躍跃 輪轮 釋释 鎮镇 際际 雜杂 靈灵 頑顽 飾饰 髮发 鬧闹 鹽盐 麵面 黨党 鼎鼎 齡龄 艷艳 冑胄';
 const T2S_MAP={};T2S.split(' ').forEach(p=>{if(p.length===2)T2S_MAP[p[0]]=p[1];});
 const t2s=s=>s.replace(/[\u4e00-\u9fff]/g,c=>T2S_MAP[c]||c);
+// v4.1 特徵統一：抓取腳本已把「簡中特徵→統一繁中」（twFeats）與「繁中異體／日文→統一繁中」（twFeatAlias）寫進 cards.json；
+// 這裡的字表只是備援，給兩次更新之間新加的自訂卡（簡中）或 cards.json 還沒收錄的寫法用：全形英數→半形、日文漢字→台灣字形、簡→繁逐字＋常見詞。
+const S2T_PAIRS='万萬与與业業丛叢东東丝絲丢丟两兩严嚴丧喪个個临臨为為丽麗么麼义義乌烏乐樂乔喬乡鄉乱亂于於云雲亚亞亲親亿億仅僅仆僕从從仑侖仪儀们們优優伙夥会會传傳伤傷伦倫伪偽体體余餘儿兒兰蘭关關兹茲兽獸内內冈岡册冊军軍冲衝决決冻凍准準减減几幾凤鳳凭憑凯凱凶兇击擊则則刚剛创創别別剑劍剧劇动動势勢区區医醫华華单單卖賣卢盧卫衛厅廳历歷压壓厮廝参參双雙发發变變台臺叶葉号號吗嗎吨噸听聽启啟啧嘖啮齧啰囉喷噴团團园園国國图圖圆圓圣聖场場坏壞块塊坚堅坠墜垫墊墙牆壮壯声聲处處备備复復够夠头頭夹夾奋奮奖獎奥奧妇婦妈媽娅婭学學宝寶实實审審宫宮宾賓对對寻尋寿壽将將尔爾尘塵属屬岁歲岚嵐岛島师師带帶帮幫并並广廣库庫应應庞龐废廢开開异異弃棄张張弯彎弹彈强強当當彻徹征徵怀懷态態总總恋戀恒恆恶惡恼惱悬懸惯慣戏戲战戰户戶扑撲护護报報拟擬拥擁择擇挡擋挥揮换換据據摆擺摇搖敌敵数數斗鬥斩斬断斷无無时時术術机機杀殺杂雜权權条條来來杰傑极極枪槍标標树樹栗慄样樣档檔梦夢槛檻横橫樱櫻欢歡欧歐残殘毁毀毕畢气氣汉漢汤湯没沒泪淚泷瀧泼潑泽澤洁潔浅淺浆漿涡渦润潤温溫游遊滚滾潜潛灭滅灵靈灾災点點炽熾烟煙烦煩烧燒烩燴烬燼热熱爱愛爷爺状狀独獨狮獅狱獄猎獵猫貓猬蝟玛瑪环環现現琼瓊电電画畫瘾癮盖蓋盗盜着著砾礫确確礼禮禄祿离離种種称稱稣穌竞競笼籠简簡篮籃类類粮糧红紅约約级級纪紀纯純纲綱纳納纸紙纽紐线線练練组組终終绊絆经經结結绘繪给給绝絕绞絞继繼续續绳繩维維绵綿绿綠缓緩缘緣缝縫缪繆网網罗羅羁羈联聯肤膚胆膽胜勝胶膠脉脈脏臟脑腦脚腳脸臉舰艦节節苍蒼范範药藥莱萊莲蓮获獲营營萨薩葱蔥蓝藍虏虜虫蟲虽雖蛮蠻蝉蟬补補袭襲装裝见見规規视視觉覺触觸计計认認让讓训訓记記讲講许許证證诃訶试試诗詩诚誠诛誅话話诞誕诡詭该該语語说說请請诸諸诺諾谁誰调調谎謊谢謝谬謬谱譜贝貝负負败敗货貨贯貫费費贼賊贾賈赋賦赖賴赛賽赞贊赢贏赶趕跃躍践踐车車转轉轮輪轰轟轻輕辈輩输輸边邊达達过過运運还還这這进進远遠违違连連迹跡适適选選逊遜递遞遗遺酱醬释釋钟鍾钢鋼钩鉤钳鉗钻鑽铁鐵铠鎧铺鋪锈鏽锤錘锦錦镇鎮镝鏑镰鐮长長门門闪閃闲閒间間闷悶闻聞队隊阳陽阴陰阶階陨隕险險随隨隐隱雾霧静靜顶頂项項顺順须須顿頓预預领領颊頰频頻颓頹颜顏风風飞飛饭飯饶饒饼餅马馬骑騎鱼魚鱿魷鲁魯鲛鮫鲨鯊鳄鱷鳞鱗鸟鳥鸡雞鸣鳴鸦鴉鸭鴨鹅鵝鹏鵬鹤鶴鹰鷹麦麥黄黃鼹鼴齐齊齿齒龙龍';
+const S2T_MAP={};for(let i=0;i<S2T_PAIRS.length;i+=2)S2T_MAP[S2T_PAIRS[i]]=S2T_PAIRS[i+1];
+const S2T_PHRASES=[['海盗团','海賊團'],['海盗','海賊'],['胡子','鬍子'],['红发','紅髮'],['一伙','一行人'],['王国','王國'],['骑士团','騎士團']];
+const s2tFeat=s=>{let t=s;for(const [a,b] of S2T_PHRASES)t=t.split(a).join(b);return [...t].map(ch=>S2T_MAP[ch]||ch).join('');};
+const JPV={'団':'團','獣':'獸','学':'學','気':'氣','黒':'黑','戦':'戰','国':'國','悪':'惡','竜':'龍','桜':'櫻','鉄':'鐵','伝':'傳','発':'發','変':'變','剣':'劍','歯':'齒','蔵':'藏','処':'處','仏':'佛','楽':'樂','実':'實','広':'廣','辺':'邊','売':'賣','読':'讀','斉':'齊','沢':'澤','円':'圓','両':'兩','単':'單','対':'對','帰':'歸','関':'關','険':'險','験':'驗','猟':'獵','覇':'霸'};
+const JPV_RE=new RegExp('['+Object.keys(JPV).join('')+']','g');
+const splitFeat=s=>String(s||'').split(/[\/／,，\n]/).map(x=>x.trim()).filter(Boolean);
+const baseFeat=f=>String(f).replace(/[Ａ-Ｚａ-ｚ０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/　/g,' ').replace(JPV_RE,ch=>JPV[ch]).replace(/\s+/g,' ').trim();
+// 繁中／日文寫法 → 統一繁中（alias 來自 cards.json；找不到就只正規化字形）
+const canonFeat=f=>{const b=baseFeat(f);const a=TWFEATALIAS[f]||TWFEATALIAS[b];return a?baseFeat(a):b;};
+// 簡中原文 → 統一繁中：先查對照表，再退回字形轉換
+const cnFeatToTw=f=>{const m=TWFEATS[f]||TWFEATALIAS[f];if(m)return canonFeat(m);const b=baseFeat(f);if(TWFEATS[b]||TWFEATALIAS[b])return canonFeat(TWFEATS[b]||TWFEATALIAS[b]);return canonFeat(s2tFeat(b));};
 
 /* ---------- IndexedDB（存卡片資料） ---------- */
 const idb={
@@ -551,8 +565,8 @@ const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;
 
 /* ---------- 狀態 ---------- */
 let RAW=null;        // {fetchedAt, cards:[raw], tw, twSets, twFeats}
-// v4.0 繁中文字（cards.json 頂層，由抓取腳本從繁中官網產生）：TWD 卡號→{n,t,g,f}、TWSETS 簡中系列名→繁中、TWFEATS 簡中特徵→繁中
-let TWD={},TWSETS={},TWFEATS={},TW_ON=false; // TW_ON：cards.json 已含繁中文字（舊資料沒有時不標「簡」，免得滿版都是標記）
+// v4.0 繁中文字（cards.json 頂層，由抓取腳本從繁中官網產生）：TWD 卡號→{n,t,g,f}、TWSETS 簡中系列名→繁中、TWFEATS 簡中特徵→統一繁中；v4.1 TWFEATALIAS 繁中異體／日文→統一繁中
+let TWD={},TWSETS={},TWFEATS={},TWFEATALIAS={},TW_ON=false; // TW_ON：cards.json 已含繁中文字（舊資料沒有時不標「簡」，免得滿版都是標記）
 let BCUSTOM={updatedAt:'',cards:[]}; // 網站內建自訂卡（custom.json，raw 格式；cardImg 為 custom/xxx.jpg 相對路徑，空字串＝自動產生文字卡面）
 let CARDS=[];        // 正規化後（每個印刷一筆）
 let BYNO=new Map();  // 卡號 → 代表卡（含 imgs）
@@ -706,7 +720,7 @@ function norm(i){
     counter:(()=>{const n=num(i.cardAttack);return n===1000||n===2000?n:null;})(),
     // 屬性：可能是「斩/特」合在一格、官方站的「知」＝繁中「智」，顏色等雜訊剔除
     attrs:[...new Set((i.cardAttribute||[]).flatMap(a=>String(a||'').split(/[\/／,，]/)).map(a=>a.trim()).map(a=>a==='知'?'智':a).filter(a=>ATTRS.includes(a)))],
-    feats:(i.cardFeatures||'').split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean),
+    feats:splitFeat(i.cardFeatures),
     text:i.cardTextDesc||'',trigger:(i.cardTrigger||'').replace(/^\s*【(触发|觸發)】\s*/,''),rarity:normRarity(i.cardRarity),set:i.cardOfferType||'',
     block:i.subscript??'',img:i.cardImg||'',cart:i.cardCartograph||'',disp:i.displayId||i.id||0,
     // v3.8 合併資料：lang＝文字來源（cn 簡中／tw 繁中／jp 日版，簡中沒有的卡才會是 tw／jp）；alt＝其他語言的卡名，只用來搜尋
@@ -715,19 +729,23 @@ function norm(i){
   },i);
 }
 // v4.0：卡片文字以繁中官方為準。tl＝實際顯示文字的語言（tw 繁中／cn 簡中原文／jp 日文）；cn＝簡中原文（有繁中時保留給「簡中原文」與搜尋）；
-// fk＝篩選用特徵（簡中原文卡的特徵經 TWFEATS 對到繁中，讓同一特徵只出現一次）；setCn＝簡中系列名
+// feats＝統一後的繁中特徵（顯示與篩選共用；v4.1）；fk＝同 feats；cn.feats＝簡中原文特徵（搜尋與「簡中原文」用）；setCn＝簡中系列名
 function twify(c,i){
   c.cn=null;c.setCn=c.set;
-  const w=c.lang==='cn'&&!i.textLang?TWD[c.no]:null;
+  const w=c.lang==='cn'?TWD[c.no]:null; // v4.1：效果文已由腳本補過（textLang）的簡中卡也要查繁中資料，特徵才對得到
   if(c.lang==='tw'||i.textLang==='tw')c.tl='tw';else if(c.lang==='jp'||i.textLang==='jp')c.tl='jp';else c.tl='cn';
-  if(w&&(w.n||w.t!=null)){
+  if(w&&(w.n||w.t!=null||w.f)){
     c.cn={name:c.name,text:c.text,trigger:c.trigger,feats:c.feats};
     if(w.n)c.name=w.n;
     if(w.t!=null){c.text=w.t;c.trigger=w.g||'';c.tl='tw';}
-    if(w.f)c.feats=w.f.split('/').map(s=>s.trim()).filter(Boolean);
   }
+  // v4.1 特徵一律統一成繁中官方寫法：繁中官網有這張卡的特徵就用它（經 canonFeat 正規化異體寫法）；
+  // 否則簡中原文（含 custom.json 的自訂卡）經 twFeats 對照／字形轉換；繁中／日版補卡與繁中自訂卡只做正規化
+  const featLang=(w&&w.f)?'tw':(c.lang!=='cn'?c.lang:(i.textLang==='tw'&&!i.lang?'tw':'cn'));
+  const src=(w&&w.f)?splitFeat(w.f):c.feats;
+  c.feats=[...new Set(src.map(featLang==='cn'?cnFeatToTw:canonFeat).filter(Boolean))];
   if(c.lang==='cn'&&TWSETS[c.set])c.set=TWSETS[c.set];
-  c.fk=c.tl==='cn'?c.feats.map(f=>TWFEATS[f]||f):c.feats.slice();
+  c.fk=c.feats; // 篩選與顯示用同一份（v4.0 的 fk 欄位保留給舊程式碼）
   if(c.cn&&c.cn.name&&c.cn.name!==c.name)c.alt.unshift(c.cn.name);
   c.alt=[...new Set(c.alt.filter(a=>a&&a!==c.name))];
   return c;
@@ -764,7 +782,7 @@ function faceFor(c){
 const isPRSet=c=>!c.custom&&!!c.set&&!SET_CODE_RE.test(c.set);
 function buildIndex(){
   const rawCards=RAW?RAW.cards:[];
-  TWD=RAW&&RAW.tw||{};TWSETS=RAW&&RAW.twSets||{};TWFEATS=RAW&&RAW.twFeats||{};TW_ON=Object.keys(TWD).length>0;
+  TWD=RAW&&RAW.tw||{};TWSETS=RAW&&RAW.twSets||{};TWFEATS=RAW&&RAW.twFeats||{};TWFEATALIAS=RAW&&RAW.twFeatAlias||{};TW_ON=Object.keys(TWD).length>0;
   // 官方資料為主：官方（含繁中／日版補卡）已收錄的卡號，自訂卡不再顯示（雙週更新也會把它從 custom.json 刪掉）
   const offNos=new Set(rawCards.map(r=>r.cardNumber));
   const customCards=(BCUSTOM&&BCUSTOM.cards||[]).filter(r=>!offNos.has(r.cardNumber)).map(r=>{const c=Object.assign(norm(r),{custom:true});if(!c.img)c.img=faceFor(c);return c;});
@@ -869,7 +887,7 @@ function openPick(id){
 }
 function renderPickList(){
   if(!PK)return;const sel=$('#'+PK.id);const q=$('#pkQ').value.trim().toLowerCase(),qs=t2s(q);
-  const opts=[...sel.options].filter(o=>o.value===''||!q||o.textContent.toLowerCase().includes(q)||o.textContent.toLowerCase().includes(qs));
+  const opts=[...sel.options].filter(o=>{if(o.value===''||!q)return true;const t=o.textContent.toLowerCase();return t.includes(q)||t.includes(qs)||t2s(t).includes(qs);}); // v4.1：清單已是繁中，簡體輸入也要找得到
   $('#pkList').innerHTML=opts.length?opts.map(o=>`<button type="button" class="${o.value===sel.value?'on':''}" data-v="${esc(o.value)}"><span>${esc(o.textContent)}</span>${o.dataset.n?`<small>${o.dataset.n} 張</small>`:''}</button>`).join(''):'<div class="none">沒有符合的項目</div>';
 }
 document.querySelectorAll('.pick[data-pick]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('.x')){e.stopPropagation();clearFilter({fFeat:'feat',fSet:'set',fBlock:'block'}[b.dataset.pick]);return;}openPick(b.dataset.pick);}));
@@ -1136,7 +1154,7 @@ function openCard(no){
   $('#cdBody').innerHTML=`<div class="cardView"><div><img id="cdImg" alt="">${c.imgs.length>1?`<div class="alts">${c.imgs.map((u,i)=>`<img data-u="${esc(u)}" data-i="${i}" class="${u===cur?'on':''}" alt="">`).join('')}</div><div style="font-size:12px;color:var(--ink3);margin-top:4px">點選版本可指定牌組使用的圖</div>`:''}${c.custom?`<div style="margin-top:8px;font-size:12px"><span class="tag" style="color:var(--gold)">自訂卡</span>　<span style="color:var(--ink3)">網站內建的未發售卡，資料以官方公布為準</span></div>`:''}</div>
   <div><h3>${esc(c.name)}</h3><div class="no">${esc(c.no)}　${esc(c.set)}</div><div class="tags">${tags}</div><div style="margin:6px 0">${stat}</div>${c.feats.length?`<div style="color:var(--ink2);margin-bottom:8px">特徵：${c.feats.map(esc).join('／')}</div>`:''}
   <div class="txt">${esc(c.text)||'（無效果文字）'}${c.trigger?`\n\n${TRIG_LABEL(c)}${esc(c.trigger)}`:''}</div>
-  ${c.cn&&c.tl==='tw'&&(c.cn.text||c.cn.trigger)?`<details class="cnOrig"><summary>簡中原文</summary><div class="txt">${esc(c.cn.name)}${c.cn.feats.length?'　'+c.cn.feats.map(esc).join('／'):''}\n\n${esc(c.cn.text)||'（無效果文字）'}${c.cn.trigger?`\n\n【触发】${esc(c.cn.trigger)}`:''}</div></details>`:''}
+  ${c.cn&&((c.tl==='tw'&&(c.cn.text||c.cn.trigger))||c.cn.feats.join('/')!==c.feats.join('/'))?`<details class="cnOrig"><summary>簡中原文</summary><div class="txt">${esc(c.cn.name)}${c.cn.feats.length?'　'+c.cn.feats.map(esc).join('／'):''}\n\n${esc(c.cn.text)||'（無效果文字）'}${c.cn.trigger?`\n\n【触发】${esc(c.cn.trigger)}`:''}</div></details>`:''}
   <div class="ops">${isL?`<button class="primary" id="cdLead">${deck.leader===no?'移除領袖':'設為領袖'}</button>`:`<button id="cdSub">−</button><b id="cdN">${deck.main[no]||0}</b><button id="cdAdd" class="primary">＋ 加入</button><span style="color:var(--ink3);font-size:12px">最多 ${MAX_COPIES} 張</span>`}</div>
   ${c.custom?'':`<div style="margin-top:14px;font-size:12px;color:var(--ink3)">文字：${TL_T[c.tl]}${c.tl==='cn'?'（繁中官網尚未收錄，顯示簡中原文）':c.tl==='jp'?'（繁中、簡中官網尚未收錄，顯示日文原文）':''}　卡圖：${LANG_T[c.lang]||'簡中官網'}${c.alt.length?'　其他語言卡名：'+c.alt.map(esc).join('／'):''}　<a href="${c.tl==='tw'?'https://asia-tc.onepiece-cardgame.com/cardlist/':c.tl==='jp'?'https://www.onepiece-cardgame.com/cardlist/':'https://www.onepiece-cardgame.cn/cardlist'}" target="_blank" rel="noopener">在官方卡牌一覽查看</a></div>`}</div></div>`;
   fullInto($('#cdImg'),c,curRef);
@@ -1180,10 +1198,12 @@ async function fetchBundledCustom(){
 $('#btnClearThumbs').onclick=async()=>{if(!confirm('清除瀏覽器裡的卡圖縮圖快取？之後會重新從官網載入。'))return;await thumbs.clear();MISS.tw.clear();MISS.jp.clear();ls.set('opcg.twmiss',[]);ls.set('opcg.jpmiss',[]);LOADER.preKey='';renderBundledInfo();applyFilters();toast('已清除卡圖快取');};
 $('#btnImport').onclick=()=>{renderBundledInfo();$('#importDlg').showModal();};
 $('#copyScraper').onclick=async()=>{const s=$('#scraperSrc').textContent.trim();try{await navigator.clipboard.writeText(s);toast('已複製，到官方網站的 Console 貼上');}catch(e){prompt('請手動複製：',s);}};
+// v4.1 修正：v4.0 載入 cards.json 時漏掉頂層的繁中資料（tw／twSets／twFeats），導致網站一直顯示簡中；現在一起存進 RAW（IndexedDB 也會有）
+const twParts=j=>({tw:j.tw||null,twSets:j.twSets||null,twFeats:j.twFeats||null,twFeatAlias:j.twFeatAlias||null});
 function parseCardsJSON(j){const cards=Array.isArray(j)?j:(j.cards||j.list||j.page?.list);if(!Array.isArray(cards)||!cards.length||!cards[0].cardNumber)throw new Error('格式不符');return cards;}
 async function loadJSONFile(file){
   try{const txt=await file.text();const j=JSON.parse(txt);const cards=parseCardsJSON(j);
-    RAW={fetchedAt:j.fetchedAt||new Date().toISOString(),source:'manual',cards,sources:j.sources||null,stats:j.stats||null};buildIndex();await idb.set(DB_KEY,RAW);$('#importDlg').close();applyFilters();renderDeck();toast(`已匯入 ${BYNO.size} 張卡`);}
+    RAW={fetchedAt:j.fetchedAt||new Date().toISOString(),source:'manual',cards,sources:j.sources||null,stats:j.stats||null,...twParts(j)};buildIndex();await idb.set(DB_KEY,RAW);$('#importDlg').close();applyFilters();renderDeck();toast(`已匯入 ${BYNO.size} 張卡`);}
   catch(e){alert('讀取失敗：'+e.message+'\n請確認是用抓取腳本產生的 JSON。');}
 }
 // 網站內建 cards.json：開啟時自動檢查，比瀏覽器裡的新就換掉（fetchedAt 比大小）
@@ -1196,9 +1216,9 @@ async function fetchBundled(force){
     const j=await r.json();const cards=parseCardsJSON(j);
     const at=j.fetchedAt||r.headers.get('last-modified')||new Date().toISOString();
     const curAt=RAW&&RAW.fetchedAt?Date.parse(RAW.fetchedAt):0;const newAt=Date.parse(at)||0;
-    if(RAW&&RAW.source==='bundled'&&RAW.fetchedAt===at&&RAW.cards.length===cards.length){BUNDLED_STATE={status:'same'};renderBundledInfo();return false;}
+    if(RAW&&RAW.source==='bundled'&&RAW.fetchedAt===at&&RAW.cards.length===cards.length&&(!j.tw||RAW.tw)){BUNDLED_STATE={status:'same'};renderBundledInfo();return false;}
     if(RAW&&RAW.source!=='bundled'&&curAt>newAt&&!force){BUNDLED_STATE={status:'older'};renderBundledInfo();return false;}
-    RAW={fetchedAt:at,source:'bundled',cards,sources:j.sources||null,stats:j.stats||null};buildIndex();await idb.set(DB_KEY,RAW);applyFilters();renderDeck();
+    RAW={fetchedAt:at,source:'bundled',cards,sources:j.sources||null,stats:j.stats||null,...twParts(j)};buildIndex();await idb.set(DB_KEY,RAW);applyFilters();renderDeck();
     BUNDLED_STATE={status:'ok'};renderBundledInfo();toast(`已載入網站卡片資料（${fmtDate(at)}，${BYNO.size} 張）`);return true;
   }catch(e){BUNDLED_STATE={status:'error',msg:e.message};renderBundledInfo();return false;}
 }

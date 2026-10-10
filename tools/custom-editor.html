@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>OPCG 自訂卡編輯器</title>
-<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/t2cn.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js"></script>
 <style>
 :root{--sea:#0C1A2B;--sea2:#132840;--sea3:#1B3552;--line:#2A4A6B;--ink:#EAF1F8;--ink2:#9FB3C8;--ink3:#6B8199;--gold:#E8B84A;--gold2:#B98A2A;--ok:#4cc38a;--bad:#ef5b5b;--warn:#e8a64a;
 --c-红:#D8463A;--c-绿:#2FA866;--c-蓝:#3B7BDF;--c-紫:#8C5BD9;--c-黑:#4A4F5A;--c-黄:#E6C23C}
@@ -79,6 +79,12 @@ header .sp{flex:1}
 #refEmpty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink3);padding:30px}
 .inboxHead{display:flex;gap:8px;align-items:center;padding:6px 10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
 .inboxHead button{padding:2px 8px;font-size:12px}
+/* v1.4 _inbox 子資料夾＝系列：資料夾分頁 */
+.inboxHead .ibf{padding:2px 8px;font-size:12px;border-radius:999px;color:var(--ink2)}
+.inboxHead .ibf.on{border-color:var(--gold);color:var(--gold);font-weight:600}
+.inboxHead .ibf b{font-weight:400;color:var(--ink3);margin-left:3px}
+#refSet{font-size:11.5px;color:var(--gold);border:1px solid var(--gold2);border-radius:999px;padding:1px 7px;white-space:nowrap}
+#refSet:empty{display:none}
 #inbox{height:118px;display:flex;gap:6px;overflow-x:auto;padding:0 10px 10px}
 #inbox .ib{flex:none;width:76px;cursor:pointer;position:relative}
 #inbox .ib img{width:76px;height:84px;object-fit:cover;border-radius:5px;border:2px solid transparent;display:block;background:#000}
@@ -95,17 +101,23 @@ dialog::backdrop{background:#0009}
 #toast.on{opacity:1}
 .welcome{max-width:560px;margin:60px auto;line-height:1.8}
 .welcome code{background:var(--sea3);padding:1px 6px;border-radius:4px}
+/* v1.3 讀圖草稿：待確認欄位 */
+.rv{box-shadow:0 0 0 2px var(--gold)!important;border-radius:7px}
+.seg.rv,.chipsIn.rv{padding:3px;outline:2px solid var(--gold);outline-offset:1px;box-shadow:none!important}
+.it .dr{font-size:10.5px;border:1px solid var(--gold2);border-radius:4px;padding:0 4px;color:var(--gold)}
+#btnImport.has{border-color:var(--gold);color:var(--gold);font-weight:700}
+#issues .d{color:var(--gold)}#issues .d button{padding:0 7px;font-size:12px;margin-left:6px}
 kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px}
 </style>
 </head>
 <body>
 <header>
-  <b>OPCG 自訂卡編輯器</b><span class="hint">v1.2</span>
+  <b>OPCG 自訂卡編輯器</b><span class="hint">v1.5 繁中</span>
   <button id="btnOpen">開啟資料夾</button>
   <span id="dirName" class="hint"></span>
   <span id="stat" class="hint"></span>
   <span class="sp"></span>
-  <label class="hint" title="卡名、特徵、效果、觸發、系列離開欄位時自動轉成簡中官方用字；卡名會對照官方繁中卡名換成簡中卡名"><input type="checkbox" id="optT2S" checked style="width:auto;vertical-align:-2px"> 自動轉簡體</label>
+  <label class="hint" title="卡名、特徵、效果、觸發離開欄位時：簡體字轉繁中、關鍵字換成繁中官方寫法（【防禦】【觸發器】【每回合1次】…）、卡名與「」內卡名對照官方繁中卡名、特徵換成統一後的繁中特徵"><input type="checkbox" id="optS2T" checked style="width:auto;vertical-align:-2px"> 自動轉繁中</label>
   <span id="dirty"></span>
   <button id="btnSave" class="pri" disabled>儲存到資料夾</button>
   <button id="btnGit" disabled title="複製 Terminal 指令：pull → commit → push，Netlify 會自動上線">複製上線指令</button>
@@ -113,14 +125,16 @@ kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid v
 
 <main class="layout">
   <aside id="left">
-    <div class="lhead"><input id="q" placeholder="搜尋卡號／卡名"><button id="btnNew" disabled>＋新卡</button></div>
+    <div class="lhead"><input id="q" placeholder="搜尋卡號／卡名"><button id="btnNew" disabled>＋新卡</button><button id="btnImport" disabled title="把 _inbox/drafts.json（Claude 讀圖產生的草稿）匯入成新卡（⌘I）">匯入草稿</button></div>
     <div id="list"></div>
   </aside>
 
   <section id="form">
     <div id="welcome" class="welcome">
       <p>按左上的 <b>開啟資料夾</b>，選 <code>~/Sites/opcg-futuredeck</code>（整個 repo 資料夾）。</p>
-      <p>工具會讀寫 <code>site/custom.json</code> 與 <code>site/custom/</code>，參考圖從 <code>_inbox/</code> 讀，並用 <code>site/cards.json</code> 提供特徵／系列／卡名的建議。</p>
+      <p>工具會讀寫 <code>site/custom.json</code> 與 <code>site/custom/</code>，參考圖從 <code>_inbox/</code> 讀，並用 <code>site/cards.json</code> 提供特徵／系列／卡名的建議。<b>v1.5 起卡片文字一律用繁中官方用語</b>（特徵＝網站統一後的繁中清單、效果關鍵字如【登場時】【防禦】【觸發器】），存檔自動標 <code>textLang:"tw"</code>；類型／顏色／屬性的程式值仍是簡中，不用管。</p>
+      <p><b>_inbox 的每個子資料夾＝一個系列</b>：資料夾名用系列代號（例 <code>_inbox/EB05/</code>、<code>_inbox/op18/</code>，大小寫、有無「-」都可），同系列的情報圖都放進去。從該資料夾的圖「用這張圖新增卡片」或「設為這張的卡圖」時，系列與卡號前綴會自動帶入，不用再另外填。</p>
+      <p>批量錄卡：把情報圖丟進 <code>_inbox/</code>，請 Claude 讀圖產生 <code>_inbox/drafts.json</code>（含裁好的卡圖），再按左上「匯入草稿」；黃框＝Claude 不確定、要人工確認的欄位。</p>
       <p class="hint">需要 Chrome 或 Edge（要用到瀏覽器讀寫本機資料夾的功能，Safari 不支援）。</p>
     </div>
     <div id="noCard" class="empty" hidden>左邊選一張卡，或按「＋新卡」</div>
@@ -150,12 +164,12 @@ kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid v
           <div class="fl"><span class="lab">稀有度</span><div class="seg" id="fRar"></div></div>
         </div>
       </div>
-      <div class="fl"><span class="lab">特徵（輸入後按 Enter；黃框＝現有資料沒有的特徵，確認用詞）</span><div class="chipsIn" id="fFeat"><input id="fFeatIn" list="dlFeat" autocomplete="off"></div></div>
+      <div class="fl"><span class="lab">特徵（繁中；輸入後按 Enter；黃框＝網站統一清單沒有的特徵，確認用詞）</span><div class="chipsIn" id="fFeat"><input id="fFeatIn" list="dlFeat" autocomplete="off"></div></div>
       <div class="fl"><span class="lab">效果（點標記插入游標處）</span><div id="tags"></div><textarea id="fText" rows="6"></textarea></div>
-      <label class="f"><span class="lab">觸發（不用打【觸發】）</span><textarea id="fTrig" rows="2"></textarea></label>
+      <label class="f"><span class="lab">觸發（不用打【觸發器】）</span><textarea id="fTrig" rows="2"></textarea></label>
       <div class="grid3">
-        <label class="f"><span class="lab">系列名稱（新系列直接打，例：特別補充包 ○○）</span><input id="fSetName" list="dlSet" autocomplete="off"></label>
-        <label class="f"><span class="lab">系列代號（依卡號自動帶）</span><input id="fSetCode" placeholder="EB-05" autocomplete="off" spellcheck="false"></label>
+        <label class="f"><span class="lab">系列名稱（從 _inbox/子資料夾 的圖新增會自動帶入；新系列直接打）</span><input id="fSetName" list="dlSet" autocomplete="off"></label>
+        <label class="f"><span class="lab">系列代號（依卡號／_inbox 資料夾自動帶）</span><input id="fSetCode" placeholder="EB-05" autocomplete="off" spellcheck="false"></label>
         <label class="f"><span class="lab">區塊圖示（可留空）</span><input id="fBlock" inputmode="numeric" autocomplete="off"></label>
       </div>
       <div class="fl"><span class="lab">從現有卡帶入資料（再錄、同名卡用；卡號與卡圖不會被蓋）</span>
@@ -166,19 +180,19 @@ kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid v
         <button id="btnDup">複製這張</button>
         <button id="btnDel" class="danger">刪除這張</button>
       </div>
-      <p class="hint" style="margin-top:14px">快捷鍵：<kbd>⌘S</kbd> 儲存到資料夾　<kbd>⌘Enter</kbd> 下一張（沒有就以卡號＋1 新增，沿用系列與顏色）　<kbd>⌥↑</kbd><kbd>⌥↓</kbd> 上／下一張　<kbd>⌘V</kbd> 貼上圖片當參考圖</p>
+      <p class="hint" style="margin-top:14px">快捷鍵：<kbd>⌘S</kbd> 儲存到資料夾　<kbd>⌘I</kbd> 匯入草稿　<kbd>⌘Enter</kbd> 下一張（沒有就以卡號＋1 新增，沿用系列與顏色）　<kbd>⌥↑</kbd><kbd>⌥↓</kbd> 上／下一張　<kbd>⌘V</kbd> 貼上圖片當參考圖</p>
     </div>
   </section>
 
   <section id="right">
     <div class="rhead">
-      <span id="refName">參考圖</span>
+      <span id="refName">參考圖</span><span id="refSet" title="依 _inbox 子資料夾判斷的系列；新增卡片會自動帶入"></span>
       <button id="refSetImg" disabled>設為這張的卡圖</button>
       <button id="refNewCard" disabled>用這張圖新增卡片</button>
       <button id="refFit">符合視窗</button>
     </div>
-    <div id="ref"><img id="refImg" alt="" hidden><div id="refEmpty">把官方情報圖／卡面放進 <b>_inbox/</b>（可以分子資料夾），<br>或直接 ⌘V 貼上、拖進這裡。<br><br>滾輪縮放、拖曳移動、雙擊符合視窗。</div></div>
-    <div class="inboxHead">_inbox <span id="inboxN"></span><span class="sp" style="flex:1"></span><button id="btnInboxReload" disabled>重新整理</button></div>
+    <div id="ref"><img id="refImg" alt="" hidden><div id="refEmpty">把官方情報圖／卡面放進 <b>_inbox/系列代號/</b>（例 _inbox/EB05/），<br>一個子資料夾＝一個系列，新增卡片時自動帶入系列；<br>或直接 ⌘V 貼上、拖進這裡。<br><br>滾輪縮放、拖曳移動、雙擊符合視窗。</div></div>
+    <div class="inboxHead">_inbox <span id="inboxN"></span><span id="inboxF" style="display:flex;gap:4px;flex-wrap:wrap"></span><span class="sp" style="flex:1"></span><button id="btnInboxReload" disabled>重新整理</button></div>
     <div id="inbox"></div>
   </section>
 </main>
@@ -193,8 +207,10 @@ kbd{font:11.5px ui-monospace,monospace;background:var(--sea3);border:1px solid v
       <div id="cropRatio" class="hint"></div>
       <div><span class="lab">方式</span><div class="seg" id="cMode"></div></div>
       <div><span class="lab">縮放 <span id="cZoomV"></span></span><input type="range" id="cZoom" min="0.3" max="6" step="0.01"></div>
+      <div><span class="lab">旋轉 <span id="cRotV"></span>（拉桿微調 ±45°，歪斜的情報圖拉正）</span><input type="range" id="cRot" min="-45" max="45" step="0.1">
+        <div style="display:flex;gap:6px;margin-top:4px"><button id="cRotL" title="逆時針轉 90°">↺ 90°</button><button id="cRotR" title="順時針轉 90°">↻ 90°</button><button id="cRot0" title="旋轉歸零">0°</button></div></div>
       <div><span class="lab">留邊顏色（完整顯示時）</span><div class="seg" id="cBg"></div></div>
-      <p class="hint">在圖上拖曳移動、滾輪縮放。要從情報圖裡只取卡面：放大後拖到卡面位置。</p>
+      <p class="hint">在圖上拖曳移動、滾輪縮放、<kbd>Shift</kbd>＋滾輪微調旋轉。要從情報圖裡只取卡面：放大後拖到卡面位置。</p>
       <div style="display:flex;gap:6px;margin-top:auto"><button id="cReset">重設</button><span style="flex:1"></span><button id="cDone" class="pri">完成</button></div>
     </div>
   </div>
@@ -212,30 +228,68 @@ const COLOR_HEX={'红':'#D8463A','绿':'#2FA866','蓝':'#3B7BDF','紫':'#8C5BD9'
 const ATTRS=['打','斩','射','特','智'],ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const NO_RE=/^[A-Z]{1,6}\d{0,2}-\d{3}$/;
-const FIELDS=['cardNumber','cardName','cardType','cardColor','cardLife','cardPower','cardAttack','cardAttribute','cardFeatures','cardTextDesc','cardTrigger','cardRarity','cardOfferType','subscript','mixedColor','cardImg'];
-// 常用標記固定排最前面（按鈕顯示簡稱，插入官方簡中寫法）
-const PIN_TAGS=[['【每回合1次】','一回一次'],['【咚!!×1】','咚!!×1'],['【咚!!×2】','咚!!×2'],['【咚!!×3】','咚!!×3']];
-const DEFAULT_TAGS=['【登场时】','【启动主要】','【阻挡者】','【速攻】','【每回合1次】','【对方的回合中】','【自己的回合中】','【攻击时】','【KO时】','【反击】','【主要】','【咚!!×1】','【咚!!×2】','【咚!!×3】'];
-// 簡中官方用字修正（OpenCC 轉出來和官方不同的詞）
-const OFFICIAL_FIX=[['海贼团','海盗团']];
-const DEFAULT_README='網站內建自訂卡（未發售卡）。cards 內每筆欄位與 cards.json 相同。同卡號會覆蓋官方資料。';
+const FIELDS=['cardNumber','cardName','cardType','cardColor','cardLife','cardPower','cardAttack','cardAttribute','cardFeatures','cardTextDesc','cardTrigger','cardRarity','cardOfferType','subscript','mixedColor','cardImg','textLang'];
+// 常用標記固定排最前面（按鈕顯示簡稱，插入繁中官方寫法；其餘從 cards.json 的繁中效果文統計）
+const PIN_TAGS=[['【每回合1次】','一回一次'],['【咚‼×1】','咚‼×1'],['【咚‼×2】','咚‼×2'],['【咚‼×3】','咚‼×3']];
+const DEFAULT_TAGS=['【登場時】','【啟動主要】','【防禦】','【速攻】','【每回合1次】','【對方回合中】','【我方回合中】','【攻擊時】','【KO時】','【反擊】','【主要】','【觸發器】','【咚‼×1】','【咚‼×2】','【咚‼×3】'];
+// 關鍵字 → 繁中官方寫法（簡中官方、OpenCC 轉出的繁中、翻譯組慣用寫法都對到 site/terms.json 統計出的官方寫法）
+const TAG_TW={"【登场时】": "【登場時】", "【启动主要】": "【啟動主要】", "【阻挡者】": "【防禦】", "【攻击时】": "【攻擊時】", "【KO时】": "【KO時】", "【我方的回合中】": "【我方回合中】", "【反击】": "【反擊】", "【对方的回合中】": "【對方回合中】", "【我方的回合结束时】": "【我方回合結束時】", "【对方的攻击时】": "【對方攻擊時】", "【触发】": "【觸發器】", "【双重攻击】": "【雙重攻擊】", "【流放】": "【消失】", "【阻挡时】": "【防禦時】", "【不可阻挡】": "【防禦不可】", "【对方攻击时】": "【對方攻擊時】", "【咚!!×3】": "【咚‼×3】", "【咚×1】": "【咚‼×1】", "【启动主要 】": "【啟動主要】", "【我方回合结束时】": "【我方回合結束時】", "【对方回合中】": "【對方回合中】", "【阻擋者】": "【防禦】", "【觸發】": "【觸發器】", "【對方的攻擊時】": "【對方攻擊時】", "【對方的回合中】": "【對方回合中】", "【我方的回合結束時】": "【我方回合結束時】", "【阻擋時】": "【防禦時】", "【不可阻擋】": "【防禦不可】", "【1回1次】": "【每回合1次】", "【回合1次】": "【每回合1次】", "【一回合1次】": "【每回合1次】", "【被KO時】": "【KO時】", "【對手攻擊時】": "【對方攻擊時】", "【對手回合中】": "【對方回合中】", "【對手的回合中】": "【對方回合中】", "【自己回合中】": "【我方回合中】", "【自己的回合中】": "【我方回合中】", "【自己回合結束時】": "【我方回合結束時】", "【自己的回合結束時】": "【我方回合結束時】", "【咚!!×1】": "【咚‼×1】", "【咚!!×2】": "【咚‼×2】"};
+// 效果文詞彙 → 繁中官方用語（只換詞，不改句型；依 cards.json 繁中官方效果文統計：領航卡、廢棄、卡組、擁有、力量值、在這個回合）
+const TERM_TW=[["牌庫上方","卡組上面"],["牌庫下方","卡組下面"],["牌庫底","卡組下面"],["牌庫","卡組"],["牌組","卡組"],["捨棄","廢棄"],["舍棄","廢棄"],["丟棄","廢棄"],["棄牌區","廢棄區"],["棄牌堆","廢棄區"],["墓地","廢棄區"],["領袖","領航卡"],["具有","擁有"],["本次戰鬥中","在這場對戰中"],["本次戰鬥","這場對戰"],["本回合中","這個回合"],["力量(?=[+\\-－＋])","力量值"],["活躍狀態","活動狀態"],["活躍","活動狀態"],["阻擋者","防禦"],["特徴","特徵"]];
+const DEFAULT_README='網站內建自訂卡（已公布、未發售的卡）。cards 內每筆欄位與 cards.json 相同；文字為繁中官方用語（textLang:"tw"）。官方 cards.json 已有同卡號時網站以官方為準，雙週更新會自動移除。';
 
-/* ---------- 轉簡體 ---------- */
-let occ=null;try{if(window.OpenCC)occ=OpenCC.Converter({from:'tw',to:'cn'});}catch(e){}
-const T2S_LITE='達达 爾尔 龍龙 羅罗 綠绿 藍蓝 紅红 黃黄 鬥斗 戰战 鷹鹰 獸兽 鳥鸟 魚鱼 馬马 貓猫 獅狮 鳳凤 風风 電电 雲云 島岛 國国 們们 寶宝 劍剑 槍枪 艦舰 團团 盜盗 軍军 將将 隊队 門门 鐵铁 銀银 擊击 護护 衛卫 體体 麗丽 蘿萝 賓宾 傑杰 蘭兰 絲丝 歐欧 亞亚 愛爱 華华 瑪玛 麥麦 兒儿 強强 鱷鳄 喬乔 傳传 說说 條条 雙双 單单 頭头 長长 陽阳 氣气 動动 聲声 書书 畫画 圖图 數数 點点 層层 階阶 終终 總总 權权 處处 貴贵 賊贼 遊游 過过 進进 選选 時时 會会 對对 還还 後后 發发 從从 當当 應应 實实 現现 讓让 樣样 張张 給给 場场 啟启 擊击 觸触 費费 張张 當当 數数 機机 剩剩 層层 選选 戰战 牌牌 這这 個个 將将 為为 與与 於于 來来 無无 斬斩 盤盘 獲获 復复 殘残 張张 區区 棄弃 墓墓 換换 給给 狀态 態态 種种 類类 擁拥 確确 認认 開开 關关 間间 際际 準准 標标 歸归 備备 銷销 魯鲁 羅罗 薩萨 諾诺 維维 盧卢 樂乐 號号 邊边 員员 揮挥 導导 謀谋 隨随 卻却 覺觉 變变 計计 劃划 節节 屬属 黨党 鬼鬼 魔魔 靈灵 聖圣 帝帝 雖虽 從从 驅驱 勢势 勞劳 協协 勝胜 敗败 創创 傷伤 斷断 釋释 雜杂 結结 擇择';
-const T2S_MAP={};T2S_LITE.split(' ').forEach(p=>{if(p.length===2)T2S_MAP[p[0]]=p[1];});
-function t2s(s){s=String(s||'');s=occ?occ(s):[...s].map(c=>T2S_MAP[c]||c).join('');for(const [a,b] of OFFICIAL_FIX)s=s.split(a).join(b);return s;}
-const conv=s=>$('#optT2S').checked?t2s(s):s;
+/* ---------- 轉繁中（v1.5）：簡體字 → 繁中、關鍵字 → 官方寫法、特徵 → 統一繁中 ---------- */
+let occ=null;try{if(window.OpenCC)occ=OpenCC.Converter({from:'cn',to:'tw'});}catch(e){}
+// 備援字表（與網站 index.html 同一份）：CDN 載不到時用
+const S2T_PAIRS='万萬与與业業丛叢东東丝絲丢丟两兩严嚴丧喪个個临臨为為丽麗么麼义義乌烏乐樂乔喬乡鄉乱亂于於云雲亚亞亲親亿億仅僅仆僕从從仑侖仪儀们們优優伙夥会會传傳伤傷伦倫伪偽体體余餘儿兒兰蘭关關兹茲兽獸内內冈岡册冊军軍冲衝决決冻凍准準减減几幾凤鳳凭憑凯凱凶兇击擊则則刚剛创創别別剑劍剧劇动動势勢区區医醫华華单單卖賣卢盧卫衛厅廳历歷压壓厮廝参參双雙发發变變台臺叶葉号號吗嗎吨噸听聽启啟啧嘖啮齧啰囉喷噴团團园園国國图圖圆圓圣聖场場坏壞块塊坚堅坠墜垫墊墙牆壮壯声聲处處备備复復够夠头頭夹夾奋奮奖獎奥奧妇婦妈媽娅婭学學宝寶实實审審宫宮宾賓对對寻尋寿壽将將尔爾尘塵属屬岁歲岚嵐岛島师師带帶帮幫并並广廣库庫应應庞龐废廢开開异異弃棄张張弯彎弹彈强強当當彻徹征徵怀懷态態总總恋戀恒恆恶惡恼惱悬懸惯慣戏戲战戰户戶扑撲护護报報拟擬拥擁择擇挡擋挥揮换換据據摆擺摇搖敌敵数數斗鬥斩斬断斷无無时時术術机機杀殺杂雜权權条條来來杰傑极極枪槍标標树樹栗慄样樣档檔梦夢槛檻横橫樱櫻欢歡欧歐残殘毁毀毕畢气氣汉漢汤湯没沒泪淚泷瀧泼潑泽澤洁潔浅淺浆漿涡渦润潤温溫游遊滚滾潜潛灭滅灵靈灾災点點炽熾烟煙烦煩烧燒烩燴烬燼热熱爱愛爷爺状狀独獨狮獅狱獄猎獵猫貓猬蝟玛瑪环環现現琼瓊电電画畫瘾癮盖蓋盗盜着著砾礫确確礼禮禄祿离離种種称稱稣穌竞競笼籠简簡篮籃类類粮糧红紅约約级級纪紀纯純纲綱纳納纸紙纽紐线線练練组組终終绊絆经經结結绘繪给給绝絕绞絞继繼续續绳繩维維绵綿绿綠缓緩缘緣缝縫缪繆网網罗羅羁羈联聯肤膚胆膽胜勝胶膠脉脈脏臟脑腦脚腳脸臉舰艦节節苍蒼范範药藥莱萊莲蓮获獲营營萨薩葱蔥蓝藍虏虜虫蟲虽雖蛮蠻蝉蟬补補袭襲装裝见見规規视視觉覺触觸计計认認让讓训訓记記讲講许許证證诃訶试試诗詩诚誠诛誅话話诞誕诡詭该該语語说說请請诸諸诺諾谁誰调調谎謊谢謝谬謬谱譜贝貝负負败敗货貨贯貫费費贼賊贾賈赋賦赖賴赛賽赞贊赢贏赶趕跃躍践踐车車转轉轮輪轰轟轻輕辈輩输輸边邊达達过過运運还還这這进進远遠违違连連迹跡适適选選逊遜递遞遗遺酱醬释釋钟鍾钢鋼钩鉤钳鉗钻鑽铁鐵铠鎧铺鋪锈鏽锤錘锦錦镇鎮镝鏑镰鐮长長门門闪閃闲閒间間闷悶闻聞队隊阳陽阴陰阶階陨隕险險随隨隐隱雾霧静靜顶頂项項顺順须須顿頓预預领領颊頰频頻颓頹颜顏风風飞飛饭飯饶饒饼餅马馬骑騎鱼魚鱿魷鲁魯鲛鮫鲨鯊鳄鱷鳞鱗鸟鳥鸡雞鸣鳴鸦鴉鸭鴨鹅鵝鹏鵬鹤鶴鹰鷹麦麥黄黃鼹鼴齐齊齿齒龙龍';
+const S2T_MAP={};for(let i=0;i<S2T_PAIRS.length;i+=2)S2T_MAP[S2T_PAIRS[i]]=S2T_PAIRS[i+1];
+const S2T_PHRASES=[['海盗团','海賊團'],['海盗','海賊'],['胡子','鬍子'],['红发','紅髮'],['一伙','一行人'],['王国','王國'],['骑士团','騎士團']];
+const JPV={'団':'團','獣':'獸','学':'學','気':'氣','黒':'黑','戦':'戰','国':'國','悪':'惡','竜':'龍','桜':'櫻','鉄':'鐵','伝':'傳','発':'發','変':'變','剣':'劍','歯':'齒','蔵':'藏','処':'處','仏':'佛','楽':'樂','実':'實','広':'廣','辺':'邊','売':'賣','読':'讀','斉':'齊','沢':'澤','円':'圓','両':'兩','単':'單','対':'對','帰':'歸','関':'關','険':'險','験':'驗','猟':'獵','覇':'霸'};
+const JPV_RE=new RegExp('['+Object.keys(JPV).join('')+']','g');
+// 繁中裡也會用到的字，不算簡體殘留
+const SIMP_OK=new Set([...'台于云么余几干后谷里系松只向志才困准征周咸舍涂蒙采板借别卷游尽据升杰秋赞冲斗丰卜布面范沈曲回胡欲迹并制了']);
+const SIMP_RE=new RegExp('['+Object.keys(S2T_MAP).filter(c=>!SIMP_OK.has(c)).join('')+'个]');
+const hasSimp=s=>SIMP_RE.test(String(s||''));
+Object.assign(S2T_MAP,{'舍':'捨','后':'後','托':'託'}); // 備援字表補幾個常見字（繁中也用到，所以不列入簡體殘留檢查）
+const TAG_RE=/【[^】]{1,12}】/g;
+function s2t(s){s=String(s||'');for(const [a,b] of S2T_PHRASES)s=s.split(a).join(b);s=occ?occ(s):[...s].map(c=>S2T_MAP[c]||c).join('');
+  s=s.replace(/[Ａ-Ｚａ-ｚ０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/咚!!/g,'咚‼');
+  return s.replace(TAG_RE,t=>TAG_TW[t]||TAG_TW[t.replace(/\s+/g,'')]||t);}
+const termTw=s=>{for(const [a,b] of TERM_TW)s=s.replace(new RegExp(a,'g'),b);return s;};
+const textTw=s=>termTw(s2t(s)).replace(/回閤/g,'回合');
+const conv=s=>$('#optS2T').checked?s2t(s):s;
+// 特徵：簡中→統一繁中（cards.json twFeats）、繁中異體／日文→統一繁中（twFeatAlias）、都沒有就字形轉換
+const baseFeat=f=>String(f).replace(/[Ａ-Ｚａ-ｚ０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).replace(/　/g,' ').replace(JPV_RE,ch=>JPV[ch]).replace(/\s+/g,' ').trim();
+function featTw(f){f=String(f||'').trim();if(!f)return '';const A=S.twFeatAlias||{},T=S.twFeats||{};const b=baseFeat(f);
+  const m=T[f]||T[b]||A[f]||A[b];if(m)return baseFeat(A[m]||m);
+  if(!hasSimp(b))return b;const t=baseFeat(s2t(b));return baseFeat(A[t]||t);}
+const featsTw=r=>featsOf(r).map(featTw).filter(Boolean);
 
 /* ---------- 狀態 ---------- */
 const S={root:null,site:null,cdir:null,items:[],cur:-1,readme:DEFAULT_README,off:new Map(),feats:new Map(),sets:[],tagList:DEFAULT_TAGS,
-  nameMap:new Map(),inbox:[],pasted:[],ref:null,dirty:false,changed:new Set(),snap:new Map(),deletedFiles:new Set(),uid:1};
+  tw:new Map(),twFeats:{},twFeatAlias:{},nameMap:new Map(),inbox:[],inboxFolder:'',pasted:[],ref:null,dirty:false,changed:new Set(),snap:new Map(),deletedFiles:new Set(),uid:1};
 const cur=()=>S.items[S.cur];
-function emptyRaw(){return {cardNumber:'',cardName:'',cardType:'角色',cardColor:'',cardLife:'',cardPower:'',cardAttack:'-',cardAttribute:[],cardFeatures:'',cardTextDesc:'',cardTrigger:'',cardRarity:'',cardOfferType:'',subscript:'',mixedColor:0,cardImg:''};}
+// v1.3 草稿待確認欄位 → 表單元素；_review／_note／_img／_src 等底線開頭欄位只存在編輯器與 IndexedDB 草稿，存檔時不寫進 custom.json
+const FIELD_EL={cardNumber:'#fNo',cardName:'#fName',cardType:'#fType',cardColor:'#fColor',cardLife:'#fCost',cardPower:'#fPow',cardAttack:'#fCounter',cardAttribute:'#fAttr',cardRarity:'#fRar',cardFeatures:'#fFeat',cardTextDesc:'#fText',cardTrigger:'#fTrig',cardOfferType:'#fSetName'};
+const FIELD_T={cardNumber:'卡號',cardName:'卡名',cardType:'類型',cardColor:'顏色',cardLife:'費用／生命',cardPower:'力量',cardAttack:'反擊',cardAttribute:'屬性',cardRarity:'稀有度',cardFeatures:'特徵',cardTextDesc:'效果',cardTrigger:'觸發',cardOfferType:'系列',cardImg:'卡圖'};
+const pub=r=>{const o={};for(const k in r)if(!k.startsWith('_'))o[k]=r[k];return o;};
+const reviewOf=r=>Array.isArray(r._review)?r._review:[];
+function emptyRaw(){return {cardNumber:'',cardName:'',cardType:'角色',cardColor:'',cardLife:'',cardPower:'',cardAttack:'-',cardAttribute:[],cardFeatures:'',cardTextDesc:'',cardTrigger:'',cardRarity:'',cardOfferType:'',subscript:'',mixedColor:0,cardImg:'',textLang:'tw'};}
 function canon(r){const o={};for(const k of FIELDS)o[k]=r[k]??(k==='cardAttribute'?[]:k==='mixedColor'?0:'');for(const k in r)if(!(k in o))o[k]=r[k];return o;}
 const newItem=(r,origNo=null)=>({uid:S.uid++,r:canon(Object.assign(emptyRaw(),r||{})),origNo,diskFile:null,img:{state:'none'}});
 const codeFromNo=no=>{const m=String(no||'').match(/^([A-Z]+)(\d+)-/);return m?m[1]+'-'+m[2]:'';};
 const splitSet=s=>{const m=String(s||'').match(/^(.*?)\s*【([^】]+)】\s*$/);return m?{name:m[1].trim(),code:m[2].trim()}:{name:String(s||'').trim(),code:''};};
+// v1.4 _inbox 子資料夾＝系列：資料夾名「EB05」「op18」「OP-18」「EB05 特別補充包○○」→ {code:'EB-05', name}
+const folderOf=path=>{const p=String(path||'');return p.includes('/')?p.split('/')[0]:'';};
+const setFromFolder=folder=>{const f=String(folder||'').trim();if(!f||f.startsWith('_'))return null;
+  const m=f.match(/^([A-Za-z]{1,6})\s*-?\s*(\d{1,2})(?:[\s_－-]+(.+))?$/);if(!m)return {code:'',name:f};
+  const code=m[1].toUpperCase()+'-'+m[2].padStart(2,'0');return {code,name:(m[3]||'').trim()||code};};
+// 資料夾 → 要寫進 cardOfferType 的字串；同代號已有自訂卡就沿用它的系列名稱
+function setStrFromFolder(folder){const t=setFromFolder(folder);if(!t)return '';if(!t.code)return t.name;
+  const ex=S.items.find(i=>splitSet(i.r.cardOfferType).code===t.code&&splitSet(i.r.cardOfferType).name);
+  return (ex&&t.name===t.code)?ex.r.cardOfferType:`${t.name}【${t.code}】`;}
+// 系列代號 → 下一個未用的卡號（EB-05 → EB05-0NN）
+function nextNoForSet(code){const pre=String(code||'').replace('-','');if(!pre)return '';let mx=0;for(const i of S.items){const m=i.r.cardNumber.match(new RegExp('^'+pre+'-(\\d{3})$'));if(m)mx=Math.max(mx,+m[1]);}return pre+'-'+String(mx+1).padStart(3,'0');}
 const colorsOf=r=>String(r.cardColor||'').split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean);
 const featsOf=r=>String(r.cardFeatures||'').split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean);
 
@@ -276,9 +330,9 @@ async function openRoot(h){
   for(const r of (cj.cards||[])){const it=newItem(r,r.cardNumber);S.items.push(it);await loadDiskImg(it);}
   sortItems();takeSnap();
   // cards.json（建議清單用）
-  try{const d=await readJSON(site,'cards.json');buildRefData(d?(Array.isArray(d)?d:d.cards):[]);}catch(e){buildRefData([]);toast('cards.json 讀取失敗，沒有建議清單');}
+  try{const d=await readJSON(site,'cards.json');buildRefData(d?(Array.isArray(d)?{cards:d}:d):{cards:[]});}catch(e){buildRefData({cards:[]});toast('cards.json 讀取失敗，沒有建議清單');}
   await loadInbox();
-  ['#btnSave','#btnGit','#btnNew','#btnInboxReload'].forEach(s=>$(s).disabled=false);
+  ['#btnSave','#btnGit','#btnNew','#btnInboxReload'].forEach(s=>$(s).disabled=false);updImportBtn();
   $('#welcome').hidden=true;
   setDirty(false);
   // 還原草稿
@@ -286,6 +340,7 @@ async function openRoot(h){
   if(dr&&dr.dir===h.name&&dr.cards&&JSON.stringify(dr.cards)!==JSON.stringify(S.items.map(i=>i.r))&&confirm(`有上次沒存到資料夾的草稿（${dr.cards.length} 張，${dr.at}），要還原嗎？\n（只有文字資料，新放的卡圖要重新指定）`)){
     const byNo=new Map(S.items.map(i=>[i.r.cardNumber,i]));
     S.items=dr.cards.map((r,k)=>{const o=byNo.get(dr.orig[k]);const it=newItem(r,dr.orig[k]||null);if(o){it.diskFile=o.diskFile;it.img=o.img;}S.changed.add(r.cardNumber);return it;});
+    for(const it of S.items)if(it.img.state==='none'&&it.r._img)await loadDraftImg(it);
     setDirty(true);
   }
   S.cur=S.items.length?0:-1;renderList();fillForm();
@@ -297,25 +352,29 @@ async function loadDiskImg(it){
   if(!h){it.img={state:'missing',file:m[1]};return;}
   try{const url=URL.createObjectURL(await h.getFile());it.img={state:'disk',src:await loadImage(url)};it.diskFile=m[1];}catch(e){it.img={state:'missing',file:m[1]};}
 }
-function buildRefData(cards){
+function buildRefData(d){
+  const cards=d.cards||[];S.twFeats=d.twFeats||{};S.twFeatAlias=d.twFeatAlias||{};S.tw=new Map(Object.entries(d.tw||{}));
   S.off.clear();S.feats.clear();S.nameMap.clear();
-  const sets=new Map(),tags=new Map(),names=new Set();
+  const sets=new Map(),tags=new Map(),names=new Set(),seenNo=new Set();
   for(const r of cards){
     if(!r||!r.cardNumber)continue;
     if(!S.off.has(r.cardNumber))S.off.set(r.cardNumber,r);
-    for(const f of featsOf(r))S.feats.set(f,(S.feats.get(f)||0)+1);
     if(r.cardOfferType&&/【[^】]+】/.test(r.cardOfferType))sets.set(r.cardOfferType,Math.max(sets.get(r.cardOfferType)||0,r.id||0));
-    for(const m of String(r.cardTextDesc||'').matchAll(/【[^】]{1,10}】/g))tags.set(m[0],(tags.get(m[0])||0)+1);
-    if(r.cardName)names.add(r.cardName);
-    if(r.cardNameTw&&r.cardName&&(!r.lang||r.lang==='cn')){S.nameMap.set(r.cardNameTw,r.cardName);S.nameMap.set(t2s(r.cardNameTw),r.cardName);}
+    const w=S.tw.get(r.cardNumber);
+    if(w&&w.n)names.add(w.n);else if(r.cardNameTw)names.add(r.cardNameTw);else if(r.cardName)names.add(r.cardName);
+    if(r.cardName){const tn=(w&&w.n)||r.cardNameTw;if(tn){const t2=tn.replace(/[（(](異圖卡|異畫)[)）]/,'');S.nameMap.set(normName(r.cardName),t2);S.nameMap.set(normName(s2t(r.cardName)),t2);}}
+    if(seenNo.has(r.cardNumber))continue;seenNo.add(r.cardNumber);   // 特徵與關鍵字每張卡只算一次（異畫不重複）
+    const fs=(w&&w.f)?String(w.f).split(/[\/／,，\n]/).map(featTw).filter(Boolean):featsTw(r);
+    for(const f of new Set(fs))S.feats.set(f,(S.feats.get(f)||0)+1);
+    const txt=(w&&w.t)||'';for(const m of String(txt).matchAll(TAG_RE))tags.set(m[0],(tags.get(m[0])||0)+1);
   }
   S.sets=[...sets.keys()].sort((a,b)=>b.localeCompare(a,'zh'));
   if(tags.size)S.tagList=[...tags.entries()].sort((a,b)=>b[1]-a[1]).slice(0,22).map(x=>x[0]);
-  S.allNames=[...names];
+  S.allNames=[...names];S.twNames=new Map([...names].map(n=>[normName(n.replace(/[（(](異圖卡|異畫)[)）]/,'')),n.replace(/[（(](異圖卡|異畫)[)）]/,'')]));
   refreshLists();
 }
 function refreshLists(){
-  const fm=new Map(S.feats);for(const it of S.items)for(const f of featsOf(it.r))fm.set(f,(fm.get(f)||0)+1);
+  const fm=new Map(S.feats);for(const it of S.items)for(const f of featsTw(it.r))fm.set(f,(fm.get(f)||0)+1);
   $('#dlFeat').innerHTML=[...fm.entries()].sort((a,b)=>b[1]-a[1]).map(([f,n])=>`<option value="${esc(f)}">${n} 張</option>`).join('');
   // 自訂卡是未發售卡，系列一定是新系列 → 只建議自己填過的系列名稱
   const cs=[...new Set(S.items.map(i=>splitSet(i.r.cardOfferType).name).filter(Boolean))];
@@ -329,13 +388,13 @@ function refreshLists(){
 /* ---------- 清單 ---------- */
 function sortItems(){const c=cur();S.items.sort((a,b)=>(a.r.cardNumber||'~').localeCompare(b.r.cardNumber||'~'));if(c)S.cur=S.items.indexOf(c);}
 function renderList(){
-  const q=t2s($('#q').value.trim()).toLowerCase();
+  const q=$('#q').value.trim().toLowerCase();
   $('#list').innerHTML=S.items.map((it,i)=>{
     const r=it.r;if(q&&!(r.cardNumber+' '+r.cardName).toLowerCase().includes(q))return '';
     const v=check(it);const st=v.err.length?'bad':v.warn.length?'warn':'';
     const dots=colorsOf(r).map(c=>`<i style="background:${COLOR_HEX[c]||'#666'}"></i>`).join('');
     const hasImg=it.img.state==='disk'||it.img.state==='new';
-    return `<div class="it${i===S.cur?' on':''}" data-i="${i}"><span class="st ${st}" title="${esc([...v.err,...v.warn].join('\n'))}"></span><div class="t"><div class="no">${esc(r.cardNumber||'（無卡號）')} <span class="dots" style="display:inline-flex">${dots}</span></div><div class="nm">${esc(r.cardName||'（未命名）')}・${esc(TYPE_T[r.cardType]||'')}</div></div><span class="im${hasImg?' y':''}">${hasImg?'圖':'文'}</span></div>`;
+    return `<div class="it${i===S.cur?' on':''}" data-i="${i}"><span class="st ${st}" title="${esc([...v.err,...v.warn].join('\n'))}"></span><div class="t"><div class="no">${esc(r.cardNumber||'（無卡號）')} <span class="dots" style="display:inline-flex">${dots}</span></div><div class="nm">${esc(r.cardName||'（未命名）')}・${esc(TYPE_T[r.cardType]||'')}</div></div>${reviewOf(r).length?'<span class="dr" title="讀圖草稿，有待確認欄位">草</span>':''}<span class="im${hasImg?' y':''}">${hasImg?'圖':'文'}</span></div>`;
   }).join('')||'<div class="empty">還沒有自訂卡</div>';
   const on=$('#list .it.on');if(on)on.scrollIntoView({block:'nearest'});
 }
@@ -356,11 +415,11 @@ seg('#fRar',['',...RARITIES],['未公布',...RARITIES],false);
 const styleColors=()=>$('#fColor').querySelectorAll('button').forEach(b=>{b.style.background=b.classList.contains('on')?COLOR_HEX[b.dataset.v]:'';b.style.borderColor=b.classList.contains('on')?COLOR_HEX[b.dataset.v]:'';});
 
 let FEATS=[];
-function renderFeats(){const known=new Set(S.feats.keys());S.items.forEach(it=>{if(it!==cur())featsOf(it.r).forEach(f=>known.add(f));});
+function renderFeats(){const known=new Set(S.feats.keys());S.items.forEach(it=>{if(it!==cur())featsTw(it.r).forEach(f=>known.add(f));});
   $('#fFeat').querySelectorAll('.chip').forEach(c=>c.remove());
   const inp=$('#fFeatIn');
-  FEATS.forEach((f,i)=>{const c=document.createElement('span');c.className='chip'+(S.feats.size&&!known.has(f)?' new':'');c.title=c.classList.contains('new')?'現有資料沒有這個特徵，確認是不是官方簡中用詞':'';c.innerHTML=`${esc(f)}<b data-rm="${i}">✕</b>`;$('#fFeat').insertBefore(c,inp);});}
-function addFeat(v){v=conv(String(v||'').trim());if(!v)return;v.split(/[\/／,，]/).map(s=>s.trim()).filter(Boolean).forEach(f=>{if(!FEATS.includes(f))FEATS.push(f);});$('#fFeatIn').value='';renderFeats();onForm();}
+  FEATS.forEach((f,i)=>{const c=document.createElement('span');c.className='chip'+(S.feats.size&&!known.has(f)?' new':'');c.title=c.classList.contains('new')?'網站統一的繁中特徵清單沒有這個，確認是不是繁中官方用詞':'';c.innerHTML=`${esc(f)}<b data-rm="${i}">✕</b>`;$('#fFeat').insertBefore(c,inp);});}
+function addFeat(v){v=String(v||'').trim();if(!v)return;v.split(/[\/／,，]/).map(s=>$('#optS2T').checked?featTw(s):s.trim()).filter(Boolean).forEach(f=>{if(!FEATS.includes(f))FEATS.push(f);});$('#fFeatIn').value='';renderFeats();onForm();}
 $('#fFeatIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();addFeat(e.target.value);}else if(e.key==='Backspace'&&!e.target.value&&FEATS.length){FEATS.pop();renderFeats();onForm();}});
 $('#fFeatIn').addEventListener('change',e=>{if(S.feats.has(e.target.value))addFeat(e.target.value);});
 $('#fFeatIn').addEventListener('blur',e=>{if(e.target.value.trim())addFeat(e.target.value);});
@@ -397,8 +456,9 @@ function readForm(){
   r.cardAttribute=(t==='事件'||t==='舞台')?[]:ATTRS.filter(a=>segGet('#fAttr').includes(a));
   r.cardFeatures=FEATS.join('/');
   r.cardTextDesc=$('#fText').value.trim();
-  r.cardTrigger=$('#fTrig').value.trim().replace(/^\s*【(触发|觸發)】\s*/,'');
+  r.cardTrigger=$('#fTrig').value.trim().replace(/^\s*【(触发|觸發|觸發器)】\s*/,'');
   r.cardRarity=segGet('#fRar');r.subscript=$('#fBlock').value.trim();
+  if(!hasSimp(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))r.textLang='tw';
   if($('#fSetCode').dataset.auto==='1')$('#fSetCode').value=codeFromNo(r.cardNumber);
   const sn=$('#fSetName').value.trim(),sc=$('#fSetCode').value.trim().toUpperCase();r.cardOfferType=sc?`${sn}【${sc}】`:sn;
 }
@@ -408,10 +468,14 @@ function onForm(){const it=cur();if(!it)return;const before=it.r.cardNumber;read
 ['#fNo','#fName','#fCost','#fPow','#fText','#fTrig','#fSetName','#fBlock'].forEach(s=>$(s).addEventListener('input',onForm));
 $('#fSetCode').addEventListener('input',e=>{e.target.dataset.auto=e.target.value.trim()?'':'1';onForm();});
 $('#fNo').addEventListener('blur',()=>{$('#fNo').value=$('#fNo').value.trim().toUpperCase().replace(/[－—–]/g,'-');onForm();sortItems();renderList();});
-// 離開欄位時轉簡中；卡名、「」裡的卡名對照官方繁中→簡中
-const fixNames=s=>s.replace(/「([^」]+)」/g,(m,n)=>'「'+(S.nameMap.get(n)||S.nameMap.get(t2s(n))||n)+'」');
-$('#fName').addEventListener('blur',e=>{const v=e.target.value.trim();if(!v)return;const nv=S.nameMap.get(v)||S.nameMap.get(t2s(v))||conv(v);if(nv!==v){e.target.value=nv;onForm();}});
-['#fText','#fTrig','#fSetName'].forEach(s=>$(s).addEventListener('blur',e=>{if(!$('#optT2S').checked)return;const v=e.target.value;const nv=fixNames(t2s(v));if(nv!==v){e.target.value=nv;onForm();}}));
+// 離開欄位時轉繁中；卡名、「」裡的卡名對照官方簡中→繁中卡名、《》裡的特徵換成統一繁中
+const fixNames=s=>s.replace(/「([^」]+)」/g,(m,n)=>'「'+(S.nameMap.get(normName(n))||S.nameMap.get(normName(s2t(n)))||n)+'」').replace(/《([^》]+)》/g,(m,f)=>'《'+(featTw(f)||f)+'》');
+const normName=n=>String(n||'').trim().replace(/\s*[·．•・]\s*/g,'・');
+const nameTw=v=>{const r=S.nameMap.get(normName(v))||S.nameMap.get(normName(s2t(v)));if(r)return r;const t=s2t(v);return (S.twNames&&S.twNames.get(normName(t)))||t;};
+$('#fName').addEventListener('blur',e=>{if(!$('#optS2T').checked)return;const v=e.target.value.trim();if(!v)return;const nv=nameTw(v);if(nv!==v){e.target.value=nv;onForm();}});
+['#fText','#fTrig'].forEach(s=>$(s).addEventListener('blur',e=>{if(!$('#optS2T').checked)return;const v=e.target.value;const nv=fixNames(textTw(v));if(nv!==v){e.target.value=nv;onForm();}}));
+// 整張轉繁中（舊的簡中自訂卡用）
+function cardToTw(it){const r=it.r;r.cardName=nameTw(r.cardName);r.cardTextDesc=fixNames(textTw(r.cardTextDesc));r.cardTrigger=fixNames(textTw(r.cardTrigger));r.cardFeatures=featsTw(r).join('/');if(!hasSimp(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))r.textLang='tw';}
 $('#tags').onclick=e=>{const b=e.target.closest('button');if(!b)return;const ta=$('#fText');const s=ta.selectionStart??ta.value.length,en=ta.selectionEnd??s;ta.value=ta.value.slice(0,s)+b.dataset.t+ta.value.slice(en);ta.focus();ta.selectionStart=ta.selectionEnd=s+b.dataset.t.length;onForm();};
 
 /* ---------- 檢查 ---------- */
@@ -426,15 +490,21 @@ function check(it){
   if((t==='领袖'||t==='角色')&&!/^\d+$/.test(r.cardPower))err.push('力量要填數字');
   if(it.img.state==='missing')err.push(`卡圖檔 custom/${it.img.file} 不存在`);
   if(!r.cardTextDesc&&t!=='角色')warn.push('效果文是空的');
+  {const f=folderOf(it.img.srcName),fs=f?setFromFolder(f):null,sc=splitSet(r.cardOfferType).code;if(fs&&fs.code&&sc&&fs.code!==sc)warn.push(`卡圖來自 _inbox/${f}/（${fs.code}），但系列代號是 ${sc}`);}
   if(!splitSet(r.cardOfferType).name)warn.push('沒填系列名稱（網站會只顯示代號'+(splitSet(r.cardOfferType).code?'【'+splitSet(r.cardOfferType).code+'】':'')+'）');
-  if(S.feats.size){const known=new Set(S.feats.keys());const nf=featsOf(r).filter(f=>!known.has(f)&&!S.items.some(o=>o!==it&&featsOf(o.r).includes(f)));if(nf.length)warn.push('新特徵（現有資料沒有）：'+nf.join('、'));}
-  if(/[達爾龍羅綠藍紅黃戰鬥擊護團盜軍將隊門鐵場時對發從應觸費啟這個為與來無區棄換態種類開關間備屬]/.test(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))warn.push('有繁體字，比對特徵／搜尋可能對不上');
-  if(r.cardName&&S.allNames&&S.allNames.length>500&&!S.allNames.includes(r.cardName))info.push('官方資料沒有同名卡（新角色可以忽略；舊角色請確認是簡中官方譯名，例「路飞」不是「鲁夫」）');
+  if(S.feats.size){const known=new Set(S.feats.keys());const nf=featsOf(r).filter(f=>!known.has(f)&&!S.items.some(o=>o!==it&&featsOf(o.r).includes(f)));if(nf.length)warn.push('新特徵（網站統一清單沒有）：'+nf.join('、'));}
+  {const all=r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures;if(hasSimp(all))warn.push('有簡體字殘留：按下面「轉繁中」或手動改成繁中官方用語');else if(r.textLang!=='tw')warn.push('沒有 textLang:"tw"：網站會把這張當簡中原文（儲存時會自動補上）');
+   for(const m of all.matchAll(TAG_RE))if(TAG_TW[m[0]])warn.push(`關鍵字 ${m[0]} 官方寫法是 ${TAG_TW[m[0]]}`);
+   {const tt=r.cardTextDesc+'\n'+r.cardTrigger;const bad=TERM_TW.filter(([a])=>new RegExp(a).test(tt)).map(([a,b])=>a.replace(/\(.*$/,'')+'→'+b);if(bad.length)warn.push('效果文用詞不是繁中官方寫法：'+bad.join('、'));}}
+  if(it.img.state==='new'&&it.img.src&&ratioOff(it.img.src)>0.02&&!it.img.rot&&it.img.zoom===1&&!it.img.ox&&!it.img.oy)warn.push('卡圖不是卡片比例（歪斜照片或整張情報圖）：按「調整卡圖」旋轉、放大到卡面');
+  if(r.cardName&&S.allNames&&S.allNames.length>500&&!S.allNames.includes(r.cardName))info.push('官方資料沒有同名卡（新角色可以忽略；舊角色請確認是繁中官方卡名，例官方是「蒙其·D·魯夫」不是「魯夫」）');
   if(no&&S.off.has(no))warn.push(`官方資料已有 ${no}「${S.off.get(no).cardName}」：網站以官方為準，這張自訂卡不會顯示，下次雙週更新會自動刪掉`);
-  return {err,warn,info};
+  const rv=reviewOf(r);const draft=rv.length?'讀圖草稿，待確認：'+rv.map(k=>FIELD_T[k]||k).join('、')+(r._note?'（'+r._note+'）':''):(r._note?'讀圖備註：'+r._note:'');
+  return {err,warn,info,draft};
 }
 function showIssues(){const it=cur();if(!it)return;const v=check(it);
-  $('#issues').innerHTML=[...v.err.map(x=>`<div class="e">✕ ${esc(x)}</div>`),...v.warn.map(x=>`<div class="w">！${esc(x)}</div>`),...v.info.map(x=>`<div class="i">・${esc(x)}</div>`)].join('')||'<div style="color:var(--ok)">✓ 資料完整</div>';
+  $('#issues').innerHTML=(v.draft?`<div class="d">✎ ${esc(v.draft)}${reviewOf(it.r).length?'<button type="button" id="btnRvOk">這張都確認了</button>':''}</div>`:'')+([...v.err.map(x=>`<div class="e">✕ ${esc(x)}</div>`),...v.warn.map(x=>`<div class="w">！${esc(x)}${/簡體字殘留|關鍵字|用詞/.test(x)?' <button type="button" class="toTw">轉繁中</button>':''}</div>`),...v.info.map(x=>`<div class="i">・${esc(x)}</div>`)].join('')||'<div style="color:var(--ok)">✓ 資料完整</div>');
+  markReview();
   const st={none:'沒有卡圖：網站會自動畫文字卡面（左邊預覽就是）',disk:`卡圖：custom/${it.diskFile||''}`,new:`新卡圖（${it.img.srcName||'貼上的圖'}），儲存時寫入 custom/${it.r.cardNumber||'卡號'}.jpg`,missing:'卡圖檔不見了'}[it.img.state];
   $('#imgState').textContent=st;}
 
@@ -459,7 +529,7 @@ function drawFace(g,r){
   g.fillText(nm,40,160);g.fillStyle='#E8B84A';g.fillRect(40,172,W-80,2);
   g.font=`500 15px ${font}`;g.fillStyle='#9FB3C8';const ft=featsOf(r).join('／');if(ft)g.fillText('特徵：'+ft,40,196);
   g.fillStyle='#EAF1F8';let tf=19;g.font=`400 ${tf}px ${font}`;
-  let body=(r.cardTextDesc||'').trim();if(r.cardTrigger)body+=(body?'\n\n':'')+'【觸發】'+r.cardTrigger;
+  let body=(r.cardTextDesc||'').trim();if(r.cardTrigger)body+=(body?'\n\n':'')+'【觸發器】'+r.cardTrigger;
   let lines=wrapText(g,body,W-80);while(lines.length>Math.floor((H-340)/(tf*1.45))&&tf>13){tf--;g.font=`400 ${tf}px ${font}`;lines=wrapText(g,body,W-80);}
   lines.slice(0,Math.floor((H-340)/(tf*1.45))).forEach((l,i)=>g.fillText(l,40,228+i*tf*1.45));
   if(!body){g.fillStyle='#6B8199';g.font=`400 16px ${font}`;g.fillText('（效果未公布）',40,232);}
@@ -471,11 +541,13 @@ function drawFace(g,r){
   g.textAlign='center';g.fillStyle='#cfd8e3';g.font=`700 14px ${font}`;g.fillText(r.cardNumber||'',W/2,H-48);
   g.font=`500 11px ${font}`;g.fillStyle='#6B8199';g.fillText(r.cardOfferType||'自訂卡',W/2,H-28);g.textAlign='left';
 }
+// 旋轉後的外框尺寸（v1.4 旋轉）：填滿／完整顯示的基準縮放用這個算，轉 90° 的橫圖也能剛好填滿
+function rotBox(m){const iw=m.src.naturalWidth||m.src.width,ih=m.src.naturalHeight||m.src.height;const a=(m.rot||0)*Math.PI/180,c=Math.abs(Math.cos(a)),n=Math.abs(Math.sin(a));return {iw,ih,bw:iw*c+ih*n,bh:iw*n+ih*c};}
 function drawCrop(g,m){
-  const iw=m.src.naturalWidth||m.src.width,ih=m.src.naturalHeight||m.src.height;
-  const s0=m.mode==='cover'?Math.max(W/iw,H/ih):Math.min(W/iw,H/ih);const s=s0*m.zoom,dw=iw*s,dh=ih*s;
+  const {iw,ih,bw,bh}=rotBox(m);
+  const s0=m.mode==='cover'?Math.max(W/bw,H/bh):Math.min(W/bw,H/bh);const s=s0*m.zoom,dw=iw*s,dh=ih*s;
   g.fillStyle=m.bg||'#000';g.fillRect(0,0,W,H);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
-  g.drawImage(m.src,(W-dw)/2+m.ox,(H-dh)/2+m.oy,dw,dh);
+  g.save();g.translate(W/2+m.ox,H/2+m.oy);g.rotate((m.rot||0)*Math.PI/180);g.drawImage(m.src,-dw/2,-dh/2,dw,dh);g.restore();
 }
 function paintCard(g,it){g.clearRect(0,0,W,H);
   if(it.img.state==='new')drawCrop(g,it.img);
@@ -504,25 +576,34 @@ seg('#cBg',['#000000','#ffffff'],['黑','白'],false,()=>{cur().img.bg=segGet('#
 function openCrop(){const it=cur();if(!it)return;
   if(it.img.state==='disk')it.img={state:'new',src:it.img.src,srcName:it.diskFile,mode:'cover',zoom:1,ox:0,oy:0,bg:'#000000'};
   if(it.img.state!=='new')return toast('這張沒有卡圖。先從參考圖「設為這張的卡圖」，或選檔案');
-  const im=it.img.src;const off=ratioOff(im);
-  $('#cropRatio').textContent=`原圖 ${im.naturalWidth}×${im.naturalHeight}`+(off>0.02?`，比例和卡片（63:88）差 ${(off*100).toFixed(0)}%：選「填滿裁切」會切掉邊，「完整顯示」會留邊`:'');
   cropSync();$('#cropDlg').showModal();}
-function cropSync(){const m=cur().img;segSet('#cMode',m.mode);segSet('#cBg',m.bg);$('#cZoom').value=m.zoom;$('#cZoomV').textContent=Math.round(m.zoom*100)+'%';drawCrop($('#cropCv').getContext('2d'),m);drawPreview();}
+function cropSync(){const m=cur().img;segSet('#cMode',m.mode);segSet('#cBg',m.bg);$('#cZoom').value=m.zoom;$('#cZoomV').textContent=Math.round(m.zoom*100)+'%';
+  const rot=m.rot||0,fine=((rot+45)%90+90)%90-45;$('#cRot').value=fine.toFixed(1);$('#cRotV').textContent=(rot%360===0?'0':rot.toFixed(1))+'°';
+  const {iw,ih,bw,bh}=rotBox(m);const off=Math.abs((bw/bh)/(W/H)-1);
+  $('#cropRatio').textContent=`原圖 ${iw}×${ih}`+(rot?`，已轉 ${rot.toFixed(1)}°`:'')+(off>0.02?`，比例和卡片（63:88）差 ${(off*100).toFixed(0)}%：選「填滿裁切」會切掉邊，「完整顯示」會留邊`:'');
+  drawCrop($('#cropCv').getContext('2d'),m);drawPreview();}
+// 旋轉 = 90° 的倍數（按鈕）＋ 微調（拉桿 ±45°）
+function setRot(v){const m=cur().img;m.rot=Math.round(((v%360)+360)%360*10)/10;if(m.rot>180)m.rot-=360;setDirty();cropSync();}
+$('#cRot').oninput=e=>{const m=cur().img;const base=Math.round((m.rot||0)/90)*90;setRot(base+ +e.target.value);};
+$('#cRotL').onclick=()=>setRot((cur().img.rot||0)-90);
+$('#cRotR').onclick=()=>setRot((cur().img.rot||0)+90);
+$('#cRot0').onclick=()=>setRot(0);
 $('#btnCrop').onclick=openCrop;
 $('#cZoom').oninput=e=>{cur().img.zoom=+e.target.value;setDirty();cropSync();};
-$('#cReset').onclick=()=>{Object.assign(cur().img,{zoom:1,ox:0,oy:0});cropSync();};
+$('#cReset').onclick=()=>{Object.assign(cur().img,{zoom:1,ox:0,oy:0,rot:0});cropSync();};
 $('#cDone').onclick=()=>{$('#cropDlg').close();S.changed.add(cur().r.cardNumber);setDirty();showIssues();renderList();};
 {const cv=$('#cropCv');let d=null;
   cv.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
   cv.addEventListener('pointermove',e=>{if(!d)return;const k=W/cv.clientWidth,m=cur().img;m.ox+=(e.clientX-d.x)*k;m.oy+=(e.clientY-d.y)*k;d={x:e.clientX,y:e.clientY};cropSync();});
   cv.addEventListener('pointerup',()=>{d=null;setDirty();});
-  cv.addEventListener('wheel',e=>{e.preventDefault();const m=cur().img;const k=W/cv.clientWidth;const px=e.offsetX*k-W/2,py=e.offsetY*k-H/2;const z0=m.zoom,z1=Math.min(6,Math.max(.3,z0*Math.exp(-e.deltaY*.0015)));const f=z1/z0;m.ox=px-(px-m.ox)*f;m.oy=py-(py-m.oy)*f;m.zoom=z1;cropSync();},{passive:false});}
+  cv.addEventListener('wheel',e=>{e.preventDefault();const m=cur().img;if(e.shiftKey){setRot((m.rot||0)+(e.deltaY>0?.5:-.5));return;}const k=W/cv.clientWidth;const px=e.offsetX*k-W/2,py=e.offsetY*k-H/2;const z0=m.zoom,z1=Math.min(6,Math.max(.3,z0*Math.exp(-e.deltaY*.0015)));const f=z1/z0;m.ox=px-(px-m.ox)*f;m.oy=py-(py-m.oy)*f;m.zoom=z1;cropSync();},{passive:false});}
 
 /* ---------- 參考圖 ---------- */
 const RV={s:1,x:0,y:0};
 function refApply(){$('#refImg').style.transform=`translate(${RV.x}px,${RV.y}px) scale(${RV.s})`;}
 function refFit(){const im=$('#refImg'),box=$('#ref');if(!im.naturalWidth)return;const s=Math.min(box.clientWidth/im.naturalWidth,box.clientHeight/im.naturalHeight);RV.s=s;RV.x=(box.clientWidth-im.naturalWidth*s)/2;RV.y=(box.clientHeight-im.naturalHeight*s)/2;refApply();}
 function showRef(ref){S.ref=ref;const im=$('#refImg');im.hidden=!ref;$('#refEmpty').hidden=!!ref;$('#refName').textContent=ref?ref.name:'參考圖';
+  {const st=ref&&ref.folder?setStrFromFolder(ref.folder):'';$('#refSet').textContent=st?'系列 '+st:'';$('#refSet').title=st?`依 _inbox/${ref.folder}/ 判斷的系列；新增卡片會自動帶入`:'';}
   $('#refSetImg').disabled=$('#refNewCard').disabled=!ref||!S.site;
   if(ref){im.onload=refFit;im.src=ref.url;}renderInbox();}
 $('#refFit').onclick=refFit;
@@ -539,32 +620,76 @@ $('#refFit').onclick=refFit;
 function addPasted(files){const imgs=files.filter(f=>f.type.startsWith('image/'));if(!imgs.length)return false;
   for(const f of imgs){const ref={name:'貼上：'+(f.name&&f.name!=='image.png'?f.name:new Date().toLocaleTimeString()),url:URL.createObjectURL(f),pasted:true};S.pasted.unshift(ref);showRef(ref);}return true;}
 document.addEventListener('paste',e=>{const files=[...(e.clipboardData?.files||[])];if(files.some(f=>f.type.startsWith('image/'))){e.preventDefault();addPasted(files);toast('已貼上參考圖');}});
-$('#refSetImg').onclick=()=>{if(S.ref)setCardImage(S.ref.url,S.ref.name);};
-$('#refNewCard').onclick=()=>{if(!S.ref)return;newCard();setCardImage(S.ref.url,S.ref.name);};
+$('#refSetImg').onclick=async()=>{if(!S.ref)return;await setCardImage(S.ref.url,S.ref.name);
+  // 卡還沒填系列 → 依圖所在的 _inbox 子資料夾帶入
+  const it=cur(),st=S.ref.folder?setStrFromFolder(S.ref.folder):'';if(it&&st&&!splitSet(it.r.cardOfferType).name){it.r.cardOfferType=st;fillForm();setDirty();saveDraft();toast('系列已依資料夾帶入：'+st);}};
+$('#refNewCard').onclick=()=>{if(!S.ref)return;newCard(null,false,S.ref.folder?setStrFromFolder(S.ref.folder):'');setCardImage(S.ref.url,S.ref.name);};
 
 async function loadInbox(){
   S.inbox.forEach(x=>URL.revokeObjectURL(x.url));S.inbox=[];
   if(!S.root||S.root===S.site){renderInbox();return;}
   const dir=await S.root.getDirectoryHandle('_inbox',{create:true});
-  async function walk(d,p){for await(const [name,h] of d.entries()){if(name.startsWith('.'))continue;
-    if(h.kind==='directory')await walk(h,p+name+'/');else if(/\.(png|jpe?g|webp|gif|avif)$/i.test(name))S.inbox.push({name:p+name,url:URL.createObjectURL(await h.getFile())});}}
-  await walk(dir,'');S.inbox.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));renderInbox();
+  async function walk(d,p){for await(const [name,h] of d.entries()){if(name.startsWith('.')||(name==='_drafts'&&h.kind==='directory'))continue;
+    if(h.kind==='directory')await walk(h,p+name+'/');else if(/\.(png|jpe?g|webp|gif|avif)$/i.test(name))S.inbox.push({name:p+name,folder:folderOf(p+name),url:URL.createObjectURL(await h.getFile())});}}
+  await walk(dir,'');S.inbox.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));renderInbox();updImportBtn();
 }
 function renderInbox(){const used=new Set(S.items.map(i=>i.img.srcName).filter(Boolean));const all=[...S.pasted,...S.inbox];
   $('#inboxN').textContent=all.length?`${S.inbox.length} 張${S.pasted.length?'＋貼上 '+S.pasted.length:''}`:'（空）';
-  $('#inbox').innerHTML=all.map((x,i)=>`<div class="ib${S.ref&&S.ref.url===x.url?' on':''}${used.has(x.name)?' used':''}" data-i="${i}" title="${esc(x.name)}"><img src="${x.url}" loading="lazy" alt=""><span>${esc(x.name.split('/').pop())}</span></div>`).join('');}
+  // 子資料夾分頁（＝系列）
+  const fc=new Map();for(const x of S.inbox)fc.set(x.folder,(fc.get(x.folder)||0)+1);
+  if(S.inboxFolder&&!fc.has(S.inboxFolder))S.inboxFolder='';
+  $('#inboxF').innerHTML=fc.size>1||(fc.size===1&&[...fc.keys()][0]!=='')?[['','全部',S.inbox.length],...[...fc.entries()].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).map(([f,n])=>[f,f||'（未分資料夾）',n])]
+    .map(([f,l,n])=>{const st=f?setFromFolder(f):null;return `<button class="ibf${S.inboxFolder===f?' on':''}" data-f="${esc(f)}" title="${st&&st.code?'系列 '+st.code:''}">${esc(l)}<b>${n}</b></button>`;}).join(''):'';
+  $('#inbox').innerHTML=all.map((x,i)=>(S.inboxFolder&&!x.pasted&&x.folder!==S.inboxFolder)?'':`<div class="ib${S.ref&&S.ref.url===x.url?' on':''}${used.has(x.name)?' used':''}" data-i="${i}" title="${esc(x.name)}"><img src="${x.url}" loading="lazy" alt=""><span>${esc(x.name.split('/').pop())}</span></div>`).join('');}
+$('#inboxF').onclick=e=>{const b=e.target.closest('.ibf');if(!b)return;S.inboxFolder=b.dataset.f;renderInbox();};
 $('#inbox').onclick=e=>{const d=e.target.closest('.ib');if(!d)return;showRef([...S.pasted,...S.inbox][+d.dataset.i]);};
 $('#btnInboxReload').onclick=()=>loadInbox().then(()=>toast('_inbox 已重新讀取'));
 
+/* ---------- v1.3 讀圖草稿匯入（_inbox/drafts.json） ---------- */
+function markReview(){const it=cur();const rv=new Set(it?reviewOf(it.r):[]);for(const k in FIELD_EL)$(FIELD_EL[k]).classList.toggle('rv',rv.has(k));}
+function clearReview(k){const it=cur();if(!it||!reviewOf(it.r).includes(k))return;it.r._review=it.r._review.filter(x=>x!==k);if(!it.r._review.length)delete it.r._review;$(FIELD_EL[k]).classList.remove('rv');setDirty();showIssues();renderList();saveDraft();}
+$('#fwrap').addEventListener('input',e=>{for(const k in FIELD_EL)if(e.target.closest(FIELD_EL[k]))clearReview(k);});
+$('#fwrap').addEventListener('click',e=>{if(e.target.id==='btnRvOk'){const it=cur();if(it){delete it.r._review;setDirty();showIssues();renderList();saveDraft();}return;}
+  if(e.target.classList.contains('toTw')){const it=cur();if(it){cardToTw(it);fillForm();onForm();toast('已轉成繁中官方用語，請再看一眼');}return;}
+  if(!e.target.closest('button,[data-rm]'))return;for(const k in FIELD_EL)if(e.target.closest(FIELD_EL[k]))clearReview(k);});
+async function getPath(dir,path){let d=dir;const parts=String(path||'').split('/').filter(Boolean);for(let i=0;i<parts.length-1;i++){d=await tryGet(d,parts[i],'dir');if(!d)return null;}return parts.length?tryGet(d,parts[parts.length-1]):null;}
+async function readDrafts(){if(!S.root||S.root===S.site)return null;const ib=await tryGet(S.root,'_inbox','dir');if(!ib)return null;try{const d=await readJSON(ib,'drafts.json');return d&&Array.isArray(d.cards)?d:null;}catch(e){toast('_inbox/drafts.json 不是正確的 JSON：'+e.message,5000);return null;}}
+async function updImportBtn(){const d=await readDrafts();const n=d?d.cards.length:0;const b=$('#btnImport');b.textContent=n?`匯入草稿（${n}）`:'匯入草稿';b.disabled=!S.site;b.classList.toggle('has',n>0);S.draftsN=n;}
+async function loadDraftImg(it){const path=it.r._img;if(!path)return false;const ib=await tryGet(S.root,'_inbox','dir');const h=ib&&await getPath(ib,path);if(!h){it.r._note=(it.r._note?it.r._note+'；':'')+'找不到草稿卡圖 '+path;return false;}
+  try{const f=await h.getFile();const im=await loadImage(URL.createObjectURL(f));it.img={state:'new',src:im,srcName:it.r._src||path,file:f,mode:'cover',zoom:1,ox:0,oy:0,bg:'#000000'};return true;}catch(e){it.r._note=(it.r._note?it.r._note+'；':'')+'草稿卡圖讀取失敗';return false;}}
+async function importDrafts(){
+  if(!S.site)return toast('先開啟資料夾');
+  const d=await readDrafts();if(!d||!d.cards.length)return toast('_inbox/drafts.json 裡沒有草稿');
+  const have=new Set(S.items.map(i=>i.r.cardNumber));const added=[],skip=[];let first=null;
+  for(const raw of d.cards){
+    const r=Object.assign(emptyRaw(),raw);r.cardNumber=String(r.cardNumber||'').trim().toUpperCase();
+    if(r.cardNumber&&have.has(r.cardNumber)){skip.push(r.cardNumber+'（自訂卡已有）');continue;}
+    if(r.cardNumber&&S.off.has(r.cardNumber)){skip.push(r.cardNumber+'（官方已有）');continue;}
+    if(!Array.isArray(r.cardAttribute))r.cardAttribute=String(r.cardAttribute||'').split(/[\/／,，]/).map(x=>x.trim()).filter(Boolean);
+    r.mixedColor=colorsOf(r).length>1?1:0;if(r._review&&!Array.isArray(r._review))r._review=String(r._review).split(/[,，、 ]/).filter(Boolean);
+    if(!hasSimp(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))r.textLang='tw';
+    if(!splitSet(r.cardOfferType).name&&folderOf(r._src))r.cardOfferType=setStrFromFolder(folderOf(r._src))||r.cardOfferType;
+    const it=newItem(r);await loadDraftImg(it);S.items.push(it);have.add(r.cardNumber);S.changed.add(r.cardNumber);added.push(r.cardNumber||'（無卡號）');if(!first)first=it;
+  }
+  if(added.length){sortItems();S.cur=S.items.indexOf(first);setDirty();renderList();fillForm();refreshLists();renderInbox();saveDraft();}
+  // 匯入過的草稿從 drafts.json 清掉（卡圖檔留在 _inbox/_drafts/，存檔時會複製到 site/custom/）
+  try{const ib=await S.root.getDirectoryHandle('_inbox');await writeFile(ib,'drafts.json',JSON.stringify({_readme:'已於 '+new Date().toLocaleString()+' 匯入編輯器；請 Claude 讀圖時會重寫這個檔',imported:added,skipped:skip,cards:[]},null,1)+'\n');}catch(e){console.warn(e);}
+  updImportBtn();
+  alert(`匯入 ${added.length} 張草稿${added.length?'：'+added.slice(0,15).join('、')+(added.length>15?'…':''):''}\n${skip.length?'略過 '+skip.length+' 張：'+skip.join('、')+'\n':''}\n黃框＝Claude 不確定的欄位，請逐張確認後 ⌘S 儲存。`);
+}
+$('#btnImport').onclick=importDrafts;
+
 /* ---------- 新增／複製／刪除／下一張 ---------- */
 const bump=no=>{const m=String(no||'').match(/^(.*-)(\d{3})$/);return m?m[1]+String(+m[2]+1).padStart(3,'0'):'';};
-function newCard(base,carry){const c=cur();const r=emptyRaw();
+function newCard(base,carry,set){const c=cur();const r=emptyRaw();
   if(c){r.cardOfferType=c.r.cardOfferType;if(carry){r.cardColor=c.r.cardColor;r.mixedColor=c.r.mixedColor;r.cardType=c.r.cardType==='领袖'?'角色':c.r.cardType;}let n=bump(c.r.cardNumber);while(n&&S.items.some(i=>i.r.cardNumber===n))n=bump(n);r.cardNumber=n;}
+  // v1.4 指定系列（來自 _inbox 子資料夾）：系列不同於目前這張時，卡號改成該系列下一個未用的號碼
+  if(set){const code=splitSet(set).code;if(!c||splitSet(c.r.cardOfferType).code!==code||!r.cardNumber)r.cardNumber=nextNoForSet(code)||r.cardNumber;r.cardOfferType=set;}
   if(base)Object.assign(r,base);
   const it=newItem(r);S.items.push(it);sortItems();S.cur=S.items.indexOf(it);S.changed.add(r.cardNumber);setDirty();renderList();fillForm();
   $(r.cardNumber?'#fName':'#fNo').focus();return it;}
-$('#btnNew').onclick=()=>newCard();
-$('#btnNew').title='沿用目前這張的系列';
+$('#btnNew').onclick=()=>newCard(null,false,S.ref&&S.ref.folder?setStrFromFolder(S.ref.folder):'');
+$('#btnNew').title='沿用右邊參考圖所在 _inbox 子資料夾的系列；沒有就沿用目前這張的系列';
 $('#btnNext').onclick=()=>{const c=cur();if(!c)return newCard();const n=bump(c.r.cardNumber);const ex=S.items.findIndex(i=>i.r.cardNumber===n);
   if(ex>=0){S.cur=ex;renderList();fillForm();$('#fName').focus();}else newCard(null,true);};
 $('#btnDup').onclick=()=>{const c=cur();if(!c)return;const r=JSON.parse(JSON.stringify(c.r));let n=bump(r.cardNumber);while(n&&S.items.some(i=>i.r.cardNumber===n))n=bump(n);r.cardNumber=n;r.cardImg='';newCard(r,true);};
@@ -574,9 +699,13 @@ $('#btnCopyFrom').onclick=()=>{const c=cur();if(!c)return;const no=$('#fCopyFrom
   if(!src)return toast('找不到 '+no);
   const keep={cardNumber:c.r.cardNumber,cardImg:c.r.cardImg,cardOfferType:c.r.cardOfferType||src.cardOfferType};
   const pick={};for(const k of FIELDS)if(src[k]!=null)pick[k]=JSON.parse(JSON.stringify(src[k]));
+  // 官方卡：改用 cards.json 的繁中文字（tw 區）；沒有繁中就轉繁中
+  {const w=S.off.get(no)===src?S.tw.get(no):null;if(w){if(w.n)pick.cardName=w.n;if(w.t!=null)pick.cardTextDesc=w.t;if(w.g!=null)pick.cardTrigger=w.g||'';if(w.f!=null)pick.cardFeatures=String(w.f).split(/[\/／,，\n]/).map(featTw).filter(Boolean).join('/');}
+   else if(S.off.get(no)===src){pick.cardName=nameTw(pick.cardName||'');pick.cardTextDesc=fixNames(textTw(pick.cardTextDesc||''));pick.cardTrigger=fixNames(textTw(pick.cardTrigger||''));pick.cardFeatures=String(pick.cardFeatures||'').split(/[\/／,，\n]/).map(featTw).filter(Boolean).join('/');}
+   pick.textLang='tw';}
   // 官方資料的反擊有純數字寫法、觸發帶前綴、稀有度有「普通（C）」寫法 → 轉成 custom.json 的標準值
   const n=(String(pick.cardAttack||'').match(/\d+/)||[])[0];pick.cardAttack=n==='1000'||n==='2000'?'反击+'+n:'-';
-  pick.cardTrigger=String(pick.cardTrigger||'').replace(/^\s*【(触发|觸發)】\s*/,'');
+  pick.cardTrigger=String(pick.cardTrigger||'').replace(/^\s*【(触发|觸發|觸發器)】\s*/,'');
   const rm=String(pick.cardRarity||'').match(/[（(]([A-Z]+)[)）]/);if(rm)pick.cardRarity=rm[1];if(pick.cardRarity==='U')pick.cardRarity='UC';if(!RARITIES.includes(pick.cardRarity))pick.cardRarity='';
   pick.cardAttribute=[...new Set((pick.cardAttribute||[]).flatMap(a=>String(a).split(/[\/／]/)).map(a=>a==='知'?'智':a.trim()).filter(a=>ATTRS.includes(a)))];
   Object.assign(c.r,pick,keep);fillForm();onForm();toast('已帶入 '+no+' 的資料');};
@@ -594,17 +723,19 @@ async function saveAll(){
   try{
     const oldFiles=new Set([...S.deletedFiles,...S.items.map(i=>i.diskFile).filter(Boolean)]);
     for(const it of S.items){const no=it.r.cardNumber;const fn=no+'.jpg';
-      if(it.img.state==='new'){await writeFile(S.cdir,fn,await cropBlob(it.img));it.r.cardImg='custom/'+fn;}
+      if(it.img.state==='new'){const m=it.img;const asIs=m.file&&m.mode==='cover'&&m.zoom===1&&!m.ox&&!m.oy&&!m.rot&&m.src.naturalWidth===W&&m.src.naturalHeight===H;
+        await writeFile(S.cdir,fn,asIs?m.file:await cropBlob(m));it.r.cardImg='custom/'+fn;}
       else if(it.img.state==='disk'){if(it.diskFile!==fn){const f=await (await S.cdir.getFileHandle(it.diskFile)).getFile();await writeFile(S.cdir,fn,f);}it.r.cardImg='custom/'+fn;}
       else if(it.img.state==='none')it.r.cardImg='';
     }
     const keep=new Set(S.items.map(i=>String(i.r.cardImg).replace(/^custom\//,'')).filter(Boolean));
     for(const f of oldFiles)if(!keep.has(f)){try{await S.cdir.removeEntry(f);}catch(e){}}
+    for(const it of S.items){const r=it.r;if(!hasSimp(r.cardName+r.cardTextDesc+r.cardTrigger+r.cardFeatures))r.textLang='tw';else if(r.textLang==='tw')delete r.textLang;}
     sortItems();
-    const out={_readme:S.readme,updatedAt:taipeiISO(),cards:S.items.map(i=>canon(i.r))};
+    const out={_readme:S.readme,updatedAt:taipeiISO(),cards:S.items.map(i=>{const o=pub(canon(i.r));if(!o.textLang)delete o.textLang;return o;})};
     await writeFile(S.site,'custom.json',JSON.stringify(out,null,1)+'\n');
     const savedNos=diffNos();
-    for(const it of S.items){it.origNo=it.r.cardNumber;await loadDiskImg(it);}
+    for(const it of S.items){it.origNo=it.r.cardNumber;for(const k of Object.keys(it.r))if(k.startsWith('_'))delete it.r[k];await loadDiskImg(it);}
     S.lastSaved=savedNos;takeSnap();S.deletedFiles.clear();setDirty(false);idb.set('draft',null);
     renderList();fillForm();refreshLists();renderInbox();
     $('#stat').textContent=`自訂卡 ${S.items.length} 張・官方 ${S.off.size} 張`;
@@ -622,6 +753,7 @@ $('#btnGit').onclick=async()=>{
 /* ---------- 快捷鍵 ---------- */
 document.addEventListener('keydown',e=>{const mod=e.metaKey||e.ctrlKey;
   if(mod&&e.key.toLowerCase()==='s'){e.preventDefault();saveAll();}
+  else if(mod&&!e.shiftKey&&e.key.toLowerCase()==='i'){e.preventDefault();if(S.site)importDrafts();}
   else if(mod&&e.key==='Enter'){e.preventDefault();if(S.site){document.activeElement.blur&&document.activeElement.blur();$('#btnNext').click();}}
   else if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')&&S.items.length){e.preventDefault();document.activeElement.blur&&document.activeElement.blur();S.cur=Math.max(0,Math.min(S.items.length-1,S.cur+(e.key==='ArrowUp'?-1:1)));renderList();fillForm();}});
 window.addEventListener('beforeunload',e=>{if(S.dirty){e.preventDefault();e.returnValue='';}});

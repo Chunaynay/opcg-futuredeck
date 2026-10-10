@@ -57,7 +57,7 @@ body.resizing{cursor:col-resize;user-select:none}
 .chip.col::before{content:"";position:absolute;left:7px;top:50%;width:10px;height:10px;border-radius:50%;transform:translateY(-50%);background:var(--dot)}
 label.ck{display:flex;align-items:center;gap:6px;margin:6px 0;cursor:pointer}
 .row{display:flex;gap:6px}
-/* 特徵／系列／區塊：可搜尋的選擇器按鈕（看得到目前選了什麼，✕ 可清除） */
+/* 特徵／系列：可搜尋的選擇器按鈕（看得到目前選了什麼，✕ 可清除） */
 .pick{display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:6px 8px 6px 10px;background:var(--sea2);border:1px solid var(--line);border-radius:8px}
 .pick .v{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink3)}
 .pick .arr{color:var(--ink3);font-size:11px}
@@ -343,7 +343,7 @@ header .title{display:flex;flex-direction:column;gap:1px}
     <label class="ck"><input type="checkbox" id="fTrigger"> 只看有觸發器的卡</label>
     <h3>特徵</h3><select id="fFeat" hidden><option value="">全部特徵</option></select><button type="button" class="pick" data-pick="fFeat" data-title="特徵"><span class="v">全部特徵</span><i class="arr">▾</i><i class="x" title="清除">✕</i></button>
     <h3>系列／商品</h3><select id="fSet" hidden><option value="">全部系列</option></select><button type="button" class="pick" data-pick="fSet" data-title="系列／商品"><span class="v">全部系列</span><i class="arr">▾</i><i class="x" title="清除">✕</i></button>
-    <h3>區塊圖示</h3><select id="fBlock" hidden><option value="">全部</option></select><button type="button" class="pick" data-pick="fBlock" data-title="區塊圖示"><span class="v">全部</span><i class="arr">▾</i><i class="x" title="清除">✕</i></button>
+    <h3>區塊圖示</h3><div class="chips" id="fBlock"></div>
     <h3></h3>
     <button id="btnReset" style="width:100%">清除所有篩選</button>
   </aside>
@@ -529,7 +529,7 @@ const ATTR_T={'打':'打','斩':'斬','射':'射','特':'特','智':'智'};
 const RARITIES=['C','UC','R','SR','SEC','L','P','TR','SP'];
 const MAX_COPIES=4, DECK_SIZE=50;
 const DB_KEY='opcg.db', CUR_KEY='opcg.current', DECKS_KEY='opcg.decks';
-const APP_VERSION='v4.1';
+const APP_VERSION='v4.2';
 const BUNDLED_URL='cards.json'; // 與 index.html 同資料夾的內建卡片資料（部署到 Netlify 時一起放）
 const CUSTOM_URL='custom.json'; // 站長維護的自訂卡（未發售卡）：{updatedAt, cards:[raw…]}，卡圖放 custom/ 資料夾
 const BCUSTOM_KEY='opcg.bcustom', DECKW_KEY='opcg.deckW', DECKMODE_KEY='opcg.deckMode';
@@ -572,7 +572,7 @@ let CARDS=[];        // 正規化後（每個印刷一筆）
 let BYNO=new Map();  // 卡號 → 代表卡（含 imgs）
 let deck={name:'',leader:null,main:{},leaderImg:null,imgs:{}};
 let view=[]; let shown=0; const PAGE=120;
-const F={q:'',colors:new Set(),types:new Set(),costs:new Set(),counters:new Set(),attrs:new Set(),rar:new Set(),powMin:'',powMax:'',trigger:false,feat:'',set:'',block:'',custom:false};
+const F={q:'',colors:new Set(),types:new Set(),costs:new Set(),counters:new Set(),attrs:new Set(),rar:new Set(),powMin:'',powMax:'',trigger:false,feat:'',set:'',blocks:new Set(),custom:false}; // v4.2 blocks＝多選（跟費用一樣，沒選＝全部；值為字串，'' 代表無區塊圖示）
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -722,7 +722,7 @@ function norm(i){
     attrs:[...new Set((i.cardAttribute||[]).flatMap(a=>String(a||'').split(/[\/／,，]/)).map(a=>a.trim()).map(a=>a==='知'?'智':a).filter(a=>ATTRS.includes(a)))],
     feats:splitFeat(i.cardFeatures),
     text:i.cardTextDesc||'',trigger:(i.cardTrigger||'').replace(/^\s*【(触发|觸發)】\s*/,''),rarity:normRarity(i.cardRarity),set:i.cardOfferType||'',
-    block:i.subscript??'',img:i.cardImg||'',cart:i.cardCartograph||'',disp:i.displayId||i.id||0,
+    block:(i.subscript==null||String(i.subscript)==='0')?'':String(i.subscript),img:i.cardImg||'', // v4.2 統一成字串；簡中 API 的 0 等於沒標（OPCG 沒有區塊 0）cart:i.cardCartograph||'',disp:i.displayId||i.id||0,
     // v3.8 合併資料：lang＝文字來源（cn 簡中／tw 繁中／jp 日版，簡中沒有的卡才會是 tw／jp）；alt＝其他語言的卡名，只用來搜尋
     lang:i.lang||'cn',alt:[i.cardNameTw,i.cardNameJp].filter(Boolean),
     search:''
@@ -802,17 +802,20 @@ function buildIndex(){
   for(const c of BYNO.values()){
     c.fk.forEach(f=>feats.set(f,(feats.get(f)||0)+1));
     if(c.set){if(isPRSet(c))prN++;else if(!seenSet.has(c.set)){seenSet.add(c.set);(c.custom?customSets:sets).push(c.set);}}
-    if(c.block!==''&&c.block!=null)blocks.add(c.block);if(c.power!=null)pows.add(c.power);
+    blocks.add(c.block);if(c.power!=null)pows.add(c.power); // '' 也收，有沒標區塊的卡時多一顆「無」
   }
   const setCount=new Map();for(const c of BYNO.values())if(c.set&&!isPRSet(c))setCount.set(c.set,(setCount.get(c.set)||0)+1);
   const opt=(sel,arr,label)=>{sel.innerHTML=`<option value="">${label}</option>`+arr.map(v=>{const [val,txt,n]=Array.isArray(v)?v:[v,v,null];return `<option value="${esc(val)}"${n!=null?` data-n="${n}"`:''}>${esc(txt)}</option>`;}).join('');};
   opt($('#fFeat'),[...feats.keys()].sort((a,b)=>a.localeCompare(b,'zh')).map(f=>[f,f,feats.get(f)]),'全部特徵');
   opt($('#fSet'),[...customSets.map(s=>[s,s+'（自訂卡）',setCount.get(s)]),...sets.map(s=>[s,s,setCount.get(s)]),...(prN?[[PR_SET,'PR卡（宣傳／活動／其他，無代號的系列）',prN]]:[])],'全部系列');
-  opt($('#fBlock'),[...blocks].sort((a,b)=>a-b),'全部');
+  // v4.2 區塊圖示改成多選晶片（跟費用一樣）：有編號的照數字排、沒標區塊的放最後一顆「無」；資料重建時把已不存在的選項從 F.blocks 拿掉
+  const blockList=[...blocks].filter(b=>b!=='').sort((a,b)=>a-b).concat(blocks.has('')?['']:[]);
+  for(const b of F.blocks)if(!blocks.has(b))F.blocks.delete(b);
+  chips($('#fBlock'),blockList,F.blocks,v=>v===''?'無':v);
   const p=[...pows].sort((a,b)=>a-b);
   opt($('#fPowMin'),p,'不限（最低）');opt($('#fPowMax'),p,'不限（最高）');
   // 選單重建後，若原本選的值已不存在就清掉
-  for(const [id,k] of [['fFeat','feat'],['fSet','set'],['fBlock','block']]){const sel=$('#'+id);if(F[k]&&![...sel.options].some(o=>o.value===F[k])){F[k]='';}sel.value=F[k];}
+  for(const [id,k] of [['fFeat','feat'],['fSet','set']]){const sel=$('#'+id);if(F[k]&&![...sel.options].some(o=>o.value===F[k])){F[k]='';}sel.value=F[k];}
   renderPicks();
   const cc=customCards.length;
   const fill=[...BYNO.values()].reduce((m,c)=>{if(!c.custom&&c.tl!=='tw')m[c.tl]=(m[c.tl]||0)+1;return m;},{});
@@ -840,7 +843,9 @@ function sourcesText(){
 
 /* ---------- 篩選 UI ---------- */
 function chips(el,items,set,label,extra){
-  el.innerHTML=items.map(v=>`<button class="chip${extra?' col':''}" data-v="${esc(v)}" ${extra?`style="--dot:var(--c-${v})"`:''}>${label?label(v):v}</button>`).join('');
+  // 可重複呼叫（區塊圖示在每次 buildIndex 重建）：已選的畫成 on、點擊監聽只掛一次
+  el.innerHTML=items.map(v=>`<button class="chip${extra?' col':''}${set.has(v)?' on':''}" data-v="${esc(v)}" ${extra?`style="--dot:var(--c-${v})"`:''}>${label?label(v):v}</button>`).join('');
+  if(el.dataset.bound)return;el.dataset.bound='1';
   el.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const v=b.dataset.v;set.has(v)?set.delete(v):set.add(v);b.classList.toggle('on');applyFilters();});
 }
 chips($('#fColor'),COLORS,F.colors,v=>COLOR_T[v],true);
@@ -850,8 +855,8 @@ chips($('#fCounter'),['無','1000','2000'],F.counters);
 chips($('#fAttr'),ATTRS,F.attrs,v=>ATTR_T[v]);
 chips($('#fRarity'),RARITIES,F.rar);
 let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{F.q=e.target.value.trim();applyFilters();},160);});
-const SEL_KEY={fPowMin:'powMin',fPowMax:'powMax',fFeat:'feat',fSet:'set',fBlock:'block'};
-['fPowMin','fPowMax','fFeat','fSet','fBlock'].forEach(id=>$('#'+id).addEventListener('change',e=>{F[SEL_KEY[id]]=e.target.value;renderPicks();applyFilters();}));
+const SEL_KEY={fPowMin:'powMin',fPowMax:'powMax',fFeat:'feat',fSet:'set'};
+['fPowMin','fPowMax','fFeat','fSet'].forEach(id=>$('#'+id).addEventListener('change',e=>{F[SEL_KEY[id]]=e.target.value;renderPicks();applyFilters();}));
 $('#fTrigger').addEventListener('change',e=>{F.trigger=e.target.checked;applyFilters();});
 $('#fCustom').addEventListener('change',e=>{F.custom=e.target.checked;applyFilters();});
 $('#leaderFirst').addEventListener('change',applyFilters);
@@ -861,14 +866,14 @@ $('#dedupe').addEventListener('change',applyFilters);
 $('#sort').addEventListener('change',applyFilters);
 // 清除單一組篩選（已套用篩選列的 ✕、選擇器的 ✕ 都用這個）
 function clearFilter(k){
-  const chipSet={colors:'fColor',types:'fType',costs:'fCost',counters:'fCounter',attrs:'fAttr',rar:'fRarity'};
+  const chipSet={colors:'fColor',types:'fType',costs:'fCost',counters:'fCounter',attrs:'fAttr',rar:'fRarity',blocks:'fBlock'};
   if(k==='q'){F.q='';$('#q').value='';}
   else if(chipSet[k]){F[k].clear();document.querySelectorAll('#'+chipSet[k]+' .chip.on').forEach(b=>b.classList.remove('on'));}
   else if(k==='pow'){F.powMin=F.powMax='';$('#fPowMin').value='';$('#fPowMax').value='';}
-  else if(k==='feat'||k==='set'||k==='block'){F[k]='';$('#'+{feat:'fFeat',set:'fSet',block:'fBlock'}[k]).value='';renderPicks();}
+  else if(k==='feat'||k==='set'){F[k]='';$('#'+{feat:'fFeat',set:'fSet'}[k]).value='';renderPicks();}
   else if(k==='trigger'){F.trigger=false;$('#fTrigger').checked=false;}
   else if(k==='custom'){F.custom=false;$('#fCustom').checked=false;}
-  else if(k==='all'){['q','colors','types','costs','counters','attrs','rar','pow','feat','set','block','trigger','custom'].forEach(x=>clearFilter(x));return;}
+  else if(k==='all'){['q','colors','types','costs','counters','attrs','rar','pow','feat','set','blocks','trigger','custom'].forEach(x=>clearFilter(x));return;}
   applyFilters();
 }
 $('#btnReset').onclick=()=>clearFilter('all');
@@ -890,7 +895,7 @@ function renderPickList(){
   const opts=[...sel.options].filter(o=>{if(o.value===''||!q)return true;const t=o.textContent.toLowerCase();return t.includes(q)||t.includes(qs)||t2s(t).includes(qs);}); // v4.1：清單已是繁中，簡體輸入也要找得到
   $('#pkList').innerHTML=opts.length?opts.map(o=>`<button type="button" class="${o.value===sel.value?'on':''}" data-v="${esc(o.value)}"><span>${esc(o.textContent)}</span>${o.dataset.n?`<small>${o.dataset.n} 張</small>`:''}</button>`).join(''):'<div class="none">沒有符合的項目</div>';
 }
-document.querySelectorAll('.pick[data-pick]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('.x')){e.stopPropagation();clearFilter({fFeat:'feat',fSet:'set',fBlock:'block'}[b.dataset.pick]);return;}openPick(b.dataset.pick);}));
+document.querySelectorAll('.pick[data-pick]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('.x')){e.stopPropagation();clearFilter({fFeat:'feat',fSet:'set'}[b.dataset.pick]);return;}openPick(b.dataset.pick);}));
 let pkT;$('#pkQ').addEventListener('input',()=>{clearTimeout(pkT);pkT=setTimeout(renderPickList,100);});
 $('#pkQ').addEventListener('keydown',e=>{if(e.key==='Enter'){const f=$('#pkList button');if(f)f.click();e.preventDefault();}else if(e.key==='Escape'){$('#pickDlg').close();e.preventDefault();}}); // type=search 的 Esc 預設只清字，這裡直接關視窗
 $('#pkList').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b||!PK)return;const sel=$('#'+PK.id);sel.value=b.dataset.v;sel.dispatchEvent(new Event('change'));$('#pickDlg').close();});
@@ -909,7 +914,7 @@ function activeFilterList(){
   if(F.trigger)add('trigger','觸發器','有');
   if(F.feat)add('feat','特徵',F.feat);
   if(F.set)add('set','系列',F.set===PR_SET?'PR卡':F.set);
-  if(F.block!=='')add('block','區塊',F.block);
+  if(F.blocks.size)add('blocks','區塊',[...F.blocks].map(b=>b===''?'無':b).join('／'));
   if(F.custom)add('custom','自訂卡','只看');
   return out;
 }
@@ -945,7 +950,7 @@ function applyFilters(){
     if(leaderFirst&&c.type!=='领袖')return false;
     if(F.feat&&!c.fk.includes(F.feat))return false;
     if(F.set&&(F.set===PR_SET?!isPRSet(c):c.set!==F.set))return false;
-    if(F.block!==''&&String(c.block)!==F.block)return false;
+    if(F.blocks.size&&!F.blocks.has(c.block))return false;
     if(onlyLegal&&c.type!=='领袖'&&!legalColor(c))return false;
     return true;
   });

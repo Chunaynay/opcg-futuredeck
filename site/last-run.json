@@ -1,38 +1,40 @@
 {
-  "ranAt": "2026-10-05T17:12:06.095Z",
+  "ranAt": "2026-10-11T17:54:09.238Z",
   "ok": true,
-  "changed": false,
+  "changed": true,
   "sources": {
     "cn": {
       "status": "ok",
-      "count": 4927,
-      "fetchedAt": "2026-10-05T17:12:06.095Z",
+      "count": 4957,
+      "fetchedAt": "2026-10-11T17:54:09.238Z",
       "note": "詳情失敗 0、沿用舊資料 0"
     },
     "tw": {
       "status": "ok",
       "count": 4915,
       "fill": 2,
-      "fetchedAt": "2026-10-05T17:12:06.095Z",
+      "fetchedAt": "2026-10-11T17:54:09.238Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     },
     "jp": {
       "status": "ok",
       "count": 4997,
       "fill": 7,
-      "fetchedAt": "2026-10-05T17:12:06.095Z",
+      "fetchedAt": "2026-10-11T17:54:09.238Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     }
   },
   "stats": {
-    "cardNumbers": 2912,
+    "cardNumbers": 2913,
     "byLang": {
-      "cn": 2907,
+      "cn": 2908,
       "tw": 1,
       "jp": 4
     },
-    "newCards": 0,
-    "newSets": [],
+    "newCards": 1,
+    "newSets": [
+      "宣传卡（1）"
+    ],
     "upgradedToCn": 0,
     "removed": 0,
     "textFilled": [
@@ -46,9 +48,18 @@
       "ST20-003"
     ],
     "twText": 2814,
-    "termConflicts": 15
+    "termConflicts": 4,
+    "features": {
+      "unified": 169,
+      "mapped": 155,
+      "fallback": 0,
+      "variants": 18,
+      "conflicts": 0
+    }
   },
-  "newCards": [],
+  "newCards": [
+    "P-158"
+  ],
   "removedCards": [],
-  "commitMessage": "cards 2026-10-05：2912 張（簡中 2907、補繁中 1、補日文 4），無新卡 [CN ok 4927 / TW ok 4915 / JP ok 4997]"
+  "commitMessage": "cards 2026-10-11：2913 張（簡中 2908、補繁中 1、補日文 4），新增 1 張：宣传卡（1） [CN ok 4957 / TW ok 4915 / JP ok 4997]"
 }

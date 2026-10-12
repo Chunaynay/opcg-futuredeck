@@ -1,26 +1,26 @@
 {
-  "ranAt": "2026-10-11T17:54:09.238Z",
+  "ranAt": "2026-10-12T21:31:53.071Z",
   "ok": true,
-  "changed": true,
+  "changed": false,
   "sources": {
     "cn": {
       "status": "ok",
       "count": 4957,
-      "fetchedAt": "2026-10-11T17:54:09.238Z",
+      "fetchedAt": "2026-10-12T21:31:53.071Z",
       "note": "詳情失敗 0、沿用舊資料 0"
     },
     "tw": {
       "status": "ok",
       "count": 4915,
       "fill": 2,
-      "fetchedAt": "2026-10-11T17:54:09.238Z",
+      "fetchedAt": "2026-10-12T21:31:53.071Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     },
     "jp": {
       "status": "ok",
       "count": 4997,
       "fill": 7,
-      "fetchedAt": "2026-10-11T17:54:09.238Z",
+      "fetchedAt": "2026-10-12T21:31:53.071Z",
       "note": "62 系列、失敗 0、重複印刷 0"
     }
   },
@@ -31,10 +31,8 @@
       "tw": 1,
       "jp": 4
     },
-    "newCards": 1,
-    "newSets": [
-      "宣传卡（1）"
-    ],
+    "newCards": 0,
+    "newSets": [],
     "upgradedToCn": 0,
     "removed": 0,
     "textFilled": [
@@ -57,9 +55,7 @@
       "conflicts": 0
     }
   },
-  "newCards": [
-    "P-158"
-  ],
+  "newCards": [],
   "removedCards": [],
-  "commitMessage": "cards 2026-10-11：2913 張（簡中 2908、補繁中 1、補日文 4），新增 1 張：宣传卡（1） [CN ok 4957 / TW ok 4915 / JP ok 4997]"
+  "commitMessage": "cards 2026-10-12：2913 張（簡中 2908、補繁中 1、補日文 4），無新卡 [CN ok 4957 / TW ok 4915 / JP ok 4997]"
 }
